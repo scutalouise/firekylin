@@ -13,4 +13,6 @@ floppya: type=1_44, 1_44="System.img", status=inserted
 
 ata0-master: type=disk, path="1.44.img", mode=flat, cylinders=80, heads=2, spt=18
 
+com1: enabled=1, mode=socket-server, dev=localhost:8888
+
 boot: a

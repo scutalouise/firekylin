@@ -10,6 +10,7 @@
 
 extern void con_init(void);
 extern void keyboard_init(void);
+extern void rs_init(void);
 
 struct tty_struct console;
 
@@ -72,6 +73,7 @@ void tty_init(void)
 {
 	con_init();
 	keyboard_init();
+	rs_init();
 	console.raw.head=console.raw.tail=console.raw.count=0;
 	console.cooked.head=console.cooked.tail=console.cooked.count=0;
 	console.out.head=console.out.tail=console.out.count=0;
