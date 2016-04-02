@@ -46,7 +46,7 @@ int blk_open(dev_t dev)
 	return 0;
 }
 
-int sys_open(char *path, int flag)
+int sys_open(char *path, int flag,mode_t mode)
 {
 	int fd;
 	struct file *file;

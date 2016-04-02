@@ -12,6 +12,7 @@
 #include <sys/fcntl.h>
 #include <firekylin/kernel.h>
 #include <firekylin/fs.h>
+#include <errno.h>
 
 struct minix1_super {
 	unsigned short s_ninodes;
@@ -37,13 +38,14 @@ struct minix1_inode {
 #define INODES_PER_BLOCK	(1024/sizeof(struct minix1_inode))
 
 extern int minix1_read_super(struct super *super);
+extern int minix1_write_super(struct super *super);
 extern int minix1_read_inode(struct inode * inode);
 extern int minix1_write_inode(struct inode * inode);
 extern int minix1_look_up(struct inode *dir_inode, char *filename,
 		struct inode **res_inode);
 extern int minix1_alloc_block(dev_t dev);
 extern int minix1_free_block(dev_t dev, int block);
-extern int minix1_alloc_inode(dev_t dev);
+extern struct inode * minix1_alloc_inode(dev_t dev);
 extern int minix1_free_inode(dev_t dev, ino_t ino);
 extern int minix1_rbmap(struct inode *inode, int block);
 extern int minix1_wbmap(struct inode *inode, int block);
@@ -51,10 +53,12 @@ extern int minix1_file_read(struct inode *inode, char * buf, size_t size,
 		off_t off, int rw_flag);
 extern int minix1_file_write(struct inode *inode, char * buf, size_t size,
 		off_t off, int rw_flag);
-extern int minix1_mknod(struct inode *inode, char *name,
-		struct inode **res_inode);
+extern int minix1_mknod(struct inode *dir_inode, char *name, mode_t mode,
+		dev_t dev);
+extern int minix1_mkdir(struct inode *dir_inode,char *name,mode_t mode);
+extern int minix1_link(struct inode *dir_inode,char *name, struct inode *inode);
+extern int minix1_unlink(struct inode *dir_inode, char *name);
+extern int minix1_rmdir(struct inode *dir_inode, char *name);
 extern int minix1_rename(struct inode *inode, char *old, char *new);
-extern int minix1_remove(struct inode *inode, char *name);
-extern int minix1_link(struct inode *dir, char *name, struct inode *inode);
 
 #endif

@@ -10,108 +10,118 @@
 #include <sys/fcntl.h>
 #include <errno.h>
 
-//int sys_create2(char *pathname)
-//{
-//	struct inode *dir_inode, *inode;
-//	char *basename;
-//
-//	if (!(dir_inode = namei(pathname, &basename)))
-//		return -ENOENT;
-//
-//	if (!*basename) {
-//		iput(dir_inode);
-//		return -EINVAL;
-//	}
-//
-//	if ((dir_inode->i_op->mknod(dir_inode, basename, &inode))) {
-//		iput(dir_inode);
-//		return -1;
-//	}
-//
-//	inode->i_mode = S_IFREG | 0777;
-//	inode->i_nlink = 1;
-//	inode->i_ctime = current_time();
-//	inode->i_flag |= I_DIRTY;
-//	iput(dir_inode);
-//	iput(inode);
-//	return 0;
-//}
-//
-//struct dir_entry s_te[2] = {
-//	{ 0, ".\0\0\0\0\0\0\0\0\0\0\0\0\0" },
-//	{ 0, "..\0\0\0\0\0\0\0\0\0\0\0\0" }
-//};
-//
-//int sys_mkdir(char *pathname)
-//{
-//	struct inode *dir_inode, *inode;
-//	char *basename;
-//
-//	if (!(dir_inode = namei(pathname, &basename)))
-//		return -ENOENT;
-//
-//	if (!*basename) {
-//		iput(dir_inode);
-//		return -EINVAL;
-//	}
-//
-//	if ((dir_inode->i_op->mknod(dir_inode, basename, &inode))) {
-//		iput(dir_inode);
-//		return -1;
-//	}
-//
-//	inode->i_mode = S_IFDIR | 0777;
-//	inode->i_nlink = 1;
-//	inode->i_ctime = current_time();
-//	inode->i_flag |= I_DIRTY;
-//	inode->i_size = 32;
-//	s_te[0].ino = inode->i_ino;
-//	s_te[1].ino = dir_inode->i_ino;
-//	iput(dir_inode);
-//
-//	struct buffer* buf = bread(inode->i_dev, minix1_wbmap(inode, 0));
-//	memcpy(buf->b_data, s_te, sizeof(struct dir_entry)*2);
-//	buf->b_flag |= B_DIRTY;
-//	brelse(buf);
-//	iput(inode);
-//	return 0;
-//}
-
-int sys_create(char *filename,mode_t mode ,long arg)
+int sys_mknod(char *filename, mode_t mode,dev_t dev)
 {
-	struct inode *dir_inode, *inode;
+	struct inode *dir_inode;
 	char *basename;
+	int res;
+
+//	if (!S_ISCHR(mode) || !S_ISBLK(mode) || !S_ISREG(mode)
+//			|| !S_ISFIFO(mode))
+//		return -EINVAL;
 
 	if (!(dir_inode = namei(filename, &basename)))
 		return -ENOENT;
+	if (!*basename) {
+		iput(dir_inode);
+		return -ENOENT;
+	}
+	res=dir_inode->i_op->mknod(dir_inode, basename, mode,dev );
+	iput(dir_inode);
+	return res;
+}
 
+int sys_mkdir(char *pathname, mode_t mode)
+{
+	struct inode *dir_inode, *inode;
+	char *basename;
+	int res;
+
+	if (!(dir_inode = namei(pathname, &basename)))
+		return -ENOENT;
 	if (!*basename) {
 		iput(dir_inode);
 		return -EINVAL;
 	}
 
-	if ((dir_inode->i_op->mknod(dir_inode, basename, &inode))) {
-		iput(dir_inode);
-		return -1;
-	}
-
-	inode->i_mode = mode;
-	inode->i_nlink = 1;
-	inode->i_ctime = current_time();
-	inode->i_flag |= I_DIRTY;
-	inode->i_size = 0;
-
-	if(S_ISCHR(inode->i_mode)||S_ISBLK(inode->i_mode))
-		inode->i_rdev=arg;
-
-	if(S_ISDIR(inode->i_mode)){
-		inode->i_op->link(inode,".",inode);
-		inode->i_op->link(inode,"..",dir_inode);
-	}
-
+	mode=S_IFDIR|(mode &07777);
+	res=dir_inode->i_op->mkdir(dir_inode, basename, mode);
 	iput(dir_inode);
+	return res;
+}
+
+int sys_link(char *name, char *newname)
+{
+	struct inode *inode, *new_dir_inode;
+	char *basename;
+	int res;
+
+	if (!(inode = namei(name, NULL)))
+		return -ENOENT;
+
+	if (S_ISDIR(inode->i_mode)) {
+		iput(inode);
+		return -EPERM;
+	}
+
+	//iunlock(inode);
+	if (!(new_dir_inode = namei(newname, &basename))) {
+		//iput(ilock(inode));
+		iput(inode);
+		return -EACCESS;
+	}
+	if (!*basename) {
+		//iput(ilock(inode));
+		iput(inode);
+		iput(new_dir_inode);
+		return -EACCESS;
+	}
+	if (inode->i_dev != new_dir_inode->i_dev) {
+		//iput(ilock(inode));
+		iput(inode);
+		iput(new_dir_inode);
+		return -EACCESS;
+	}
+
+	//ilock(inode);
+
+	res=new_dir_inode->i_op->link(new_dir_inode, basename, inode);
 	iput(inode);
-	return 0;
+	iput(new_dir_inode);
+	return res;
+}
+
+int sys_unlink(char *pathname)
+{
+	struct inode *dir_inode;
+	char *basename;
+	int res;
+
+	if (!(dir_inode = namei(pathname, &basename)))
+		return -ENOENT;
+	if (!*basename) {
+		iput(dir_inode);
+		return -EACCESS;
+	}
+
+	res=dir_inode->i_op->unlink(dir_inode, basename);
+	iput(dir_inode);
+	return res;
+}
+
+int sys_rmdir(char *pathname)
+{
+	struct inode *dir_inode;
+	char *basename;
+
+	if (!(dir_inode = namei(pathname, &basename)))
+		return -ENOENT;
+	if (!*basename) {
+		iput(dir_inode);
+		return -ENOENT;
+	}
+
+	return dir_inode->i_op->rmdir(dir_inode, basename);
 }
 
 int sys_rename(char *old, char *new)
@@ -136,65 +146,9 @@ int sys_rename(char *old, char *new)
 		return -1;
 	}
 
-	res=new_dir_inode->i_op->rename(new_dir_inode, old_basename,
+	res = new_dir_inode->i_op->rename(new_dir_inode, old_basename,
 			new_basename);
 	iput(new_dir_inode);
 	iput(ilock(old_dir_inode));
-	return res;
-}
-
-int sys_remove(char *name)
-{
-	struct inode *inode;
-	char *basename;
-	int res;
-
-	inode=namei(name,&basename);
-
-	if(!inode)
-		return -ENOENT;
-	if(!*basename){
-		iput(inode);
-		return -EINVAL;
-	}
-	res=inode->i_op->remove(inode,basename);
-	iput(inode);
-
-	return res;
-}
-
-int sys_link(char *name,char *newname)
-{
-	struct inode *inode,*new_dir_inode;
-	char *basename;
-	int res;
-
-	inode=namei(name,NULL);
-	if(!inode)
-		return -ENOENT;
-	if(S_ISDIR(inode->i_mode)){
-		iput(inode);
-		return -EPERM;
-	}
-	iunlock(inode);
-	new_dir_inode=namei(newname,&basename);
-	if(!new_dir_inode){
-		iput(ilock(inode));
-		return -EACCESS;
-	}
-	if(!*basename){
-		iput(ilock(inode));
-		iput(new_dir_inode);
-		return -EACCESS;
-	}
-	if(inode->i_dev!=new_dir_inode->i_dev){
-		iput(ilock(inode));
-		iput(new_dir_inode);
-		return -EACCESS;
-	}
-
-	res=new_dir_inode->i_op->link(new_dir_inode,basename,inode);
-	iput(ilock(inode));
-	iput(new_dir_inode);
 	return res;
 }

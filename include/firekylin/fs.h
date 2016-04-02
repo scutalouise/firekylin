@@ -87,10 +87,12 @@ struct fs_operation{
 			off_t offset, int rw_flag);
 	int (*file_write)(struct inode *inode, char *buf, size_t size,
 			off_t offset, int rw_flag);
-	int (*mknod)(struct inode *inode, char *name, struct inode **res_inode);
-	int (*rename)(struct inode *inode,char *old,char *new);
-	int (*remove)(struct inode *inode,char *name);
+	int (*mknod)(struct inode *inode, char *name,mode_t mode,dev_t dev);
+	int (*mkdir)(struct inode *dir_inode,char *basename,mode_t mode);
 	int (*link)(struct inode *dir_inode,char *name,struct inode *inode);
+	int (*unlink)(struct inode *dir_inode,char *basename);
+	int (*rmdir)(struct inode *dir_inode,char *basename);
+	int (*rename)(struct inode *inode,char *old,char *new);
 };
 
 struct file {

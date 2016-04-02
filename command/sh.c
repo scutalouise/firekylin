@@ -9,15 +9,15 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <stdio.h>
+#include <errno.h>
 
 #define MAX_ARG 64
 
 char *ps1 = "[firkylin~]#";
-int size;
 
 int get_cmd(char *buf)
 {
-	size = read(0, buf, 100);
+	int size = read(0, buf, 100);
 	buf[size] = 0;
 	return size;
 }
@@ -57,7 +57,9 @@ void execcmd(char **argv)
 	if (pid) {
 		waitpid(pid, NULL, 0);
 	} else {
-		_exit(execve(argv[0], argv,NULL));
+		execve(argv[0], argv,NULL);
+		printf("sh:%s\n",strerror(errno));
+		_exit(0);
 	}
 }
 
@@ -67,7 +69,8 @@ int main(void)
 	char *argv[MAX_ARG];
 	char buf[100];
 
-	printf("\n\nWelcome To FireKylin 0.1 !\n\n\n");
+	printf("\n\nWelcome To FireKylin 0.1 !\n\n");
+	printf("More info:http://firekylin.freekj.cn\n\n\n");
 
 	while (1) {
 		printf("%s", ps1);

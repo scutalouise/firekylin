@@ -25,3 +25,8 @@ int minix1_read_super(struct super *super)
 	brelse(buf);
 	return 0;
 }
+
+int minix1_write_super(struct super *super)
+{
+	return 0;
+}

@@ -24,7 +24,7 @@ commands:
 	$(CC) $(CFLAGS) -o cp.o cp.c
 	$(CC) $(CFLAGS) -o ll.o ll.c
 	$(CC) $(CFLAGS) -o rename.o rename.c
-	$(CC) $(CFLAGS) -o mv.o mv.c
+	$(CC) $(CFLAGS) -o rm.o rm.c
 	$(CC) $(CFLAGS) -o ed.o ed.c
 	$(CC) $(CFLAGS) -o link.o link.c
 
@@ -40,7 +40,7 @@ install:
 	$(LD) -o cp cp.o  $(LIB)
 	$(LD) -o ll ll.o  $(LIB)
 	$(LD) -o rename rename.o  $(LIB)
-	$(LD) -o mv mv.o  $(LIB)
+	$(LD) -o rm rm.o  $(LIB)
 	$(LD) -o ed ed.o  $(LIB)
 	$(LD) -o link link.o  $(LIB)
 	mkdir tmpdir
@@ -56,12 +56,12 @@ install:
 	cp   cp tmpdir/bin/cp
 	cp   ll tmpdir/bin/ll
 	cp   rename tmpdir/bin/rename
-	cp   mv tmpdir/bin/mv
+	cp   rm tmpdir/bin/rm
 	cp   ed tmpdir/bin/ed
 	cp   link tmpdir/bin/link
 	sudo umount ../1.44.img
 	rmdir tmpdir
 
 clean:
-	-del init sh ls echo cat mkdir cp sync touch ll rename mv ed link
+	-del init sh ls echo cat mkdir cp sync touch ll rename rm ed link
 	-del *.o

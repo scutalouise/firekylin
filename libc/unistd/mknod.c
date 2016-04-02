@@ -9,5 +9,5 @@
 #include <sys/unistd.h>
 #include <sys/stat.h>
 
-__syscall3(int, create, char *,filename, mode_t, mode, long, arg);
+__syscall3(int, mknod, char *,filename, mode_t, mode, dev_t, dev);
 

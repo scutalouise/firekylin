@@ -113,7 +113,7 @@ static int __minix1_bmap(struct inode *inode, int block, int create)
 		}
 		if (!inode->i_zone[7])
 			return 0;
-		buffer = bread(inode->i_dev, inode->i_zone[8]);
+		buffer = bread(inode->i_dev, inode->i_zone[7]);
 		res = *((short*) (buffer->b_data + block * 2));
 		if (create && !res) {
 			res = minix1_alloc_block(inode->i_dev);

@@ -15,7 +15,7 @@ OBJS= crt/crt.o  \
       string/memcpy.o string/memset.o string/strcat.o string/strcpy.o \
       string/strlen.o string/strncpy.o string/strcmp.o string/vsprintf.o \
       string/strerror.o unistd/fork.o unistd/getpid.o  string/strncmp.o \
-      unistd/getuid.o unistd/setuid.o unistd/setsid.o  unistd/create.o \
+      unistd/getuid.o unistd/setuid.o unistd/setsid.o  unistd/mknod.o \
       unistd/errno.o  unistd/open.o unistd/read.o unistd/stat.o unistd/link.o \
       unistd/execve.o unistd/_exit.o unistd/waitpid.o unistd/sbrk.o \
       stdio/printf.o  unistd/write.o unistd/dup.o unistd/fstat.o \

@@ -35,10 +35,10 @@
 #define __NR_ioctl		25
 #define __NR_chdir		26
 #define __NR_pipe		27
-#define __NR_create		28
+#define __NR_mknod		28
 #define __NR_link		29
 #define __NR_rename		30
-#define __NR_remove		31
+#define __NR_unlink		31
 #define __NR_mount		32
 #define __NR_umount		33
 #define __NR_stat		34
@@ -49,6 +49,8 @@
 #define __NR_getime		39
 #define __NR_setime		40
 #define __NR_sync		41
+#define __NR_mkdir		42
+#define __NR_rmdir		43
 
 #define __syscall0(type,name) 			\
 type name(void)					\

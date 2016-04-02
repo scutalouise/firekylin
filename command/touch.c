@@ -18,5 +18,5 @@ int main(int argc, char **argv)
 	if(argc<2){
 		printf("%s","touch filename");
 	}
-	create(argv[1],S_IFREG|0777,0);
+	mknod(argv[1],S_IFREG|0777,0);
 }

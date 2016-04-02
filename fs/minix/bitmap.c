@@ -96,10 +96,13 @@ int minix1_alloc_block(dev_t dev)
 	return 0;
 }
 
-int minix1_alloc_inode(dev_t dev)
+struct inode * minix1_alloc_inode(dev_t dev)
 {
 	struct buffer *bh;
-	struct super *super;
+	struct super  *super;
+	struct inode  *inode;
+	struct task   *current;
+	struct fs_operation *fs_op;
 	ino_t res;
 	int tmp;
 
@@ -115,16 +118,32 @@ int minix1_alloc_inode(dev_t dev)
 		if(tmp>super->s_inodes){
 			brelse(bh);
 			put_super(super);
-			return -1;
+			return NULL;
 		}
 
 		set_bit(bh->b_data,tmp);
 		bh->b_flag|=B_DIRTY;
-
 		brelse(bh);
+		fs_op=super->s_op;
 		put_super(super);
-		return res;
+
+		inode=iget(dev,res);
+		if(!inode){
+			minix1_free_inode(dev,res);
+			return NULL;
+		}
+
+		current=CURRENT_TASK();
+		inode->i_nlink=1;
+		inode->i_uid=current->uid;
+		inode->i_gid=current->gid;
+		inode->i_size=0;
+		inode->i_atime=inode->i_mtime=inode->i_ctime=current_time();
+		inode->i_op=fs_op;
+		memset(inode->i_zone,0,4*NR_ZONE);
+		inode->i_wait=NULL;
+		return inode;
 	}
 	put_super(super);
-	return -1;
+	return NULL;
 }

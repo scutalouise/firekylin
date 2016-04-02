@@ -9,10 +9,5 @@
 #include <sys/unistd.h>
 #include <sys/stat.h>
 
-static inline
-__syscall3(int, create, char *,filename, mode_t, mode, long, arg);
+__syscall2(int, mkdir, char *,filename, mode_t, mode);
 
-int mkdir(char *filename,mode_t mode)
-{
-	return create(filename,S_IFDIR|(mode &0777),0);
-}

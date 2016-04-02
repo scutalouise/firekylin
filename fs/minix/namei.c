@@ -5,9 +5,8 @@
  */
 
 #include "minix_fs.h"
-#include <errno.h>
 
-struct buffer * find_entry(struct inode *dir_inode, char *filename,
+static struct buffer * find_entry(struct inode *dir_inode, char *filename,
 		struct dir_entry **res_de)
 {
 	struct buffer *buf;
@@ -42,11 +41,11 @@ struct buffer * find_entry(struct inode *dir_inode, char *filename,
 	return NULL;
 }
 
-int add_entry(struct inode *inode, struct dir_entry *add_de)
+static int add_entry(struct inode *inode, char *name,ino_t ino)
 {
 	struct buffer *buf;
 	struct dir_entry *de;
-	int size;
+	int size=0;
 
 	if (!inode)
 		panic("find_entry:inode is NULL");
@@ -59,20 +58,21 @@ int add_entry(struct inode *inode, struct dir_entry *add_de)
 
 		de = (struct dir_entry *) buf->b_data;
 		for (int j = 0; j < 1024 / sizeof(struct dir_entry); j++) {
-			if (de->ino) {
+			if (size<inode->i_size && de->ino) {
+				size += sizeof(struct dir_entry);
 				de++;
 				continue;
 			}
 
-			memcpy(de, add_de, sizeof(struct dir_entry));
+			strncpy(de->name,name,NAME_LEN);
+			de->ino=ino;
 			buf->b_flag |= B_DIRTY;
 
-			size = i * 1024 + (j + 1) * sizeof(struct dir_entry);
+			size += sizeof(struct dir_entry);
 
 			if (size > inode->i_size) {
 				inode->i_size = size;
 				inode->i_flag |= I_DIRTY;
-				//minix1_write_inode(inode);
 			}
 
 			brelse(buf);
@@ -156,35 +156,140 @@ int minix1_look_up(struct inode *dir_inode, char *filename,
 	return 0;
 }
 
-int minix1_mknod(struct inode *inode, char *name, struct inode **res_inode)
+int minix1_mknod(struct inode *dir_inode, char *name, mode_t mode, dev_t dev )
 {
 	struct buffer *buf;
 	struct dir_entry *de;
-	struct dir_entry add_de;
 	struct inode *new_inode;
-	ino_t ino;
 
-	if ((buf = find_entry(inode, name, &de))) {
+	if ((buf = find_entry(dir_inode, name, &de))) {
 		brelse(buf);
-		*res_inode = NULL;
 		return -EEXIST;
 	}
-	ino = minix1_alloc_inode(inode->i_dev);
-	if (!ino)
-		return -ENOSPACE;
 
-	new_inode = iget(inode->i_dev, ino);
-	if (!new_inode)
+	if (!(new_inode=minix1_alloc_inode(dir_inode->i_dev))){
 		return -EAGAIN;
-	add_de.ino = ino;
-	strncpy(add_de.name, name, NAME_LEN);
-	if ((add_entry(inode, &add_de))) {
+	}
+	new_inode->i_mode=mode;
+	if(S_ISCHR(mode) || S_ISBLK(mode))
+		new_inode->i_rdev=dev;
+
+	if ((add_entry(dir_inode, name,new_inode->i_ino))) {
 		iput(new_inode);
-		minix1_free_inode(inode->i_dev, ino);
-		*res_inode = NULL;
+		minix1_free_inode(dir_inode->i_dev, new_inode->i_ino);
 		return -1;
 	}
-	*res_inode = new_inode;
+	new_inode->i_flag|=I_DIRTY;
+	iput(new_inode);
+	return 0;
+}
+
+int minix1_mkdir(struct inode *dir_inode,char *name,mode_t mode)
+{
+	struct buffer *buf;
+	struct dir_entry *de;
+	struct inode *inode;
+	int res;
+
+	if ((buf = find_entry(dir_inode, name, &de))) {
+		brelse(buf);
+		return -EEXIST;
+	}
+
+	if(!(inode=minix1_alloc_inode(dir_inode->i_dev)))
+		return -EAGAIN;
+	inode->i_mode=mode;
+	inode->i_flag|=I_DIRTY;
+	iput(inode);
+	add_entry(dir_inode,name,inode->i_ino);
+	minix1_link(inode,".",inode);
+	minix1_link(inode,"..",dir_inode);
+	return 0;
+}
+
+int minix1_link(struct inode *dir_inode,char *name, struct inode *inode)
+{
+	struct buffer *buf;
+	struct dir_entry *de;
+
+	if((buf=find_entry(dir_inode,name,&de))){
+		brelse(buf);
+		return -EEXIST;
+	}
+
+	inode->i_nlink++;
+	inode->i_flag|=I_DIRTY;
+	return add_entry(dir_inode,name,inode->i_ino);
+}
+
+int minix1_unlink(struct inode *dir_inode, char *name)
+{
+	struct dir_entry *de;
+	struct buffer *buf;
+	struct inode *del_inode;
+
+	buf = find_entry(dir_inode, name, &de);
+	if (!buf)
+		return -ENOENT;
+
+	del_inode = iget(dir_inode->i_dev, de->ino);
+
+	if (!del_inode) {
+		brelse(buf);
+		return -EAGAIN;
+	}
+	if (del_inode->i_count != 1) {
+		iput(del_inode);
+		brelse(buf);
+		return -EBUSY;
+	}
+	if (S_ISDIR(del_inode->i_mode)){
+		iput(del_inode);
+		brelse(buf);
+		return -EISDIR;
+	}
+
+	del_inode->i_nlink--;
+	del_inode->i_flag|=I_DIRTY;
+	iput(del_inode);
+	de->ino = 0;
+	buf->b_flag |= B_DIRTY;
+	brelse(buf);
+	return 0;
+}
+
+int minix1_rmdir(struct inode *dir_inode, char *name)
+{
+	struct dir_entry *de;
+	struct buffer *buf;
+	struct inode *del_inode;
+
+	buf = find_entry(dir_inode, name, &de);
+	if (!buf)
+		return -ENOENT;
+
+	del_inode = iget(dir_inode->i_dev, de->ino);
+
+	if (!del_inode) {
+		brelse(buf);
+		return -EAGAIN;
+	}
+	if (del_inode->i_count != 1) {
+		iput(del_inode);
+		brelse(buf);
+		return -EBUSY;
+	}
+	if (!S_ISDIR(del_inode->i_mode)){
+		iput(del_inode);
+		brelse(buf);
+		return -ENOTDIR;
+	}
+
+	minix1_unlink(del_inode,".");
+	minix1_unlink(del_inode,"..");
+	brelse(buf);
+	iput(del_inode);
+	minix1_unlink(dir_inode,name);
 	return 0;
 }
 
@@ -200,60 +305,4 @@ int minix1_rename(struct inode *inode, char *old, char *new)
 	buf->b_flag |= B_DIRTY;
 	brelse(buf);
 	return 0;
-}
-
-int minix1_remove(struct inode *inode, char *name)
-{
-	struct dir_entry *de;
-	struct buffer *buf;
-	struct inode *del_inode;
-
-	buf = find_entry(inode, name, &de);
-	if (!buf)
-		return -ENOENT;
-
-	del_inode = iget(inode->i_dev, de->ino);
-
-	if (!del_inode) {
-		brelse(buf);
-		return -EAGAIN;
-	}
-
-	if (del_inode->i_count != 1) {
-		iput(del_inode);
-		brelse(buf);
-		return -EBUSY;
-	}
-	if (S_ISDIR(del_inode->i_mode) && count_entry(del_inode) > 2) {
-		iput(del_inode);
-		brelse(buf);
-		return -ERROR;
-	}
-
-	del_inode->i_nlink--;
-	del_inode->i_flag|=I_DIRTY;
-	iput(del_inode);
-	de->ino = 0;
-	buf->b_flag |= B_DIRTY;
-	brelse(buf);
-	return 0;
-}
-
-int minix1_link(struct inode *dir_inode,char *name, struct inode *inode)
-{
-	struct buffer *buf;
-	struct dir_entry *de;
-	struct dir_entry new_de;
-
-	buf=find_entry(dir_inode,name,&de);
-	if(buf){
-		brelse(buf);
-		return -EEXIST;
-	}
-
-	inode->i_nlink++;
-	inode->i_flag|=I_DIRTY;
-	new_de.ino=inode->i_ino;
-	strncpy(new_de.name,name,NAME_LEN);
-	return add_entry(dir_inode,&new_de);
 }

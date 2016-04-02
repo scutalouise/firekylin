@@ -18,10 +18,10 @@ extern 	sys_ptrace, sys_times,   sys_getpid,  sys_setgrp,  sys_setsid
 extern  sys_getuid, sys_setuid,  sys_getgid,  sys_setgid,  sys_sigact
 extern  sys_sigmask,sys_sigsend, sys_sigwait, sys_alarm,   sys_access
 extern  sys_open,   sys_read,    sys_write,   sys_close,   sys_fcntl
-extern  sys_ioctl,  sys_chdir,   sys_pipe,    sys_create,  sys_link
-extern  sys_rename, sys_remove,  sys_mount,   sys_umount,  sys_stat
+extern  sys_ioctl,  sys_chdir,   sys_pipe,    sys_mknod,   sys_link
+extern  sys_rename, sys_unlink,  sys_mount,   sys_umount,  sys_stat
 extern  sys_fstat,  sys_chmod,   sys_chown,   sys_utime,   sys_getime
-extern  sys_setime, sys_sync
+extern  sys_setime, sys_sync,    sys_mkdir,   sys_rmdir
 
 syscall_table:
 	dd  sys_fork,   sys_exec,    sys_sbrk,    sys_pwait,   sys_exit
@@ -29,10 +29,10 @@ syscall_table:
 	dd  sys_getuid, sys_setuid,  sys_getgid,  sys_setgid,  sys_sigact
 	dd  sys_sigmask,sys_sigsend, sys_sigwait, sys_alarm,   sys_access
 	dd  sys_open,   sys_read,    sys_write,   sys_close,   sys_fcntl
-	dd  sys_ioctl,  sys_chdir,   sys_pipe,    sys_create,  sys_link
-	dd  sys_rename, sys_remove,  sys_mount,   sys_umount,  sys_stat
+	dd  sys_ioctl,  sys_chdir,   sys_pipe,    sys_mknod,   sys_link
+	dd  sys_rename, sys_unlink,  sys_mount,   sys_umount,  sys_stat
 	dd  sys_fstat,  sys_chmod,   sys_chown,   sys_utime,   sys_getime
-	dd  sys_setime, sys_sync
+	dd  sys_setime, sys_sync,    sys_mkdir,   sys_rmdir
 
 div_zero:
 	push 0

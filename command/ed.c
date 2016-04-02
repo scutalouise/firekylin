@@ -27,7 +27,7 @@ int main(int argc, char **argv)
 	if(argc<2){
 		printf("Usage:ed name ...");
 	}
-	if(create(argv[1],S_IFREG |0777,0)<0){
+	if(mknod(argv[1],S_IFREG |0777,0)<0){
 		printf("%s",strerror(errno));
 		_exit(0);
 	}
