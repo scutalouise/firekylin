@@ -41,6 +41,7 @@ int main(int argc, char **argv)
 				break;
 		}
 		printf("%d\t", statbuf.st_nlink);
+		printf("%x\t", statbuf.st_rdev);
 		printf("%d\n", statbuf.st_size);
 	}
 }

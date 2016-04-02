@@ -9,14 +9,10 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
-/*
- * create a file
- */
-
 int main(int argc, char **argv)
 {
 	if(argc<2){
-		printf("%s","touch filename");
+		printf("%s\n\r","touch filename");
 	}
 	mknod(argv[1],S_IFREG|0777,0);
 }

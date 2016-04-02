@@ -77,7 +77,7 @@ int printk(char* fmt, ...)
 
 	va_start(ap, fmt);
 	i = sformat(printk_buf, fmt, ap);
-	tty_write(0,printk_buf, 0,i);
+	tty_write(1,printk_buf, 0,i);
 	return i;
 }
 
@@ -89,7 +89,7 @@ void panic(char* fmt, ...)
 	printk("\n\nKernel Panic: ");
 	va_start(ap, fmt);
 	i = sformat(printk_buf, fmt, ap);
-	tty_write(0,printk_buf, 0,i);
+	tty_write(1,printk_buf, 0,i);
 	irq_disable();
 	asm("hlt");
 }

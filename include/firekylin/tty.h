@@ -37,4 +37,6 @@ struct tty_struct {
 #define GETCH(tty_buf,ch)	\
 	(ch=(tty_buf).buf[(tty_buf).tail],__INC((tty_buf).tail),(tty_buf).count--)
 
+extern struct tty_struct console;
+extern struct tty_struct com1;
 #endif

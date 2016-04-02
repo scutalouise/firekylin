@@ -21,7 +21,7 @@ void con_init()
 	cur = base + (a & 0xff) * 512 + inb(0x3d5) * 2;
 }
 
-int con_write2(struct tty_struct *tty)
+int con_write(struct tty_struct *tty)
 {
 	char ch;
 	char *tmp = (char*) cur;

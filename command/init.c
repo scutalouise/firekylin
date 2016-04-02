@@ -12,17 +12,19 @@
 
 int main(int argc, char **argv)
 {
-	int pid;
+	char buf[50];
+	int size;
 
-	open("/dev/tty1",O_READ|O_WRITE,0);
-	
-	while(1){
-		pid=fork();
-		if(pid){
-			waitpid(pid,NULL,0);
-		} else{
-			execve("/bin/sh",NULL,NULL);
-			_exit(0);
-		}
+	if (!fork()) {
+		open("/dev/tty1", O_RDWR, 0);
+		execve("/bin/sh", NULL, NULL);
+		_exit(0);
 	}
+	if (!fork()) {
+		open("/dev/com1", O_RDWR, 0);
+		execve("/bin/sh", NULL, NULL);
+		_exit(0);
+	}
+
+	waitpid(0,NULL,0);
 }

@@ -15,8 +15,6 @@ static int shiftl = 0;
 static int shiftr = 0;
 static int cap = 0;
 
-extern struct tty_struct console;
-
 void do_keyboard(struct trapframe *tf)
 {
 	unsigned char tmp, s;
@@ -41,11 +39,11 @@ void do_keyboard(struct trapframe *tf)
 				else if (s >= 'A' && s <= 'Z')
 					s = s + 32;
 			}
-			printk("%c", s);
 			if(!isfull(console.raw)){
 				PUTCH(console.raw,s);
 				wake_up(&(console.raw.wait));
 			}
+			printk("%c",s);
 			break;
 		}
 	} else {

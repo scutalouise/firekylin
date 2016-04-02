@@ -4,7 +4,6 @@
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
-#include <sys/syscall.h>
 #include <sys/unistd.h>
 #include <sys/fcntl.h>
 #include <sys/stat.h>

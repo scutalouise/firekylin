@@ -50,17 +50,17 @@ void do_rs(struct trapframe *tf)
 					outb(0x3f8,data);
 					break;
 				}
-				outb(inb(0x3f8+1),inb(0x3f8+1)& ~0x2);
+				outb(inb(0x3f8+1),0xd);
+				wake_up(&(com1.out.wait));
 				break;
 			case 4:
 				data=inb(0x3f8);
-				printk("%c",data);
 				if(!isfull(com1.raw)){
 					PUTCH(com1.raw,data);
 					wake_up(&(com1.raw.wait));
+					//PUTCH(com1.out,data);
+					//rs_write(&com1);
 				}
-				PUTCH(com1.out,data);
-				rs_write(&com1);
 				break;
 			case 6:
 				inb(0x3f8+5);

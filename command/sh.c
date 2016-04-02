@@ -69,8 +69,8 @@ int main(void)
 	char *argv[MAX_ARG];
 	char buf[100];
 
-	printf("\n\nWelcome To FireKylin 0.1 !\n\n");
-	printf("More info:http://firekylin.freekj.cn\n\n\n");
+	printf("\n\n\rWelcome To FireKylin 0.1 !\n\n\r");
+	printf("More info:http://firekylin.freekj.cn\n\n\r");
 
 	while (1) {
 		printf("%s", ps1);

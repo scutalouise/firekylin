@@ -59,6 +59,7 @@ install:
 	cp   rm tmpdir/bin/rm
 	cp   ed tmpdir/bin/ed
 	cp   link tmpdir/bin/link
+	-sudo mknod  tmpdir/dev/com1 c 4 2
 	sudo umount ../1.44.img
 	rmdir tmpdir
 
