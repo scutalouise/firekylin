@@ -43,7 +43,7 @@ struct flock {
 	pid_t l_pid; 		/* process id of the locks' owner 	*/
 };
 
-extern int open(const char *path, int flag, ...);
+extern int open(char *path, int flag, ...);
 extern int fcntl(int fd, int cmd, long arg);
 
 #endif

@@ -10,43 +10,44 @@
 #include <sys/types.h>
 
 #define irq_disable() 			\
-    asm("cli");
+    __asm__("cli");
 
 #define irq_enable() 			\
-    asm("sti");
+    __asm__("sti");
 
 /* Just should be used once in a function */
 #define irq_lock()			\
     unsigned long  __flag;		\
-    asm("pushf;popl %0;cli":"=m"(__flag))
+    __asm__("pushf;popl %0;cli":"=m"(__flag))
 
 /* Used must after irq_lock() */
 #define irq_unlock()			\
-    asm("pushl %0;popf"::"m"(__flag))
+    __asm__("pushl %0;popf"::"m"(__flag))
 
 #define inb(port) 			\
     ({					\
 	unsigned char __res;		\
-	asm volatile ("in %%dx,%%al"  	\
-		  : "=a"(__res) 	\
-		  :"d"(port));		\
+	__asm__ __volatile__ (		\
+            "in %%dx,%%al"  		\
+	    : "=a"(__res) 		\
+	    :"d"(port));		\
 	__res;				\
     })
 
 #define outb(port,value)   		\
-    asm("out %%al,%%dx" : :"a"(value),"d"(port))
+    __asm__("out %%al,%%dx" : :"a"(value),"d"(port))
 
 #define ins(port,buf,size)		\
-    asm("rep insw" :: "D"(buf),"d"(port),"c"(size>>1))
+    __asm__("rep insw" :: "D"(buf),"d"(port),"c"(size>>1))
 
 #define outs(port,buf,size)		\
-    asm("rep outsw" :: "S"(buf),"d"(port),"c"(size>>1))
+    __asm__("rep outsw" :: "S"(buf),"d"(port),"c"(size>>1))
 
 #define memcpy(dst,src,size)		\
-    asm("rep movsb":: "D"(dst),"S"(src),"c"(size)); 
+    __asm__("rep movsb":: "D"(dst),"S"(src),"c"(size));
     
 #define memset(s,c,size)		\
-    asm("rep stosb" ::"D"(s),"a"(c),"c"(size));   
+    __asm__("rep stosb" ::"D"(s),"a"(c),"c"(size));
 
 static inline int strncmp(char *s1, char *s2, int n)
 {

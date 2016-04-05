@@ -12,9 +12,6 @@
 
 int main(int argc, char **argv)
 {
-	char buf[50];
-	int size;
-
 	if (!fork()) {
 		open("/dev/tty1", O_RDWR, 0);
 		execve("/bin/sh", NULL, NULL);

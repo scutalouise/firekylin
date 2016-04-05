@@ -9,8 +9,6 @@
 #include <sys/unistd.h>
 #include <sys/fcntl.h>
 
-static inline __syscall3(int, fcntl, int, fd, int ,cmd, long ,arg);
-
 int dup(int fd)
 {
 	return fcntl(fd,F_DUPFD,0);

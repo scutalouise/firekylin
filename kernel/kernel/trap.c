@@ -46,11 +46,11 @@ extern void hwintE(void);
 extern void hwintF(void);
 extern void syscall(void);
 
-#define set_gate(fun,index,dpl) 			\
-	asm("movl %%eax, (%%edx);"  			\
-	    "movl %%ebx, 4(%%edx);"			\
-	    ::"a"((fun&0xffff)|0x00080000), 		\
-	      "b"(fun&0xffff0000|0x8e00|(dpl<<13)), 	\
+#define set_gate(fun,index,dpl) 				\
+    __asm__("movl %%eax, (%%edx);"  				\
+	    "movl %%ebx, 4(%%edx);"				\
+	    ::"a"(((long)fun&0xffff)|0x00080000), 		\
+	      "b"(((long)fun&0xffff0000)|0x8e00|(dpl<<13)), 	\
 	      "d"(&(idt_table[index])))
 
 static void (*trap_handle[0x30])(struct trapframe *tf);
@@ -77,7 +77,7 @@ static void gdt_init(void)
 	short tmp[3] = { sizeof(gdt_table) - 1, 0, 0 };
 	tmp[1] = ((long) &gdt_table) & 0xffff;
 	tmp[2] = (((long) &gdt_table) >> 16) & 0xffff;
-	asm("lgdt %0"::"m"(tmp));
+	__asm__("lgdt %0"::"m"(tmp));
 }
 
 static void idt_init(void)
@@ -125,7 +125,7 @@ static void idt_init(void)
 	set_gate(syscall, 0x30, 3);
 	idt[1] = ((long) &idt_table) & 0xffff;
 	idt[2] = (((long) &idt_table) >> 16) & 0xffff;
-	asm("lidt %0 "::"m"(idt));
+	__asm__("lidt %0 "::"m"(idt));
 }
 
 static void i8259_init(void)
@@ -161,14 +161,14 @@ void set_trap_handle(int index, void (*fn)(struct trapframe *tf))
 
 void execption(unsigned long unuesd)
 {
-	static char *msg[] = { "divide zero", "debug", "nmi", "breakpoint",
-			"overflow", "bound", "invalid opcade",
-			"device not invalid", "double fault",
-			"coprocessor overrun", "invalid TSS",
-			"segment not exsit", "stack error",
-			"general protection", "page fault", "reserved error",
-			"coprocessor error", "align check", "machine check",
-			"simd float error" };
+//	static char *msg[] = { "divide zero", "debug", "nmi", "breakpoint",
+//			"overflow", "bound", "invalid opcade",
+//			"device not invalid", "double fault",
+//			"coprocessor overrun", "invalid TSS",
+//			"segment not exsit", "stack error",
+//			"general protection", "page fault", "reserved error",
+//			"coprocessor error", "align check", "machine check",
+//			"simd float error" };
 
 	struct trapframe *tf = (struct trapframe*) &unuesd;
 

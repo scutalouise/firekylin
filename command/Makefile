@@ -1,68 +1,64 @@
 #
-#    firekylin/Makefile
+#    command/Makefile
 #
 #    Copyright (C) 2016 ximo<ximoos@foxmail.com>
 #
 
 AS=nasm
-CC=tcc
+CC=gcc
 LD=ld -m elf_i386 -T ldscript
 
-SFLAGS=-f elf
-CFLAGS=-c -Wall -nostdinc -nostdlib -I ../include
+SFLAGS=-f elf32
+CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
+       -fno-stack-protector -I ../include
 LIB=../libc/libc.a
 
-commands:
-	$(CC) $(CFLAGS) -o init.o init.c
-	$(CC) $(CFLAGS) -o sh.o sh.c
-	$(CC) $(CFLAGS) -o ls.o ls.c
-	$(CC) $(CFLAGS) -o echo.o echo.c
-	$(CC) $(CFLAGS) -o cat.o cat.c
-	$(CC) $(CFLAGS) -o sync.o sync.c
-	$(CC) $(CFLAGS) -o mkdir.o mkdir.c
-	$(CC) $(CFLAGS) -o touch.o touch.c
-	$(CC) $(CFLAGS) -o cp.o cp.c
-	$(CC) $(CFLAGS) -o ll.o ll.c
-	$(CC) $(CFLAGS) -o rename.o rename.c
-	$(CC) $(CFLAGS) -o rm.o rm.c
-	$(CC) $(CFLAGS) -o ed.o ed.c
-	$(CC) $(CFLAGS) -o link.o link.c
+OBJS=init sh ls echo cat sync mkdir touch cp ll rename rm ed link
 
-install:
+command: $(OBJS)
+
+init: init.c
+	$(CC) $(CFLAGS) -o init.o init.c
 	$(LD) -o init init.o  $(LIB)
+sh: sh.c
+	$(CC) $(CFLAGS) -o sh.o sh.c
 	$(LD) -o sh sh.o  $(LIB)
-	$(LD) -o ls ls.o  $(LIB)
+echo: echo.c
+	$(CC) $(CFLAGS) -o echo.o echo.c
 	$(LD) -o echo echo.o  $(LIB)
+cat: cat.c
+	$(CC) $(CFLAGS) -o cat.o cat.c
 	$(LD) -o cat cat.o  $(LIB)
+sync: sync.c
+	$(CC) $(CFLAGS) -o sync.o sync.c
 	$(LD) -o sync sync.o  $(LIB)
+mkdir:mkdir.c
+	$(CC) $(CFLAGS) -o mkdir.o mkdir.c
 	$(LD) -o mkdir mkdir.o  $(LIB)
+touch:touch.o
+	$(CC) $(CFLAGS) -o touch.o touch.c
 	$(LD) -o touch touch.o  $(LIB)
+cp:cp.c
+	$(CC) $(CFLAGS) -o cp.o cp.c
 	$(LD) -o cp cp.o  $(LIB)
+ls:ls.c
+	$(CC) $(CFLAGS) -o ls.o ls.c
+	$(LD) -o ls ls.o  $(LIB)
+ll:ll.c
+	$(CC) $(CFLAGS) -o ll.o ll.c
 	$(LD) -o ll ll.o  $(LIB)
+rename:rename.c
+	$(CC) $(CFLAGS) -o rename.o rename.c
 	$(LD) -o rename rename.o  $(LIB)
+rm:rm.o
+	$(CC) $(CFLAGS) -o rm.o rm.c
 	$(LD) -o rm rm.o  $(LIB)
+ed:ed.o
+	$(CC) $(CFLAGS) -o ed.o ed.c
 	$(LD) -o ed ed.o  $(LIB)
+link:link.c
+	$(CC) $(CFLAGS) -o link.o link.c
 	$(LD) -o link link.o  $(LIB)
-	mkdir tmpdir
-	sudo mount -t minix ../1.44.img -o loop tmpdir
-	cp   init tmpdir/bin/init
-	cp   sh tmpdir/bin/sh
-	cp   ls tmpdir/bin/ls
-	cp   echo tmpdir/bin/echo
-	cp   cat tmpdir/bin/cat
-	cp   sync tmpdir/bin/sync
-	cp   mkdir tmpdir/bin/mkdir
-	cp   touch tmpdir/bin/touch
-	cp   cp tmpdir/bin/cp
-	cp   ll tmpdir/bin/ll
-	cp   rename tmpdir/bin/rename
-	cp   rm tmpdir/bin/rm
-	cp   ed tmpdir/bin/ed
-	cp   link tmpdir/bin/link
-	-sudo mknod  tmpdir/dev/com1 c 4 2
-	sudo umount ../1.44.img
-	rmdir tmpdir
 
 clean:
-	-del init sh ls echo cat mkdir cp sync touch ll rename rm ed link
-	-del *.o
+	-rm *.o $(OBJS)

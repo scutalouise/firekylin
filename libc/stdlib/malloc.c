@@ -18,7 +18,7 @@ struct block_list {
 	char padding[8];
 };
 
-static struct block_list base = { NULL, 1, 0 };
+static struct block_list base = { NULL, 1, { 0 } };
 
 void free(void *p)
 {
@@ -57,8 +57,7 @@ void * malloc(long nbytes)
 
 	nunits = (nbytes + sizeof(struct block_list) - 1)
 			/ sizeof(struct block_list) + 1;
-repeat:
-	for (prev = &base, p = prev->next; p; prev = p, p = p->next) {
+	repeat: for (prev = &base, p = prev->next; p; prev = p, p = p->next) {
 		if (p->size < nunits)
 			continue;
 
@@ -80,7 +79,7 @@ repeat:
 	up->size = nu;
 	up->next = NULL;
 
-	free(up+1);
+	free(up + 1);
 	goto repeat;
 
 	return NULL;

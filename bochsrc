@@ -11,8 +11,8 @@ vgaromimage: file="D:/Program Files/bochs/VGABIOS-lgpl-latest"
 
 floppya: type=1_44, 1_44="System.img", status=inserted
 
-ata0-master: type=disk, path="1.44.img", mode=flat, cylinders=80, heads=2, spt=18
+ata0-master: type=disk, path="hd.img", mode=flat, cylinders=20, heads=16, spt=18
 
-com1: enabled=1, mode=socket-server, dev=localhost:8888
+#com1: enabled=1, mode=socket-server, dev=localhost:8888
 
 boot: a

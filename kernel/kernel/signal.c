@@ -6,6 +6,7 @@
 
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
+#include <firekylin/trap.h>
 #include <signal.h>
 #include <errno.h>
 
@@ -59,8 +60,6 @@ int sys_sigact(unsigned int signr, struct sigaction *newact,
 
 int sys_sigsend(pid_t pid, int signr)
 {
-	int res;
-
 	struct task **p;
 
 	for (p = task_table; p < task_table + NR_TASK; p++) {

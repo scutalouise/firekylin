@@ -9,7 +9,7 @@
 
 #include <sys/types.h>
 
-#define NAME_LEN	14
+#define NAME_LEN	30
 struct dirent {
 	unsigned short d_ino;
 	char           d_name[NAME_LEN];

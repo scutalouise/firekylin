@@ -16,7 +16,7 @@ struct buffer {
 	unsigned int    b_block;
 	unsigned short  b_flag;
 	unsigned short  b_count;
-	unsigned char   b_data[BUF_SIZE];
+	char            b_data[BUF_SIZE];
 	struct buffer * b_hash_prev;
 	struct buffer * b_hash_next;
 	struct buffer * b_free_prev;
@@ -102,7 +102,7 @@ struct file {
 	struct inode * f_inode;
 };
 
-#define NAME_LEN	14
+#define NAME_LEN	30
 struct dir_entry {
 	unsigned short ino;
 	char name[NAME_LEN];

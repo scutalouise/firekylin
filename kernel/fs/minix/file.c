@@ -10,7 +10,7 @@ int minix1_file_read(struct inode *inode, char * buf, size_t size, off_t off,
 		int rw_flag)
 {
 	struct buffer *bh;
-	int block, chars, left;
+	int chars, left;
 
 	if (off >= inode->i_size)
 		return 0;

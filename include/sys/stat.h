@@ -68,10 +68,10 @@ struct utimebuf {
 };
 
 extern int create(char *filename, mode_t mode, long arg);
-extern int stat(const char *filename, struct stat *statbuf);
+extern int stat(char *filename, struct stat *statbuf);
 extern int fstat(int fd, struct stat *statbuf);
-extern int chown(const char *filename, uid_t uid, gid_t gid);
-extern int chmod(const char *filename, mode_t mode);
-extern int utime(const char *filename, struct utimebuf *utbuf);
+extern int chown(char *filename, uid_t uid, gid_t gid);
+extern int chmod(char *filename, mode_t mode);
+extern int utime(char *filename, struct utimebuf *utbuf);
 
 #endif

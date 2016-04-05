@@ -7,5 +7,6 @@
 #include <sys/types.h>
 #include <sys/syscall.h>
 #include <sys/unistd.h>
+#include <sys/stat.h>
 
 __syscall2(int, fstat, int, fd, struct stat*, statbuf);

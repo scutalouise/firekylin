@@ -61,4 +61,5 @@ int sys_fork(long unuesd)
 		task_table[i] = task;
 		return task->pid;
 	}
+	return -1;
 }

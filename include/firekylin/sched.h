@@ -91,39 +91,39 @@ struct task {
 #define CURRENT_TASK() 			\
     (struct task*)({ 			\
 	unsigned long __res; 		\
-	asm volatile(			\
+	__asm__ __volatile__(		\
             "movl %%esp,%%eax;"		\
             "andl $0xfffff000,%%eax"	\
             :"=a"(__res)); 		\
 	__res; 				\
     })
 
-#define __switch_to(n)				\
-    ({	asm volatile (				\
-		"pushl $__ret_switch;"		\
-		"pushf;"			\
-		"pushl %%eax;"			\
-		"pushl %%ebx;"			\
-		"pushl %%ecx;"			\
-		"pushl %%edx;"			\
-		"pushl %%edi;"			\
-		"pushl %%esi;"			\
-		"pushl %%ebp;"			\
-		"movl  %%esp,%%eax;"		\
-		"andl  $0xfffff000,%%eax;"	\
-		"movl  %%esp,(%%eax);"		\
-		"movl  %%ecx,%%esp;"		\
-		"popl  %%ebp;"			\
-		"popl  %%esi;"			\
-		"popl  %%edi;"			\
-		"popl  %%edx;"			\
-		"popl  %%ecx;"			\
-		"popl  %%ebx;"			\
-		"popl  %%eax;"			\
-		"popf;"				\
-		"ret;"				\
-		"__ret_switch:  ;"		\
-		::"c"(task_table[n]->kesp));	\
+#define __switch_to(n)			\
+    ({	__asm__ __volatile__ (		\
+	"pushl $__ret_switch;"		\
+	"pushf;"			\
+	"pushl %%eax;"			\
+	"pushl %%ebx;"			\
+	"pushl %%ecx;"			\
+	"pushl %%edx;"			\
+	"pushl %%edi;"			\
+	"pushl %%esi;"			\
+	"pushl %%ebp;"			\
+	"movl  %%esp,%%eax;"		\
+	"andl  $0xfffff000,%%eax;"	\
+	"movl  %%esp,(%%eax);"		\
+	"movl  %%ecx,%%esp;"		\
+	"popl  %%ebp;"			\
+	"popl  %%esi;"			\
+	"popl  %%edi;"			\
+	"popl  %%edx;"			\
+	"popl  %%ecx;"			\
+	"popl  %%ebx;"			\
+	"popl  %%eax;"			\
+	"popf;"				\
+	"ret;"				\
+	"__ret_switch:  ;"		\
+	::"c"(task_table[n]->kesp));	\
     })
 
 #define current_time()	start_time + clock / CLOCKS_PER_SEC;

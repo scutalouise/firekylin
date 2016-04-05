@@ -29,7 +29,7 @@ static void init_tss(void)
 	gdt_table[5].low=((addr<<16)&0xffff0000) |104;
 	gdt_table[5].high=(addr&0xff000000) | 0xe900 | ((addr>>16)&0xff);
 
-	asm("ltr %%ax"::"a"(0x28));
+	__asm__("ltr %%ax"::"a"(0x28));
 }
 
 void sched_init(void)
@@ -57,7 +57,7 @@ void sched(void)
 		if (c) {
 			if ((CURRENT_TASK() ) != task_table[n]) {
 				tss.esp0=(long)task_table[n]+4096;
-				asm("movl %%eax,%%cr3"
+				__asm__("movl %%eax,%%cr3"
 						::"a"(task_table[n]->pdtr));
 				__switch_to(n);
 			}
@@ -159,7 +159,7 @@ int sys_sbrk(unsigned int inc)
 	inc=(inc+0xf)&0xfffffff0;
 	current->sbrk += inc;
 	
-	addr=(addr+0xfff)&0xfffff000;
+	addr=(res+0xfff)&0xfffff000;
 	for(;addr<=current->sbrk; addr+=4096){
 		map_page(addr,get_page(),current->pdtr);
 	}

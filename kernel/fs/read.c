@@ -24,7 +24,7 @@ static int read_char(dev_t dev, char *buf, off_t off, size_t size)
 static int read_blk(dev_t dev, char *buf, off_t off, size_t size)
 {
 	struct buffer *bh;
-	int block, chars, left;
+	int chars, left;
 
 	left = size;
 	while (left) {
@@ -109,6 +109,8 @@ long exec_load_file(struct inode *inode, struct buffer*bh)
 	for (int i = 0; i < ehdr->e_phnum; i++) {
 		phdr = (Elf32_Phdr *) (buf_page + ehdr->e_phoff
 				+ i * ehdr->e_phentsize);
+		if(!phdr->p_vaddr)
+			continue;
 		alloc_mm(current->pdtr, phdr->p_vaddr, phdr->p_memsz);
 		read_file(inode, (char*)phdr->p_vaddr, phdr->p_offset,
 				phdr->p_filesz);

@@ -102,16 +102,15 @@ void do_page_fault(struct trapframe *tf)
 {
 	unsigned long cr2;
 	struct task *current;
-//	static int count;
-//	count++;
-//	if (count == 2) {
-//		printk("Too Much Page Fault");
-//		irq_enable();
-//		while(1){
-//		}
-//	}
+	static int count=0;
+	__asm__("movl %%cr2,%%eax":"=a"(cr2));
 
-	asm("movl %%cr2,%%eax":"=a"(cr2));
+//	printk("CS:EIP=%x:%x\t EFLAGS=%x\t SS:ESP=%x:%x\t", tf->cs, tf->eip,
+//		tf->eflags, tf->ss, tf->esp);
+//	printk("cr2=%x\n",cr2);
+//	count++;
+	if(count>7)
+		while(1){}
 	current = CURRENT_TASK();
 	map_page(cr2 & 0xfffff000, get_page(), current->pdtr);
 	current->stack = cr2 & 0xfffff000;
@@ -138,7 +137,7 @@ long copy_mm(void)
 void alloc_mm(long pdtr, long addr, long size)
 {
 	long start = addr & 0xfffff000;
-	long end = addr + (size + 0xfff) & 0xfffff000;
+	long end = addr + ((size + 0xfff) & 0xfffff000);
 	for (int i = start; i < end; i += 4096) {
 		map_page(i, get_page(), pdtr);
 	}

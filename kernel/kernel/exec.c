@@ -114,19 +114,17 @@ int sys_exec(char *filename, char **argv, char **envp)
 	entry=exec_load_file(inode,buf);
 
 	map_page(0x40100000 - 4096, arg_page, current->pdtr);
-
 	iput(inode);
 
 	current->stack = 0x40FF0000;
-
-	asm("movl %%eax,%%cr3"::"a"(current->pdtr));
-	asm( " pushl $0x23;"
-	     " pushl $0x400FF000;"
-	     " pushl $0x13200;"
-	     " pushl $0x1b;"
-	     " pushl %%eax;"
-	     " iret"
-	     ::"a"(entry));
+	__asm__("movl %%eax,%%cr3"::"a"(current->pdtr));
+	__asm__( " pushl $0x23;"
+	         " pushl $0x400FF000;"
+	         " pushl $0x13200;"
+	         " pushl $0x1b;"
+	         " pushl %%eax;"
+	         " iret"
+	         ::"a"(entry));
 
 	return 0;
 }

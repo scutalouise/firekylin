@@ -133,7 +133,6 @@ struct inode *namei(char *filepath, char **basename)
 {
 	struct inode *inode;
 	char name[NAME_LEN + 1];
-	char *n;
 
 	if (*filepath == '/') {
 		filepath++;

@@ -10,7 +10,6 @@ static struct buffer * find_entry(struct inode *dir_inode, char *filename,
 		struct dir_entry **res_de)
 {
 	struct buffer *buf;
-	struct inode *inode = NULL;
 	struct dir_entry *de;
 
 	for (int i = 0; i < 7 + 512; i++) {
@@ -20,7 +19,6 @@ static struct buffer * find_entry(struct inode *dir_inode, char *filename,
 
 		de = (struct dir_entry *) buf->b_data;
 		for (int j = 0; j < 1024 / sizeof(struct dir_entry); j++) {
-
 			if (i * 1024 + j * sizeof(struct dir_entry)
 					> dir_inode->i_size) {
 
@@ -81,6 +79,7 @@ static int add_entry(struct inode *inode, char *name,ino_t ino)
 		brelse(buf);
 		return 1;
 	}
+	return 1;
 }
 
 int count_entry(struct inode *inode)
@@ -122,7 +121,6 @@ int minix1_look_up(struct inode *dir_inode, char *filename,
 	struct buffer *buf;
 	struct inode *inode;
 	struct dir_entry *de;
-	int ino;
 
 	if (filename[0] == '.' && filename[1] == 0) {
 		*res_inode = dir_inode;
@@ -189,7 +187,6 @@ int minix1_mkdir(struct inode *dir_inode,char *name,mode_t mode)
 	struct buffer *buf;
 	struct dir_entry *de;
 	struct inode *inode;
-	int res;
 
 	if ((buf = find_entry(dir_inode, name, &de))) {
 		brelse(buf);

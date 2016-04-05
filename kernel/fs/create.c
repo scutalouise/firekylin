@@ -33,7 +33,7 @@ int sys_mknod(char *filename, mode_t mode,dev_t dev)
 
 int sys_mkdir(char *pathname, mode_t mode)
 {
-	struct inode *dir_inode, *inode;
+	struct inode *dir_inode;
 	char *basename;
 	int res;
 
@@ -64,27 +64,20 @@ int sys_link(char *name, char *newname)
 		return -EPERM;
 	}
 
-	//iunlock(inode);
 	if (!(new_dir_inode = namei(newname, &basename))) {
-		//iput(ilock(inode));
 		iput(inode);
 		return -EACCESS;
 	}
 	if (!*basename) {
-		//iput(ilock(inode));
 		iput(inode);
 		iput(new_dir_inode);
 		return -EACCESS;
 	}
 	if (inode->i_dev != new_dir_inode->i_dev) {
-		//iput(ilock(inode));
 		iput(inode);
 		iput(new_dir_inode);
 		return -EACCESS;
 	}
-
-	//ilock(inode);
-
 	res=new_dir_inode->i_op->link(new_dir_inode, basename, inode);
 	iput(inode);
 	iput(new_dir_inode);

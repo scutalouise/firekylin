@@ -23,7 +23,7 @@ static int write_char(dev_t dev, char *buf, off_t off, size_t size)
 static int write_blk(dev_t dev, char *buf, off_t off, size_t size)
 {
 	struct buffer *bh;
-	int block, chars, left;
+	int chars, left;
 
 	left = size;
 	while (left) {

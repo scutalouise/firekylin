@@ -65,7 +65,6 @@ void execcmd(char **argv)
 
 int main(void)
 {
-	int pid;
 	char *argv[MAX_ARG];
 	char buf[100];
 

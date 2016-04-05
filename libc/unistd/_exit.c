@@ -10,5 +10,5 @@
 
 void _exit(int status)
 {
-	asm("int $0x30" : :"a"(__NR_exit),"b"(status));
+	__asm__("int $0x30" : :"a"(__NR_exit),"b"(status));
 }

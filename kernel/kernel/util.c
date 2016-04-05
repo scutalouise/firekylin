@@ -91,5 +91,5 @@ void panic(char* fmt, ...)
 	i = sformat(printk_buf, fmt, ap);
 	tty_write(1,printk_buf, 0,i);
 	irq_disable();
-	asm("hlt");
+	__asm__("hlt");
 }

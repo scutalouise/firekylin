@@ -5,10 +5,11 @@
 #
 
 AS=nasm
-CC=tcc
+CC=gcc
 
-SFLAGS=-f elf
-CFLAGS=-c -Wall -nostdinc -nostdlib -I ../include
+SFLAGS=-f elf32
+CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
+       -fno-stack-protector -I ../include
 
 OBJS= crt/crt.o  \
       stdlib/abs.o stdlib/labs.o stdlib/malloc.o stdlib/getenv.o \
@@ -29,19 +30,16 @@ OBJS= crt/crt.o  \
       signal/sigprocmask.o  \
       dirent/opendir.o dirent/readdir.o dirent/rewinddir.o dirent/closedir.o
       
-
 .s.o:
 	@echo         AS	$<
-	@$(AS) $(SFLAGS) -o $@ $<
+	@$(AS) $(SFLAGS) -o $@  $<
 .c.o:
 	@echo         CC	$<
-	@$(CC) $(CFLAGS) -o $@ $<
+	@$(CC) $(CFLAGS) -o $@  $<
 
 libc.a: $(OBJS)
 	@echo         AR       OBJS
-	@ar rcs   libc.a $(OBJS) 
+	@ar rcs   libc.a     $(OBJS) 
 
 clean: 
-	-del libc.a
-	-del stdlib\*.o string\*.o unistd\*.o stdio\*.o ctype\*.o 
-	-del crt\*.o stdio\*.o
+	-rm libc.a $(OBJS)

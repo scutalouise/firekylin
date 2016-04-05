@@ -56,10 +56,10 @@
 type name(void)					\
 {						\
 	long res;				\
-	asm("int $0x30"				\
-	   :"=a"(res)				\
-	   :"a"(__NR_##name));			\
-	   if(res<0){				\
+	__asm__("int $0x30"			\
+	    :"=a"(res)				\
+	    :"a"(__NR_##name));			\
+	if(res<0){				\
 		errno=-res;			\
 		return -1;			\
 	}					\
@@ -70,10 +70,10 @@ type name(void)					\
 type name(typeb argb)				\
 {						\
 	long res;				\
-	asm("int $0x30"				\
-	   :"=a"(res)				\
-	   :"a"(__NR_##name),"b"(argb));	\
-	   if(res<0){				\
+	__asm__("int $0x30"			\
+	    :"=a"(res)				\
+	    :"a"(__NR_##name),"b"(argb));	\
+	if(res<0){				\
 		errno=-res;			\
 		return -1;			\
 	}					\
@@ -84,10 +84,10 @@ type name(typeb argb)				\
 type name(typeb argb,typec argc)			\
 {							\
 	long res;					\
-	asm("int $0x30"					\
-	   :"=a"(res)					\
-	   :"a"(__NR_##name),"b"(argb),"c"(argc));	\
-	   if(res<0){					\
+	__asm__("int $0x30"				\
+	    :"=a"(res)					\
+	    :"a"(__NR_##name),"b"(argb),"c"(argc));	\
+	if(res<0){					\
 		errno=-res;				\
 		return -1;				\
 	}						\
@@ -98,10 +98,10 @@ type name(typeb argb,typec argc)			\
 type name(typeb argb,typec argc,typed argd)			\
 {								\
 	long res;						\
-	asm("int $0x30"						\
-	   :"=a"(res)						\
-	   :"a"(__NR_##name),"b"(argb),"c"(argc),"d"(argd));	\
-	   if(res<0){						\
+	__asm__("int $0x30"					\
+	    :"=a"(res)						\
+	    :"a"(__NR_##name),"b"(argb),"c"(argc),"d"(argd));	\
+	if(res<0){						\
 		errno=-res;					\
 		return -1;					\
 	}							\

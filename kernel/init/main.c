@@ -11,7 +11,7 @@
 #include <time.h>
 
 #define CMOSREAD(value,index)			\
-    asm("mov $0x70,%%dx\t\n"  			\
+__asm__("mov $0x70,%%dx\t\n"  			\
         "out %%al,%%dx\t\n"			\
         "inc %%dx\t\n"				\
         "in  %%dx,%%al\t\n"			\
@@ -21,8 +21,8 @@
 
 #define BCD_BIN(c)	(c=c/16*10+c%16)
 
-extern char __bss_start__[];
-extern char __bss_end__[];
+extern char _edata[];
+extern char _end[];
 
 extern void arch_init();
 extern void tty_init();
@@ -90,7 +90,7 @@ static void time_init()
 
 void start(void)
 {
-	memset(__bss_start__, 0, (__bss_end__-__bss_start__));
+	memset(_edata, 0, (_end-_edata));
 
 	arch_init();
 	tty_init();
@@ -102,7 +102,7 @@ void start(void)
 	clock_init();
 
 	if (sys_fork()) {
-		asm("__hlt:hlt ; jmp __hlt");
+		__asm__("__hlt:hlt ; jmp __hlt");
 	}
 
 	mount_root();
