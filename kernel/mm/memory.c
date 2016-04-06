@@ -159,7 +159,12 @@ void mm_init(void)
 {
 	unsigned long i, *p;
 
-	memsize = ((*(int*) 0xc0002000) & 0xffff) * 1024 + 0x100000;
+	/*
+	 * Note:
+	 *  if use boot/boot.s to load kernel the addr shold be 0xc0002000
+	 *  else use boot/bootsect.s it should be 0xc0008000
+	 */
+	memsize = ((*(int*) 0xc0008000) & 0xffff) * 1024 + 0x100000;
 	NR_PAGE = min((memsize >> 12), MAX_NR_PAGES);
 
 	p = (unsigned long*) 0xC0000000;

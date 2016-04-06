@@ -5,17 +5,15 @@
 #
 
 AS=nasm
-CC=gcc
+CC=gcc -fno-builtin -std=c99
 
-all:System.img libc/libc.a commands
-
-System.img:boot/boot.bin kernel/kernel.bin tools/build
-	./tools/build boot/boot.bin kernel/kernel.bin System.img
+default:
+	@echo default todo nothing
 	
-tools/build:tools/build.c
-	$(CC) -o $@  $<
-
 boot/boot.bin:boot/boot.s
+	$(AS) -o $@  $<
+
+boot/bootsect.bin:boot/bootsect.s
 	$(AS) -o $@  $<
 
 kernel/kernel.bin:
@@ -27,16 +25,32 @@ libc/libc.a:
 commands:
 	make -C command
 
-install:commands
-	-rm hd.img
+tools/build:tools/build.c
+	$(CC) -o $@  $<
+
+tools/install-boot:tools/install-boot.c
+	$(CC) -o $@  $<
+
+floppy.img:boot/boot.bin kernel/kernel.bin tools/build
+	./tools/build boot/boot.bin kernel/kernel.bin floppy.img
+
+hd.img:
 	dd if=/dev/zero of=hd.img bs=512 count=20480
+	
+install:boot/bootsect.bin kernel/kernel.bin libc/libc.a commands \
+        tools/install-boot hd.img
 	mkfs.minix -1 hd.img
 	mount -t minix hd.img -o loop /mnt
-	mkdir /mnt/bin
-	mkdir /mnt/dev
-	mkdir /mnt/etc
-	mknod /mnt/dev/tty1 c 4 1
-	mknod /mnt/dev/com1 c 4 2
+	-mkdir /mnt/boot
+	-mkdir /mnt/bin
+	-mkdir /mnt/dev
+	-mkdir /mnt/etc
+	-mkdir /mnt/home
+	-mkdir /mnt/lib
+	-mknod /mnt/dev/tty1 c 4 1
+	-mknod /mnt/dev/com1 c 4 2
+	cp   kernel/kernel.bin /mnt/boot/kernel
+	cp   kernel/kernel.map /mnt/boot/kernel.map
 	cp   command/init /mnt/bin/init
 	cp   command/sh /mnt/bin/sh
 	cp   command/ls /mnt/bin/ls
@@ -51,18 +65,23 @@ install:commands
 	cp   command/rm /mnt/bin/rm
 	cp   command/ed /mnt/bin/ed
 	cp   command/link /mnt/bin/link
-	tree /mnt
 	umount hd.img
+	./tools/install-boot boot/bootsect.bin hd.img
+	
 clean:
-	-rm boot/boot.bin tools/build system.img hd.img
+	-rm boot/boot.bin boot/bootsect.bin
 	make clean -C kernel
 	make clean -C libc
 	make clean -C command
-	
-run: system.img
+	-rm tools/build tools/install-boot
+	-rm floppy.img hd.img
+
+build:clean install
+
+run: 
 	bochs -q -f bochsrc
 
-dbg: system.img
+dbg: 
 	bochsdbg -q -f bochsrc
 
 count:
