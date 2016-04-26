@@ -14,11 +14,11 @@ static char color = 15;
 
 void con_init()
 {
-	int a;
+	char a;
 	outb(0x3d4, 14);
 	a = inb(0x3d5);
 	outb(0x3d4, 15);
-	cur = base + (a & 0xff) * 512 + inb(0x3d5) * 2;
+	cur = base + a * 512 + inb(0x3d5) * 2;
 }
 
 int con_write(struct tty_struct *tty)

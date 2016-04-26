@@ -7,7 +7,7 @@
 #ifndef _TTY_H
 #define _TTY_H
 
-#include <termios.h>
+#include <sys/termios.h>
 #include <firekylin/sched.h>
 
 #define TTY_BUF_SIZE 1024
@@ -39,4 +39,5 @@ struct tty_struct {
 
 extern struct tty_struct console;
 extern struct tty_struct com1;
+
 #endif
