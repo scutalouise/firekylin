@@ -8,29 +8,14 @@
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
 
-static unsigned long inode_busy = 0;
-static struct task * inode_wait = NULL;
-
 #define NR_INODE	32
 struct inode inode_table[NR_INODE];
 struct inode *root_inode;
+sleeplock_t inode_lock;
 
-static inline void lock_inode_table(void)
-{
-	irq_lock();
-	while (inode_busy)
-		sleep_on(&inode_wait);
-	inode_busy = 1;
-	irq_unlock();
-}
+#define lock_inode_table()	require_lock(&inode_lock);
+#define unlock_inode_table()	release_lock(&inode_lock);
 
-static inline void unlock_inode_table(void)
-{
-	irq_lock();
-	inode_busy = 0;
-	wake_up(&inode_wait);
-	irq_unlock();
-}
 
 struct inode * ilock(struct inode * inode)
 {

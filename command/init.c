@@ -12,16 +12,12 @@
 
 int main(int argc, char **argv)
 {
-	if (!fork()) {
-		open("/dev/tty1", O_RDWR, 0);
-		execve("/bin/sh", NULL, NULL);
-		_exit(0);
+	while (1) {
+		if (!fork()) {
+			open("/dev/tty1", O_RDWR, 0);
+			execve("/bin/sh", NULL, NULL);
+			_exit(0);
+		}
+		waitpid(0, NULL, 0);
 	}
-	if (!fork()) {
-		open("/dev/com1", O_RDWR, 0);
-		execve("/bin/sh", NULL, NULL);
-		_exit(0);
-	}
-
-	waitpid(0,NULL,0);
 }

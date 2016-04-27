@@ -5,6 +5,7 @@
  */
 
 #include <firekylin/kernel.h>
+#include <firekylin/lock.h>
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
 #include <sys/types.h>
@@ -12,28 +13,12 @@
 
 #define NR_BUFFER	64
 
-static unsigned long buffer_busy=0;
-static struct task * buffer_wait=NULL;
 struct buffer buffer_table[NR_BUFFER];
 struct buffer * free_list_head;
+sleeplock_t buffer_lock;
 
-static inline void lock_buffer_table(void)
-{
-	irq_lock();
-	while (buffer_busy){
-		sleep_on(&buffer_wait);
-	}
-	buffer_busy = 1;
-	irq_unlock();
-}
-
-static inline void unlock_buffer_table(void)
-{
-	irq_lock();
-	buffer_busy = 0;
-	wake_up(&buffer_wait);
-	irq_unlock();
-}
+#define lock_buffer_table()	require_lock(&buffer_lock);
+#define unlock_buffer_table()	release_lock(&buffer_lock);
 
 static inline void lock_buffer(struct buffer *buf)
 {
@@ -107,7 +92,7 @@ void brelse(struct buffer *buf)
 			buf->b_free_prev->b_free_next=buf;
 			free_list_head->b_free_prev=buf;
 		}
-		wake_up(&buffer_wait);
+		//wake_up(&buffer_wait);
 	}
 	unlock_buffer_table();
 	unlock_buffer(buf);
