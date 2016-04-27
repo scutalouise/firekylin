@@ -14,11 +14,7 @@ static char color = 15;
 
 void con_init()
 {
-	char a;
-	outb(0x3d4, 14);
-	a = inb(0x3d5);
-	outb(0x3d4, 15);
-	cur = base + a * 512 + inb(0x3d5) * 2;
+	memset((char*)base,0,25*80*2);
 }
 
 int con_write(struct tty_struct *tty)
@@ -44,7 +40,7 @@ int con_write(struct tty_struct *tty)
 			*--tmp=0x20;
 		}
 		if (tmp == (char*) 0xc00bff80) {
-			memcpy(base, (tmp-24*2*80), 24*2*80);
+			memcpy((char*)base, (char*)(tmp-24*2*80), 24*2*80);
 			tmp = (char*) base + 24 * 2 * 80;
 			orgin = base;
 		}

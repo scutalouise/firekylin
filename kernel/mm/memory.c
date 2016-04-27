@@ -123,12 +123,12 @@ long copy_mm(void)
 	long ret = get_page();
 	struct task *current = CURRENT_TASK();
 
-	memset(__va(ret), 0, 3072);
-	memcpy(__va(ret)+3072, __va(current->pdtr) + 3072, 1024);
+	memset((char*)__va(ret), 0, 3072);
+	memcpy((char*)__va(ret)+3072, (char*)__va(current->pdtr) + 3072, 1024);
 
 	for (addr = current->stack; addr < current->sbrk; addr += 4096) {
 		tmp_addr = get_page();
-		memcpy(__va(tmp_addr), addr, 4096);
+		memcpy((char*)__va(tmp_addr), (char*)addr, 4096);
 		map_page(addr, tmp_addr, ret);
 	}
 	return ret;

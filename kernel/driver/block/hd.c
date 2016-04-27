@@ -76,7 +76,7 @@ static void hd_identify(void)
 	do {
 		tmp = inb(HD_STATUS);
 	} while ((tmp & (HD_STAT_BUSY | HD_STAT_DRQ)) != HD_STAT_DRQ);
-	ins(0x1f0, buf, 512);
+	ins(0x1f0, (char*)buf, 512);
 
 	HD0.LBA = buf[60] | buf[61] << 16;
 }

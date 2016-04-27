@@ -32,7 +32,7 @@ static int read_blk(dev_t dev, char *buf, off_t off, size_t size)
 		if (!bh)
 			return -EIO;
 		chars = min(left, 1024 - off % 1024);
-		memcpy(buf, bh->b_data+off%1024, chars);
+		memcpy((char*)buf, (char*)(bh->b_data+off%1024), chars);
 		brelse(bh);
 		buf += chars;
 		off += chars;
@@ -101,7 +101,7 @@ long exec_load_file(struct inode *inode, struct buffer*bh)
 	struct task *current = CURRENT_TASK();
 
 	buf_page = __va(get_page());
-	memcpy(buf_page, bh->b_data, 1024);
+	memcpy((char*)buf_page, bh->b_data, 1024);
 	brelse(bh);
 
 	ehdr = (Elf32_Ehdr *) buf_page;

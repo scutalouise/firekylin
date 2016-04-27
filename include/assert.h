@@ -12,8 +12,8 @@
 #else
 extern void __bad_assert(char *expr, char* file, int line);
 
-#define assert(expr) 						\
-	if(!(expr)){						\
+#define assert(expr) 					\
+	if(!(expr)){					\
 		__bad_assert(#expr,__FILE__,__LINE__); 	\
 	}
 
