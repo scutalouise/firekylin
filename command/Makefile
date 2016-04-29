@@ -13,7 +13,7 @@ CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../include
 LIB=../libc/libc.a
 
-OBJS=init sh ls echo cat sync mkdir touch cp ll rename rm ed link
+OBJS=init sh ls echo cat sync mkdir touch cp ll rm ed link
 
 command: $(OBJS)
 
@@ -47,9 +47,6 @@ ls:ls.c
 ll:ll.c
 	$(CC) $(CFLAGS) -o ll.o ll.c
 	$(LD) -o ll ll.o  $(LIB)
-rename:rename.c
-	$(CC) $(CFLAGS) -o rename.o rename.c
-	$(LD) -o rename rename.o  $(LIB)
 rm:rm.o
 	$(CC) $(CFLAGS) -o rm.o rm.c
 	$(LD) -o rm rm.o  $(LIB)

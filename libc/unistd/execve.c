@@ -8,10 +8,4 @@
 #include <sys/syscall.h>
 #include <sys/unistd.h>
 
-static inline
-__syscall3(int, exec,const char*, filename, char **, argv,char **, envp) ;
-
-int execve(char *filename, char **argv, char **envp)
-{
-	return exec(filename, argv, envp);
-}
+__syscall3(int, execve, const char*, filename, char **, argv,char **, envp) ;

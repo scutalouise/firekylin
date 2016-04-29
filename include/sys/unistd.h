@@ -32,7 +32,7 @@ extern pid_t getpid();
 extern pid_t getppid();
 extern ssize_t read(int fd,char * buf,size_t size);
 extern ssize_t write(int fd,char * buf,size_t size);
-extern int execve(char *filename, char **argv, char **envp);
+extern int execve(const char *fname, char **argv, char **envp);
 extern void _exit(int status);
 extern int sbrk(int inc);
 extern int dup(int fd);
@@ -43,5 +43,7 @@ extern int lseek(int fd,long off,int where);
 extern int mkdir(char *name,mode_t mode);
 extern int link(char *name, char *newname);
 extern int sync(void);
+extern int unlink(char *name);
+extern int mknod(char *name, mode_t mode,dev_t dev);
 
 #endif

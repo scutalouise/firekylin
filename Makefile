@@ -61,7 +61,6 @@ install:boot/bootsect.bin kernel/kernel.bin libc/libc.a commands \
 	cp   command/touch /mnt/bin/touch
 	cp   command/cp /mnt/bin/cp
 	cp   command/ll /mnt/bin/ll
-	cp   command/rename /mnt/bin/rename
 	cp   command/rm /mnt/bin/rm
 	cp   command/ed /mnt/bin/ed
 	cp   command/link /mnt/bin/link

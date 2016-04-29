@@ -77,7 +77,7 @@ void map_page(long va, long pa, long pdtr)
 
 	if (!(p[va >> 22 & 0x3ff] & 1)) { //PTE not exist.
 		tmp = get_page();
-		memset(__va(tmp), 0, 4096);
+		memset((char*)__va(tmp), 0, 4096);
 		p[va >> 22 & 0x3ff] = tmp + 7;
 	}
 
@@ -152,7 +152,7 @@ void free_mm(void)
 	for (long addr = current->stack; addr < current->sbrk; addr += 4096) {
 		put_page(unmap_page(addr, current->pdtr));
 	}
-	memset(__va(current->pdtr), 0, 3072);
+	memset((char*)__va(current->pdtr), 0, 3072);
 }
 
 void mm_init(void)

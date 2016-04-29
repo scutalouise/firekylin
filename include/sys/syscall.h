@@ -8,9 +8,9 @@
 #define _SYS_SYSCALL_H
 
 #define __NR_fork		0
-#define __NR_exec		1
+#define __NR_execve		1
 #define __NR_sbrk		2
-#define __NR_pwait		3
+#define __NR_waitpid		3
 #define __NR_exit		4
 #define __NR_ptrace		5
 #define __NR_times		6

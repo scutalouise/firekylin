@@ -8,10 +8,7 @@
 #include <sys/syscall.h>
 #include <sys/unistd.h>
 
-static inline
-__syscall3(int, pwait, pid_t, pid, long *, status, int, options);
-
 int wait(long *status)
 {
-	return pwait(0,status,0);
+	return waitpid(0,status,0);
 }
