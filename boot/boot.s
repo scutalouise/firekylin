@@ -13,6 +13,8 @@ start:
 	mov ds,ax
 	mov ss,ax
 	mov sp,0xfff0
+
+disp_info:
 	mov cx,10
 	mov di,info+0x7c00
 	mov ah,0x0e
@@ -22,31 +24,33 @@ start:
 	int 0x10
 	inc di
 	loop .next
+
 load_kernel:
-	mov dx,0     	; DH-_head,DL--driver
-	mov cx,2     	; bit 0-5 begin socter number,ch:cyl number.
 	mov ax,0x1000
 	mov es,ax    	; buf es:bx
+	mov dx,0     	; DH-_head,DL--driver
+	mov cl,1    	; bit 0-5 begin socter number,ch:cyl number.
+	mov ch,1
 .loop1:
 	xor bx,bx
-	mov ax,0x224 	; ah:cmd 2--read,AL:read number of socters
+	mov ah,0x2
+	mov al,18	; ah:cmd 2--read,AL:read number of socters
 	int 0x13
 	jc  .die
 	inc ch
 	cmp ch,[size+0x7c00]
-	je  .ok_load
+	je  ok_load
 	mov ax,es
-	add ax,0x20*36
+	add ax,0x20*18
 	mov es,ax	
 		     	; echo .
-	mov  ah,0x0e
-	mov  bx,0x10
-	mov  al,'.'
-	int  0x10
-	jmp  .loop1
-
+	mov ah,0x0e
+	mov bx,0x10
+	mov al,'.'
+	int 0x10
+	jmp .loop1
 .die:	jmp $
-.ok_load:	     	; kill floppy motor
+ok_load:	     	; kill floppy motor
 	mov dx,0x3f2
 	mov al,0
 	out dx,al
@@ -57,19 +61,29 @@ load_kernel:
 	int 0x10
 	mov al,0x0d  	; "\r"
 	int 0x10
-		     	; get memory size
+
+get_mem:
 	mov ah,0x88
 	int 0x15
 	mov word [0x2000],ax
-.open_A20:
+
+clear_screen:
+	mov ax,0x0600
+	xor cx,cx
+	mov dh,24
+	mov al,79
+	mov bh,0x07
+	int 0x10
+
+open_A20:
 	cli
-	in  al,  0x92
-	or  al,  2
+	in  al,   0x92
+	or  al,   2
 	out 0x92, al
 	lgdt [gdt_48+0x7c00]
-	mov eax, cr0
-	or  eax, 1
-	mov cr0, eax
+	mov eax,  cr0
+	or  eax,  1
+	mov cr0,  eax
 	jmp dword 8:0x10000
 
 info:
@@ -87,5 +101,5 @@ gdt_48:
 
 	times 508-($-$$) db 0
 size:
-	dw  3
+	dw  6
 	dw  0xaa55

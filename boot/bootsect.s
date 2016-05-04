@@ -5,6 +5,9 @@
 ; *
 ; * Load kernel to 0x10000, change to protect mode,
 ; * then jmp kernel enter ponit 0x8:0x10000.
+; *
+; * not used
+; *
 ; */
 
 	bits 16

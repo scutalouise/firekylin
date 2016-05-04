@@ -86,6 +86,7 @@ static void time_init()
 	BCD_BIN(month);
 	BCD_BIN(year);
 	start_time = mktimek(year, month, day, hour, min, sec);
+	printk("start time:%d-%d-%d %d:%d:%d\n",year,month,day,hour,min,sec);
 }
 
 void start(void)
@@ -104,9 +105,9 @@ void start(void)
 	if (sys_fork()) {
 		__asm__("__hlt:hlt ; jmp __hlt");
 	}
-
+	printk("before mount root");
 	mount_root();
-
+	printk("after mount root");
 	sys_exec("/bin/init", NULL, NULL);
 	panic("Can't find init");
 }

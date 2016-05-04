@@ -37,20 +37,23 @@ static int dupfd(int fd, unsigned int arg)
 	return -EMFILE;
 }
 
-static int do_lseek(struct file *file, long off, int where)
+int sys_lseek(int fd, long off, int where)
 {
+	struct file *file;
+	if (fd > NR_OPEN || !(file = (CURRENT_TASK() )->file[fd]))
+			return -EBADF;
 	switch (where) {
-		case F_SEEKSET:
+		case SEEK_SET:
 			if (off < 0)
 				return -EINVAL;
 			file->f_pos = off;
 			break;
-		case F_SEEKCUR:
+		case SEEK_CUR:
 			if (file->f_pos + off < 0)
 				return -EINVAL;
 			file->f_pos += off;
 			break;
-		case F_SEEKEND:
+		case SEEK_END:
 			if (file->f_inode->i_size + off < 0)
 				return -EINVAL;
 			file->f_pos = file->f_inode->i_size + off;
@@ -71,10 +74,6 @@ int sys_fcntl(unsigned int fd, unsigned int cmd, unsigned long arg)
 	switch (cmd) {
 		case F_DUPFD:
 			return dupfd(fd, arg);
-		case F_SEEKSET:
-		case F_SEEKCUR:
-		case F_SEEKEND:
-			return do_lseek(file, arg, cmd);
 		default:
 			return -EIO;
 	}

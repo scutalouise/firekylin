@@ -43,9 +43,9 @@ struct inode {
 	time_t 		     i_mtime;
 	time_t 		     i_ctime;
 	unsigned int 	     i_zone[NR_ZONE];
-	struct fs_operation *i_op;
 	unsigned short 	     i_flag;
 	unsigned short 	     i_count;
+	struct fs_operation *i_op;
 	struct task         *i_wait;
 };
 

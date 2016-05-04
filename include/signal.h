@@ -7,8 +7,6 @@
 #ifndef _SIGNAL_H
 #define _SIGNAL_H
 
-typedef unsigned long sigset_t;
-
 #define	NR_SIG		32
 
 #define SIGHUP		1
@@ -35,6 +33,8 @@ typedef unsigned long sigset_t;
 
 #define SIG_DFL		((void(*)(int))0)
 #define SIG_IGN		((void(*)(int))1)
+
+typedef unsigned long sigset_t;
 
 struct sigaction {
 	void (*sa_handle)(int);

@@ -5,6 +5,9 @@
  *
  *  Usage: install-boot boot.bin dev_name
  *      such as: install-boot boot/boot.bin hd.img
+ *
+ *  not used
+ *
  */
 
 #include <stdio.h>

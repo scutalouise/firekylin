@@ -13,9 +13,6 @@ default:
 boot/boot.bin:boot/boot.s
 	$(AS) -o $@  $<
 
-boot/bootsect.bin:boot/bootsect.s
-	$(AS) -o $@  $<
-
 kernel/kernel.bin:
 	make -C kernel
 	
@@ -28,19 +25,15 @@ commands:
 tools/build:tools/build.c
 	$(CC) -o $@  $<
 
-tools/install-boot:tools/install-boot.c
-	$(CC) -o $@  $<
+boot.img:boot/boot.bin kernel/kernel.bin tools/build
+	./tools/build boot/boot.bin kernel/kernel.bin boot.img
 
-floppy.img:boot/boot.bin kernel/kernel.bin tools/build
-	./tools/build boot/boot.bin kernel/kernel.bin floppy.img
-
-hd.img:
-	dd if=/dev/zero of=hd.img bs=512 count=20480
+root.img:
+	dd if=/dev/zero of=root.img bs=512 count=20480
 	
-install:boot/bootsect.bin kernel/kernel.bin libc/libc.a commands \
-        tools/install-boot hd.img
-	mkfs.minix -1 hd.img
-	mount -t minix hd.img -o loop /mnt
+install:kernel/kernel.bin libc/libc.a commands root.img
+	mkfs.minix -1 root.img
+	mount -t minix root.img -o loop /mnt
 	-mkdir /mnt/boot
 	-mkdir /mnt/bin
 	-mkdir /mnt/dev
@@ -64,19 +57,13 @@ install:boot/bootsect.bin kernel/kernel.bin libc/libc.a commands \
 	cp   command/rm /mnt/bin/rm
 	cp   command/ed /mnt/bin/ed
 	cp   command/link /mnt/bin/link
-	umount hd.img
-	./tools/install-boot boot/bootsect.bin hd.img
+	umount root.img
 	
 clean:
-	-rm boot/boot.bin boot/bootsect.bin
+	-rm boot/boot.bin tools/build boot.img root.img
 	make clean -C kernel
 	make clean -C libc
 	make clean -C command
-	-rm tools/build tools/install-boot
-	-rm floppy.img hd.img
-
-build:clean install
-
 run: 
 	bochs -q -f bochsrc
 

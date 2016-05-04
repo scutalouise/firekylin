@@ -11,6 +11,20 @@
 
 #define size (80*18*2*512)
 
+void copy_file(FILE *img, FILE *sys)
+{
+	char buf[512];
+	for (int i = 1; i < 80; i++) {
+		fseek(img, 18 * 2 * 512 * i, 0);
+		for (int j = 0; j < 18; j++) {
+			if (fread(buf, 1, 512, sys))
+				fwrite(buf, 1, 512, img);
+			else
+				return;
+		}
+	}
+}
+
 int main(int argc, char **argv)
 {
 	FILE *boot, *sys, *img;
@@ -41,9 +55,9 @@ int main(int argc, char **argv)
 
 	fread(buf, 512, 1, boot);
 	fwrite(buf, 512, 1, img);
-	while (fread(&buf, 1, 512, sys)) {
-		fwrite(&buf, 1, 512, img);
-	}
+
+	copy_file(img, sys);
+
 	fseek(img, size - 1, 0);
 	fputc(0, img);
 

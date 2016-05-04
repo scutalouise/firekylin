@@ -79,6 +79,7 @@ static void hd_identify(void)
 	ins(0x1f0, (char*)buf, 512);
 
 	HD0.LBA = buf[60] | buf[61] << 16;
+	printk("hd size:%d",HD0.LBA);
 }
 
 static struct blk_dev ide = { "ATA HD", NULL, NULL, ide_read, ide_write, NULL };

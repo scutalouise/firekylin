@@ -42,8 +42,8 @@ struct tss_struct {
 };
 
 struct timer{
-	clock_t t_time;
-	void (*t_fun)(void);
+	clock_t       t_time;
+	void        (*t_fun)(void);
 	struct timer *t_next;
 };
 

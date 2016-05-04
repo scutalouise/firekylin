@@ -149,4 +149,5 @@ void buffer_init(void)
 	buffer_table[0].b_free_prev=&buffer_table[NR_BUFFER-1];
 	buffer_table[NR_BUFFER-1].b_free_next=buffer_table;
 	free_list_head=buffer_table;
+	printk("buffer _init");
 }

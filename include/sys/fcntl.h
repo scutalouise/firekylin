@@ -30,9 +30,10 @@
 #define F_SETLK 	6	/* set record locking information           */
 #define F_SETLKW	7	/* set record locking info; wait if blocked */
 #define F_FREESP	8	/* free a section of a regular file         */
-#define F_SEEKSET	9
-#define F_SEEKCUR	10
-#define F_SEEKEND	11
+
+#define SEEK_SET	0
+#define SEEK_CUR	1
+#define SEEK_END	2
 
 /* Struct of file lock */
 struct flock {

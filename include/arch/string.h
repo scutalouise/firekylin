@@ -8,12 +8,12 @@
 #ifndef _ARCH_STRING_H
 #define _ARCH_STRING_H
 
-static inline void memcpy(void *dst,void*src,int size)
+static inline void memcpy(void *dst, void*src, int size)
 {
 	__asm__("rep movsb":: "D"(dst),"S"(src),"c"(size));
 }
 
-static inline void memset(void *s,int c,int size)
+static inline void memset(void *s, int c, int size)
 {
 	__asm__("rep stosb" ::"D"(s),"a"(c),"c"(size));
 }

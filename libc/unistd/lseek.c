@@ -9,7 +9,5 @@
 #include <sys/unistd.h>
 #include <sys/fcntl.h>
 
-int lseek(int fd,long off,int where)
-{
-	return fcntl(fd,F_SEEKSET+where,off);
-}
+__syscall3(int,lseek,int, fd, long,off , int,where);
+

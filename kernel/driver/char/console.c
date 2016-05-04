@@ -14,7 +14,6 @@ static char color = 15;
 
 void con_init()
 {
-	memset((char*)base,0,25*80*2);
 }
 
 int con_write(struct tty_struct *tty)

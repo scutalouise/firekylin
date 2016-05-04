@@ -101,6 +101,7 @@ void clock_init()
 	outb(0x40, LATCH>>8);
 	set_trap_handle(0x20, &do_clock);
 	outb(0x21, inb(0x21)&~1);
+	printk("clock init");
 }
 
 int sys_getime(long *res)

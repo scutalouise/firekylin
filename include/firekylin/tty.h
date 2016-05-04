@@ -21,7 +21,7 @@ struct tty_buf {
 
 struct tty_struct {
 	struct termios termios;
-	unsigned int pgrp;
+	unsigned int   pgrp;
 	struct tty_buf raw;
 	struct tty_buf cooked;
 	struct tty_buf out;

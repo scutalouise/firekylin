@@ -11,7 +11,7 @@
 static inline char inb(short port)
 {
 	char __res;
-	__asm__ ("in %%dx,%%al":"=a"(__res):"d"(port));
+	__asm__("in %%dx,%%al":"=a"(__res):"d"(port));
 	return __res;
 }
 

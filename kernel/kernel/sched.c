@@ -40,6 +40,7 @@ void sched_init(void)
 	current->count = current->priority = 20;
 	current->state = TASK_RUN;
 	task_table[0] = current;
+	printk("sched init");
 }
 
 void sched(void)
