@@ -25,6 +25,4 @@ double acos(double x);
 double asin(double x);
 double atan(double x);
 
-
-
 #endif

@@ -63,12 +63,4 @@ struct partition {
 	unsigned int  nr_sects;
 };
 
-struct hd_ctl{
-	unsigned long LBA;
-	unsigned char busy;
-	unsigned char cmd;
-	struct buffer *buf;
-	struct task  *wait;
-};
-
 #endif

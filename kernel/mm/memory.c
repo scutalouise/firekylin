@@ -10,7 +10,7 @@
 #include <firekylin/mm.h>
 #include <firekylin/fs.h>
 
-#define MAX_NR_PAGES	(64*1024*1024/4096)
+#define MAX_NR_PAGES	((64-4)*1024*1024/4096)
 
 static unsigned int memsize = 0;
 static unsigned int NR_PAGE = 0;
@@ -28,28 +28,6 @@ long get_page(void)
 	panic("out of memory");
 	return 0L;
 }
-
-/*void test_mem(void)
-{
-	for (unsigned int i = 0; i < NR_PAGE; i++) {
-		if (page_table[i].count > 1) {
-			printk("warn: mem error %x,count %d",
-					(i << 12) + 0xC0400000,
-					page_table[i].count++);
-		}
-	}
-}
-
-void cal_mem(void)
-{
-	int count=0;
-	for (unsigned int i = 0; i < NR_PAGE; i++) {
-		if (page_table[i].count) {
-			count++;
-		}
-	}
-	printk("mem_info:use  %x,free %x\n",count,NR_PAGE-count);
-}*/
 
 void put_page(long addr)
 {
@@ -102,19 +80,18 @@ void do_page_fault(struct trapframe *tf)
 {
 	unsigned long cr2;
 	struct task *current;
-	static int count=0;
+
 	__asm__("movl %%cr2,%%eax":"=a"(cr2));
 
-//	printk("CS:EIP=%x:%x\t EFLAGS=%x\t SS:ESP=%x:%x\t", tf->cs, tf->eip,
-//		tf->eflags, tf->ss, tf->esp);
-//	printk("cr2=%x\n",cr2);
-//	count++;
-	if(count>7)
-		while(1){}
+	if (cr2 > 0x41000000 || cr2 < 0x40000000) {
+		printk("CS:EIP=%x:%x\t EFLAGS=%x\t SS:ESP=%x:%x\t", tf->cs,
+				tf->eip, tf->eflags, tf->ss, tf->esp);
+		panic("cr2=%x\n",cr2);
+	}
+
 	current = CURRENT_TASK();
 	map_page(cr2 & 0xfffff000, get_page(), current->pdtr);
 	current->stack = cr2 & 0xfffff000;
-	//printk("NOTE:current->stack=%x\n", current->stack);
 }
 
 long copy_mm(void)
@@ -159,12 +136,7 @@ void mm_init(void)
 {
 	unsigned long i, *p;
 
-	/*
-	 * Note:
-	 *  if use boot/boot.s to load kernel the addr shold be 0xc0002000
-	 *  else use boot/bootsect.s it should be 0xc0008000
-	 */
-	memsize = ((*(int*) 0xc0002000) & 0xffff) * 1024 + 0x100000;
+	memsize = ((*(int*) 0xc0008000) & 0xffff) * 1024 + 0x100000;
 	NR_PAGE = min((memsize >> 12), MAX_NR_PAGES);
 
 	p = (unsigned long*) 0xC0000000;
@@ -179,5 +151,5 @@ void mm_init(void)
 	}
 
 	set_trap_handle(14, do_page_fault);
-	printk("memsize:%dMB\n",memsize>>22);
+	printk("memsize:%dMB\n",memsize>>20);
 }

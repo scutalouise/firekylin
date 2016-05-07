@@ -15,47 +15,41 @@ LIB=../libc/libc.a
 
 OBJS=init sh ls echo cat sync mkdir touch cp ll rm ed link
 
+.s.o:
+	@echo         AS	$<
+	@$(AS) $(SFLAGS) -o $@  $<
+.c.o:
+	@echo         CC	$<
+	@$(CC) $(CFLAGS) -o $@  $<
+
 command: $(OBJS)
 
-init: init.c
-	$(CC) $(CFLAGS) -o init.o init.c
-	$(LD) -o init init.o  $(LIB)
-sh: sh.c
-	$(CC) $(CFLAGS) -o sh.o sh.c
-	$(LD) -o sh sh.o  $(LIB)
-echo: echo.c
-	$(CC) $(CFLAGS) -o echo.o echo.c
-	$(LD) -o echo echo.o  $(LIB)
-cat: cat.c
-	$(CC) $(CFLAGS) -o cat.o cat.c
-	$(LD) -o cat cat.o  $(LIB)
-sync: sync.c
-	$(CC) $(CFLAGS) -o sync.o sync.c
-	$(LD) -o sync sync.o  $(LIB)
-mkdir:mkdir.c
-	$(CC) $(CFLAGS) -o mkdir.o mkdir.c
-	$(LD) -o mkdir mkdir.o  $(LIB)
+init: init.o
+	$(LD) -o  $@  $<  $(LIB)
+sh: sh.o
+	$(LD) -o  $@  $<  $(LIB)
+echo: echo.o
+	$(LD) -o  $@  $<  $(LIB)
+cat: cat.o
+	$(LD) -o  $@  $<  $(LIB)
+sync: sync.o
+	$(LD) -o  $@  $<  $(LIB)
+mkdir:mkdir.o
+	$(LD) -o  $@  $<  $(LIB)
 touch:touch.o
-	$(CC) $(CFLAGS) -o touch.o touch.c
-	$(LD) -o touch touch.o  $(LIB)
-cp:cp.c
-	$(CC) $(CFLAGS) -o cp.o cp.c
-	$(LD) -o cp cp.o  $(LIB)
-ls:ls.c
-	$(CC) $(CFLAGS) -o ls.o ls.c
-	$(LD) -o ls ls.o  $(LIB)
-ll:ll.c
-	$(CC) $(CFLAGS) -o ll.o ll.c
-	$(LD) -o ll ll.o  $(LIB)
+	$(LD) -o  $@  $<  $(LIB)
+cp:cp.o
+	$(LD) -o  $@  $<  $(LIB)
+ls:ls.o
+	$(LD) -o  $@  $<  $(LIB)
+ll:ll.o
+	$(LD) -o  $@  $<  $(LIB)
 rm:rm.o
-	$(CC) $(CFLAGS) -o rm.o rm.c
-	$(LD) -o rm rm.o  $(LIB)
+	$(LD) -o  $@  $<  $(LIB)
 ed:ed.o
-	$(CC) $(CFLAGS) -o ed.o ed.c
-	$(LD) -o ed ed.o  $(LIB)
-link:link.c
-	$(CC) $(CFLAGS) -o link.o link.c
-	$(LD) -o link link.o  $(LIB)
+	$(LD) -o  $@  $<  $(LIB)
+link:link.o
+	$(LD) -o  $@  $<  $(LIB)
 
 clean:
 	-rm *.o $(OBJS)

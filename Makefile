@@ -6,42 +6,20 @@
 
 AS=nasm
 CC=gcc -fno-builtin -std=c99
+HD=hd.img
 
-default:
-	@echo default todo nothing
-	
-boot/boot.bin:boot/boot.s
-	$(AS) -o $@  $<
-
-kernel/kernel.bin:
-	make -C kernel
-	
-libc/libc.a:
-	make -C libc
-
-commands:
-	make -C command
-
-tools/build:tools/build.c
-	$(CC) -o $@  $<
-
-boot.img:boot/boot.bin kernel/kernel.bin tools/build
-	./tools/build boot/boot.bin kernel/kernel.bin boot.img
-
-root.img:
-	dd if=/dev/zero of=root.img bs=512 count=20480
-	
-install:kernel/kernel.bin libc/libc.a commands root.img
-	mkfs.minix -1 root.img
-	mount -t minix root.img -o loop /mnt
+build:boot/bootsect.bin kernel/kernel.bin libc/libc.a \
+      commands tools/install-boot $(HD)
+	mkfs.minix -1 $(HD)
+	sudo mount -t minix $(HD) -o loop /mnt
 	-mkdir /mnt/boot
 	-mkdir /mnt/bin
 	-mkdir /mnt/dev
 	-mkdir /mnt/etc
 	-mkdir /mnt/home
 	-mkdir /mnt/lib
-	-mknod /mnt/dev/tty1 c 4 1
-	-mknod /mnt/dev/com1 c 4 2
+	-sudo mknod /mnt/dev/tty1 c 4 1
+	-sudo mknod /mnt/dev/com1 c 4 2
 	cp   kernel/kernel.bin /mnt/boot/kernel
 	cp   kernel/kernel.map /mnt/boot/kernel.map
 	cp   command/init /mnt/bin/init
@@ -57,20 +35,36 @@ install:kernel/kernel.bin libc/libc.a commands root.img
 	cp   command/rm /mnt/bin/rm
 	cp   command/ed /mnt/bin/ed
 	cp   command/link /mnt/bin/link
-	umount root.img
+	sudo umount /mnt
+	./tools/install-boot boot/bootsect.bin $(HD)
+
+rebuild: clean build
 	
 clean:
-	-rm boot/boot.bin tools/build boot.img root.img
+	-rm -f boot/bootsect.bin
+	-rm -f tools/install-boot
 	make clean -C kernel
 	make clean -C libc
 	make clean -C command
-run: 
-	bochs -q -f bochsrc
-
-dbg: 
-	bochsdbg -q -f bochsrc
 
 count:
-	@echo dirs: $(shell ls -lR |grep ^d |wc -l)
+	@echo dirs:  $(shell ls -lR |grep ^d |wc -l)
 	@echo files: $(shell ls -lR |grep ^- |wc -l)
 	@echo lines: $(shell find . -name *.[chs] |xargs grep -v ^$$ |wc -l)
+
+boot/bootsect.bin:boot/bootsect.s
+	$(AS) -o $@  $<
+
+kernel/kernel.bin:
+	make -C kernel
+	
+libc/libc.a:
+	make -C libc
+
+commands:
+	make -C command
+
+tools/install-boot:tools/install-boot.c
+	$(CC) -o $@  $<
+$(HD):
+	dd if=/dev/zero of=$(HD) bs=512 count=20480

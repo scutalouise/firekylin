@@ -2,7 +2,6 @@
  *    include/arch/string.h
  *
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
- *
  */
 
 #ifndef _ARCH_STRING_H

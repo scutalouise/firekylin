@@ -105,9 +105,9 @@ void start(void)
 	if (sys_fork()) {
 		__asm__("__hlt:hlt ; jmp __hlt");
 	}
-	printk("before mount root");
+
 	mount_root();
-	printk("after mount root");
+
 	sys_exec("/bin/init", NULL, NULL);
 	panic("Can't find init");
 }

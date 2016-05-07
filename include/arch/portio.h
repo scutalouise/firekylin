@@ -2,7 +2,6 @@
  *    include/arch/portio.h
  *
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
- *
  */
 
 #ifndef _ARCH_PORTIO_H

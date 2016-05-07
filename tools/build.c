@@ -2,8 +2,6 @@
  *    tools/build.c
  *
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
- *
- * Usage: build  boot.o system.bin a.img 
  */
 
 #include <stdio.h>
