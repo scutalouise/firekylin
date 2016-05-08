@@ -27,6 +27,7 @@
 #define ENOSPACE	18
 #define ERSCH		19
 #define EBUSY		20
+#define ESPIPE		21
 
 extern int errno;
 

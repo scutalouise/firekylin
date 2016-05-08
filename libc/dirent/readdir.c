@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include <errno.h>
 
+static struct dirent _res_dirent;
+
 struct dirent * readdir(DIR * dir)
 {
 	struct dirent * ptr;
@@ -33,6 +35,9 @@ struct dirent * readdir(DIR * dir)
 		dir->d_off += sizeof (struct dirent);
 		if (!ptr->d_ino)
 			continue;
-		return ptr;
+
+		_res_dirent.d_ino=ptr->d_ino;
+		strncpy(_res_dirent.d_name,ptr->d_name,NAME_LEN);
+		return &_res_dirent;
 	}
 }

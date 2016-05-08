@@ -11,25 +11,19 @@ SFLAGS=-f elf32
 CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../include
 
-OBJS= crt/crt.o  \
-      stdlib/abs.o stdlib/labs.o stdlib/malloc.o stdlib/getenv.o \
-      string/memcpy.o string/memset.o string/strcat.o string/strcpy.o \
-      string/strlen.o string/strncpy.o string/strcmp.o string/vsprintf.o \
-      string/strerror.o unistd/fork.o unistd/getpid.o  string/strncmp.o \
-      unistd/getuid.o unistd/setuid.o unistd/setsid.o  unistd/mknod.o \
-      unistd/errno.o  unistd/open.o unistd/read.o unistd/stat.o unistd/link.o \
-      unistd/execve.o unistd/_exit.o unistd/waitpid.o unistd/sbrk.o \
-      stdio/printf.o  unistd/write.o unistd/dup.o unistd/fstat.o \
-      unistd/chdir.o unistd/close.o  unistd/sync.o unistd/mkdir.o \
-      ctype/__ctype.o ctype/isalnum.o ctype/isalpha.o ctype/iscntrl.o \
-      ctype/isdigit.o ctype/islower.o ctype/isprint.o ctype/ispuntc.o \
-      ctype/isupper.o ctype/isxdigit.o ctype/isspace.o ctype/isgraph.o \
-      ctype/tolower.o ctype/toupper.o  \
-      signal/sigaction.o   signal/sigaddset.o  signal/sigdelset.o   \
-      signal/sigemptyset.o signal/sigfillset.o signal/sigismember.o \
-      signal/sigprocmask.o  \
-      dirent/opendir.o dirent/readdir.o dirent/rewinddir.o dirent/closedir.o
-      
+include assert/sub.mk
+include crt/sub.mk
+include ctype/sub.mk
+include dirent/sub.mk
+include math/sub.mk
+include setjmp/sub.mk
+include signal/sub.mk
+include stdio/sub.mk
+include stdlib/sub.mk
+include string/sub.mk
+include time/sub.mk
+include unistd/sub.mk
+     
 .s.o:
 	@echo         AS	$<
 	@$(AS) $(SFLAGS) -o $@  $<
@@ -37,9 +31,9 @@ OBJS= crt/crt.o  \
 	@echo         CC	$<
 	@$(CC) $(CFLAGS) -o $@  $<
 
-libc.a: $(OBJS)
+libc.a: $(LIBC_OBJ)
 	@echo         AR       OBJS
-	@ar rcs   libc.a     $(OBJS) 
+	@ar rcs   libc.a     $(LIBC_OBJ) 
 
 clean: 
-	-rm libc.a $(OBJS)
+	-rm libc.a $(LIBC_OBJ)

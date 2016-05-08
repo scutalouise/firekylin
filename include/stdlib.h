@@ -12,5 +12,6 @@ extern char **environ;
 extern void *malloc(long nbytes);
 extern void  free(void *p);
 extern char *getenv(char *name);
+extern void exit(int exit_code);
 
 #endif

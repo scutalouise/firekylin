@@ -6,7 +6,7 @@
 
 #include <string.h>
 
-char * strchr(const char * str, char ch)
+char * strchr(const char * str, int ch)
 {
 	char *s = (char *) str;
 	

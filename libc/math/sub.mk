@@ -1,0 +1,1 @@
+LIBC_OBJ+=math/frexp.o

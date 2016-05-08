@@ -1,3 +1,9 @@
+/*
+ *	libc/string/strstr.c
+ *
+ *	Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ */
+
 #include <string.h>
 
 char * strstr(const char *s1, const char *s2)

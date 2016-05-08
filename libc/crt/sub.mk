@@ -1,0 +1,1 @@
+LIBC_OBJ+=crt/crt.o

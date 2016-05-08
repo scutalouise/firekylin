@@ -19,5 +19,5 @@ void rewinddir(DIR * dir)
 		return;
 	}
 	dir->d_size = dir->d_off = 0;
-	lseek(dir->d_fd,0L,SEEK_SET);
+	lseek(dir->d_fd, 0L, SEEK_SET);
 }

@@ -89,6 +89,7 @@ int minix1_alloc_block(dev_t dev)
 		set_bit(bh->b_data,tmp);
 		bh->b_flag|=B_DIRTY;
 		brelse(bh);
+		res+=super->s_first_data_zone;
 		put_super(super);
 		return res;
 	}

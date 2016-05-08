@@ -1,0 +1,1 @@
+LIBC_OBJ+=assert/__bad_assert.o

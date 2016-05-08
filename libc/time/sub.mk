@@ -1,0 +1,1 @@
+LIBC_OBJ+=time/time.o

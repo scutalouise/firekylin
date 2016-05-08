@@ -4,7 +4,7 @@
 ; *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
 ; */
 
-extern main
+extern main,exit
 global _start,environ
 
 section .text
@@ -15,6 +15,8 @@ _start:
 	mov  eax,[esp+8]
 	mov  dword [environ],eax
 	call main
+	push eax
+	call exit
 	mov  eax,4
 	int  0x30
 	

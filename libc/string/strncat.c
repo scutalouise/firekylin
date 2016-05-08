@@ -6,7 +6,7 @@
 
 #include <string.h>
 
-char *strcat(char *dst, char *src ,size_t n)
+char *strncat(char *dst, char *src ,size_t n)
 {
 	char *tmp = dst;
 

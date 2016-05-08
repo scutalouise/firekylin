@@ -47,5 +47,6 @@ extern int link(char *name, char *newname);
 extern int sync(void);
 extern int unlink(char *name);
 extern int mknod(char *name, mode_t mode,dev_t dev);
+extern int execvpe(const char * file, char ** argv, char ** envp);
 
 #endif

@@ -12,10 +12,13 @@
 
 int main(int argc, char **argv)
 {
+	char *envp[]={
+		"PATH=/bin"
+	};
 	while (1) {
 		if (!fork()) {
 			open("/dev/tty1", O_RDWR, 0);
-			execve("/bin/sh", NULL, NULL);
+			execve("/bin/sh", NULL, envp);
 			_exit(0);
 		}
 		waitpid(0, NULL, 0);

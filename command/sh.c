@@ -57,7 +57,7 @@ void execcmd(char **argv)
 	if (pid) {
 		waitpid(pid, NULL, 0);
 	} else {
-		execve(argv[0], argv,NULL);
+		execvpe(argv[0], argv,NULL);
 		printf("sh:%s\n",strerror(errno));
 		_exit(0);
 	}

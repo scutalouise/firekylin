@@ -14,7 +14,7 @@
 #define SIGQUIT		3
 #define SIGILL		4
 #define SIGTRAP		5
-#define SIGABORT	6
+#define SIGABRT		6
 #define SIGFPU		7
 #define SIGKILL		8
 #define SIGUSR1		9
@@ -69,5 +69,6 @@ int sigfillset(sigset_t *set);
 int sigismember(sigset_t *set,int signo);
 int sigprocmask(int how,sigset_t *set ,sigset_t *oldset);
 int sigaction(int sig,struct sigaction *newact,struct sigaction * oldact);
+int sigsend(pid_t pid,int signo);
 
 #endif

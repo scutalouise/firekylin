@@ -12,5 +12,7 @@ char *strncpy(char *dst, char *src, size_t n)
 
 	while (n-- && *src)
 		*t++ = *src++;
+	if(n)
+		*t=0;
 	return dst;
 }

@@ -8,8 +8,10 @@ AS=nasm
 CC=gcc -fno-builtin -std=c99
 HD=hd.img
 
-build:boot/bootsect.bin kernel/kernel.bin libc/libc.a \
-      commands tools/install-boot $(HD)
+build:boot/bootsect.bin tools/install-boot $(HD)
+	make -C kernel
+	make -C libc
+	make -C command
 	mkfs.minix -1 $(HD)
 	sudo mount -t minix $(HD) -o loop /mnt
 	-mkdir /mnt/boot
@@ -37,12 +39,11 @@ build:boot/bootsect.bin kernel/kernel.bin libc/libc.a \
 	cp   command/link /mnt/bin/link
 	sudo umount /mnt
 	./tools/install-boot boot/bootsect.bin $(HD)
-
-rebuild: clean build
 	
 clean:
 	-rm -f boot/bootsect.bin
 	-rm -f tools/install-boot
+	-rm -f $(HD)
 	make clean -C kernel
 	make clean -C libc
 	make clean -C command
@@ -54,17 +55,9 @@ count:
 
 boot/bootsect.bin:boot/bootsect.s
 	$(AS) -o $@  $<
-
-kernel/kernel.bin:
-	make -C kernel
 	
-libc/libc.a:
-	make -C libc
-
-commands:
-	make -C command
-
 tools/install-boot:tools/install-boot.c
 	$(CC) -o $@  $<
+	
 $(HD):
-	dd if=/dev/zero of=$(HD) bs=512 count=20480
+	dd if=/dev/zero of=$(HD) bs=1024 count=4096

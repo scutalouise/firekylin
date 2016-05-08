@@ -47,11 +47,7 @@ load_kernel:
 	add  si,2
 	jmp  .loop
 	
-.ok_load:	     	; kill floppy motor
-	mov dx,0x3f2
-	mov al,0
-	out dx,al
-	
+.ok_load:
 clear_screen:
 	mov ax,0x0600
 	xor cx,cx
@@ -83,13 +79,10 @@ open_A20:
 read_block:
 	mov  dx,0x1f7
 	in   al,dx
-	and  al,0x80
-	cmp  al,0
+	and  al,0xC0
+	cmp  al,0x40
 	jne  read_block
-	mov  dx,0x1f1
-	xor  al,al
-	out  dx,al
-	inc  dx
+	mov  dx,0x1f2
 	mov  al,2
 	out  dx,al	;outb(0x1f2,nr)
 	inc  dx
@@ -109,8 +102,8 @@ read_block:
 	out  dx,al	;outb(0x1f7,cmd(read=0x20))
 .wait1:
 	in   al,dx
-	and  al,0x88
-	cmp  al,0x08
+	and  al,0xC0
+	cmp  al,0x40
 	jne  .wait1
 	mov  cx,256
 	mov  dx,0x1f0
@@ -118,8 +111,8 @@ read_block:
 .wait2:
 	mov  dx,0x1f7
 	in   al,dx
-	and  al,0x88
-	cmp  al,0x08
+	and  al,0xC0
+	cmp  al,0x40
 	jne  .wait2
 	mov  cx,256
 	mov  dx,0x1f0
