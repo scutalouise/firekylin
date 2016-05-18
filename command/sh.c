@@ -69,10 +69,7 @@ int main(void)
 	char buf[100];
 
 	printf("\n\rWelcome To FireKylin 0.1 !\n\r");
-	printf("More info:http://firekylin.cc\n\r");
-	printf("Blog :http://firekylin.cc/blog\n\r");
-	printf("Forum:http://firekylin.cc/forums\n\r");
-	printf("DOcument:http://firekylin.cc/doc\n\n\r");
+	printf("More info:http://bbs.firekylin.cc\n\r");
 
 	while (1) {
 		printf("%s", ps1);

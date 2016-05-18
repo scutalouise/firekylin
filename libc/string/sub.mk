@@ -12,4 +12,5 @@ LIBC_OBJ+=string/memcpy.o \
 	  string/strncmp.o \
 	  string/vsprintf.o \
           string/strerror.o \
-          string/strchr.o 
+          string/strchr.o \
+          string/strfmt.o

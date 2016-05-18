@@ -44,6 +44,9 @@ int sys_fork(long unuesd)
 	*(--stack) = 0;		// esi
 	*(--stack) = 0;		// ebp
 
+	stack-=27;
+	__asm__ ("fnsave (%%eax)" ::"a"(stack));
+
 	task->kesp = (unsigned long) stack;
 	task->state = TASK_RUN;
 

@@ -24,7 +24,8 @@ int main(int argc, char **argv)
 	}
 
 	while ((de = readdir(dp))) {
-		stat(de->d_name, &statbuf);
+		if(stat(de->d_name, &statbuf)<0)
+			break;
 		printf("%s\t", de->d_name);
 		switch (statbuf.st_mode & S_IFMT) {
 			case S_IFREG:
@@ -40,8 +41,6 @@ int main(int argc, char **argv)
 				printf("%s\t", "CHAR");
 				break;
 		}
-		printf("%d\t", statbuf.st_nlink);
-		printf("%x\t", statbuf.st_rdev);
-		printf("%d\n", statbuf.st_size);
+		printk("\n");
 	}
 }

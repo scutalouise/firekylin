@@ -7,7 +7,7 @@
 #include <sys/unistd.h>
 #include <stdarg.h>
 
-extern int vsprintf(char* buf, char* fmt, va_list ap);
+//extern int vsprintf(char* buf, char* fmt, va_list ap);
 
 int myprintf(char *fmt,...)
 {
@@ -16,7 +16,7 @@ int myprintf(char *fmt,...)
 	int i;
 
 	va_start(ap, fmt);
-	i = vsprintf(buf, fmt, ap);
+	i = strfmt(buf, fmt, ap);
 	write(0,buf,i);
 	return i;
 }

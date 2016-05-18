@@ -8,6 +8,7 @@
 #define _STRING_H
 
 #include <sys/types.h>
+#include <stdarg.h>
 
 extern void*  memset(void *s, int c, size_t n);
 extern void*  memcpy(void *dst, void *src, size_t n);

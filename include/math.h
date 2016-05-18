@@ -21,8 +21,41 @@
 #define M_SQRT2        1.41421356237309504880  /* sqrt(2) 	*/
 #define M_SQRT1_2      0.70710678118654752440  /* 1/sqrt(2) 	*/
 
-double acos(double x);
-double asin(double x);
-double atan(double x);
+extern double fabs(double x);
+extern double floor(double x);
+extern double ceil(double x);
+extern double sqrt(double x);
+extern double sin(double x);
+extern double cos(double x);
+extern double tan(double x);
+
+extern double acos(double x);
+extern double asin(double x);
+extern double atan(double x);
+extern double atan2(double x, double y);
+extern double hypot(double x, double y);
+extern double cosh(double x);
+extern double sinh(double x);
+extern double tanh(double x);
+extern double exp(double x);
+extern double frexp(double x, int *i);
+extern double ldexp(double x, int i);
+extern double log(double x);
+extern double log10(double x);
+extern double modf(double x, double *l);
+extern double pow(double x, double y);
+extern double fmod(double x, double m);
+extern double NaN(void);
+extern int isNaN(double x);
+extern double Inf(int i);
+extern int isInf(double x, int i);
+extern double erf(double x);
+extern double erfc(double x);
+extern double j0(double x);
+extern double y0(double x);
+extern double j1(double x);
+extern double y1(double x);
+extern double jn(int i, double x);
+extern double yn(int i, double x);
 
 #endif

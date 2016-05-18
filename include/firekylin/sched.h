@@ -109,10 +109,14 @@ struct task {
 	"pushl %%edi;"			\
 	"pushl %%esi;"			\
 	"pushl %%ebp;"			\
+	"subl  $108,%%esp;"		\
+	"fnsave (%%esp);"		\
 	"movl  %%esp,%%eax;"		\
 	"andl  $0xfffff000,%%eax;"	\
 	"movl  %%esp,(%%eax);"		\
 	"movl  %%ecx,%%esp;"		\
+	"frstor (%%esp);"		\
+	"addl  $108,%%esp;"		\
 	"popl  %%ebp;"			\
 	"popl  %%esi;"			\
 	"popl  %%edi;"			\
