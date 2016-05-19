@@ -5,5 +5,18 @@ LIBC_OBJ+=math/frexp.o \
           math/cos.o   \
           math/tan.o   \
           math/floor.o \
-          math/ceil.o
-          
+          math/ceil.o  \
+          math/atan.o  \
+          math/atan2.o \
+          math/asin.o  \
+          math/acos.o  \
+          math/hypot.o \
+          math/log.o   \
+          math/log10.o \
+          math/exp.o   \
+          math/pow.o   \
+          math/sinh.o  \
+          math/cosh.o  \
+          math/tanh.o  \
+          math/fmod.o  \
+          math/ldexp.o

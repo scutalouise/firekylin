@@ -37,7 +37,7 @@ build:boot/bootsect.bin tools/install-boot $(HD)
 	cp   command/rm /mnt/bin/rm
 	cp   command/ed /mnt/bin/ed
 	cp   command/link /mnt/bin/link
-	cp   command/t1 /mnt/bin/t1
+	cp   command/t1   /mnt/bin/t1
 	sudo umount /mnt
 	./tools/install-boot boot/bootsect.bin $(HD)
 	

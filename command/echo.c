@@ -13,4 +13,10 @@ int main(int argc, char **argv)
 		printf("%s ",argv[i]);
 	}
 	printf("\n");
+	printf("\03310;6Chellp");
+	printf("\03310;7Chellp");
+	printf("\03310;8Chellp");
+	printf("\03310;9Chellp");
+	printf("\03310;10Chellp");
+	printf("\03310;11Chellp");
 }

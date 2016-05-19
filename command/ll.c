@@ -41,6 +41,5 @@ int main(int argc, char **argv)
 				printf("%s\t", "CHAR");
 				break;
 		}
-		printk("\n");
 	}
 }

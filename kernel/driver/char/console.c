@@ -37,6 +37,33 @@ int con_write(struct tty_struct *tty)
 		} else if(ch=='\b'){
 			*--tmp=15;
 			*--tmp=0x20;
+		} else if(ch=='\033'){
+			int x=0,y=0;
+			while(1){
+				GETCH(tty->out,ch);
+				if(ch>='0' && ch <='9')
+					x=x*10+ch-'0';
+				else
+					break;
+			}
+			if(ch==';'){
+				while(1){
+					GETCH(tty->out,ch);
+					if(ch>='0' && ch <='9')
+						y=y*10+ch-'0';
+					else
+						break;
+				}
+			}
+			if(ch=='P'){
+				if(x>80)
+					x=80;
+				if(y>24)
+					y=24;
+				tmp=orgin +y*160+x*2;
+			}
+			else if(ch=='C')
+				color=((x<<4)&0xf0)|(y&0xf);
 		}
 		if (tmp == (char*) 0xc00bff80) {
 			memcpy((char*)base, (char*)(tmp-24*2*80), 24*2*80);

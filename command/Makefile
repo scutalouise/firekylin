@@ -52,6 +52,6 @@ link:link.o
 	$(LD) -o  $@  $<  $(LIB)
 t1:t1.o
 	$(LD) -o  $@  $<  $(LIB)
-	
+		
 clean:
 	-rm *.o $(OBJS)

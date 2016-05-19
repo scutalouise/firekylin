@@ -7,8 +7,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void __bad_assert(char *expr,char* file,int line)
+void __bad_assert(char *expr, char* file, int line)
 {
-	printf("Assert %s failed, file %s,line %d",expr,file,line);
+	fprintf(stderr, "Assertion failed: %s , file %s, line %d", expr, file,
+			line);
 	exit(0);
 }
