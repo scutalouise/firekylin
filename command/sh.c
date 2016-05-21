@@ -15,16 +15,51 @@
 
 char *ps1 = "[firkylin~]#";
 
+struct cmd_struct {
+	char *name;
+	int (*fun)(int, char **);
+};
+
+int do_echo(int argc, char **argv)
+{
+	for (int i = 1; i < argc; i++) {
+		printf("%s ", argv[i]);
+	}
+	printf("\n");
+	return 0;
+}
+
+int do_clear(int argc, char **argv)
+{
+	printf("\0330;0P");
+	for (int i = 0; i < 8 * 24; i++) {
+		printf("          ");
+	}
+	printf("\0330;0P");
+	return 0;
+}
+
+int do_cd(int argc, char **argv)
+{
+	if (argv[1]) {
+		chdir(argv[1]);
+	} else {
+		chdir("/");
+	}
+	return 0;
+}
+
 int get_cmd(char *buf)
 {
 	int size = read(0, buf, 100);
-	buf[size] = 0;
-	return size;
+	buf[size - 1] = 0;
+	return size - 1;
 }
 
-void parcmd(char *buf, char **argv)
+int parcmd(char *buf, char **argv)
 {
-	for (int i = 0; i < MAX_ARG; i++) {
+	int i;
+	for (i = 0; i < MAX_ARG; i++) {
 		while (*buf == ' ')
 			buf++;
 		if (*buf == 0) {
@@ -40,25 +75,26 @@ void parcmd(char *buf, char **argv)
 		if (*buf != 0)
 			*buf++ = 0;
 	}
+	return i-1;
 }
 
-void execcmd(char **argv)
+struct cmd_struct builtins[3] = { { "cd", do_cd }, { "echo", do_echo }, {
+		"clear", do_clear }, };
+
+int execcmd(int argc, char **argv)
 {
 	int pid;
-	if (strcmp(argv[0], "cd") == 0) {
-		if(argv[1]){
-			chdir(argv[1]);
-		}else{
-			chdir("/");
-		}
-		return ;
+	for (int i = 0; i < 3; i++) {
+		if (strcmp(argv[0], builtins[i].name) == 0)
+			return (*builtins[i].fun)(argc, argv);
 	}
+
 	pid = fork();
 	if (pid) {
 		waitpid(pid, NULL, 0);
 	} else {
-		execvpe(argv[0], argv,NULL);
-		printf("sh:%s\n",strerror(errno));
+		execvpe(argv[0], argv, NULL);
+		printf("sh:%s\n", strerror(errno));
 		_exit(0);
 	}
 }
@@ -66,6 +102,7 @@ void execcmd(char **argv)
 int main(void)
 {
 	char *argv[MAX_ARG];
+	int argc;
 	char buf[100];
 
 	printf("\n\rWelcome To FireKylin 0.1 !\n\r");
@@ -74,8 +111,8 @@ int main(void)
 	while (1) {
 		printf("%s", ps1);
 		if (get_cmd(buf)) {
-			parcmd(buf, argv);
-			execcmd(argv);
+			argc = parcmd(buf, argv);
+			execcmd(argc, argv);
 		}
 	}
 }

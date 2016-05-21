@@ -1,22 +1,26 @@
-LIBC_OBJ+=math/frexp.o \
-          math/fabs.o  \
-          math/sqrt.o  \
-          math/sin.o   \
+LIBC_OBJ+=math/sin.o   \
           math/cos.o   \
           math/tan.o   \
-          math/floor.o \
-          math/ceil.o  \
+	  math/asin.o  \
+          math/acos.o  \
           math/atan.o  \
           math/atan2.o \
-          math/asin.o  \
-          math/acos.o  \
-          math/hypot.o \
-          math/log.o   \
-          math/log10.o \
           math/exp.o   \
           math/pow.o   \
-          math/sinh.o  \
+          math/ln.o    \
+	  math/lg.o    \
+	  math/log.o   \
+	  math/sinh.o  \
           math/cosh.o  \
           math/tanh.o  \
+          math/asinh.o \
+	  math/acosh.o \
+	  math/atanh.o \
+	  math/sqrt.o  \
+	  math/hypot.o \
+	  math/fabs.o  \
+          math/floor.o \
+          math/ceil.o  \
           math/fmod.o  \
           math/ldexp.o
+	  

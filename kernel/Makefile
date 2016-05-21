@@ -36,4 +36,10 @@ kernel.bin: $(OBJS)
 	    -Map kernel.map -o kernel.bin $(OBJS)	
 	
 clean:
-	-rm kernel.map kernel.bin $(OBJS)
+	@echo kernel cleaning...
+	@-rm kernel.map kernel.bin $(OBJS)
+
+count:
+	@echo dirs:  $(shell ls -lR |grep ^d |wc -l)
+	@echo files: $(shell ls -lR |grep ^- |wc -l)
+	@echo lines: $(shell find . -name *.[chs] |xargs grep -v ^$$ |wc -l)

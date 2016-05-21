@@ -18,22 +18,20 @@ typedef struct _iobuf {
 	char *_ptr;
 } FILE;
 
-#define	_IOFBF		0x000
-#define	_IOREAD		0x001
-#define	_IOWRITE	0x002
-#define	_IONBF		0x004
-#define	_IOMYBUF	0x008
-#define	_IOEOF		0x010
-#define	_IOERR		0x020
-#define	_IOLBF		0x040
-#define	_IOREADING	0x080
-#define	_IOWRITING	0x100
-#define	_IOAPPEND	0x200
-#define _IOFIFO		0x400
+#define _IONULL		0x0000
+#define	_IONBF		0x0001
+#define	_IOLBF		0x0002
+#define	_IOFBF		0x0004
+#define	_IOMYBUF	0x0008
+#define	_IOREAD		0x0010
+#define	_IOWRITE	0x0020
+#define	_IOAPPEND	0x0040
+#define	_IOREADING	0x0080
+#define	_IOWRITING	0x0100
+#define	_IOEOF		0x1000
+#define	_IOERR		0x2000
+#define _IOFIFO		0x4000
 
-/* The following definitions are also in <sys/unistd.h>.
- * They should not conflict.
- */
 #define	SEEK_SET	0
 #define	SEEK_CUR	1
 #define	SEEK_END	2
@@ -83,7 +81,7 @@ extern int ungetc(int ch, FILE *iop);
 			  (int) (*(p)->_ptr++ = (c)) :  __flushbuf((c),(p)))
 
 #define getchar()	getc(stdin)
-#define putchar()	putc(c,stdout)
+#define putchar(c)	putc(c,stdout)
 
 #define	feof(p)		(((p)->_flag & _IOEOF) != 0)
 #define	ferror(p)	(((p)->_flag & _IOERR) != 0)

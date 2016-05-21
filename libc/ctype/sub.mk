@@ -10,5 +10,7 @@ LIBC_OBJ+=ctype/__ctype.o \
 	  ctype/isxdigit.o \
 	  ctype/isspace.o  \
 	  ctype/isgraph.o \
+	  ctype/isascii.o \
           ctype/tolower.o \
-	  ctype/toupper.o
+	  ctype/toupper.o \
+	  ctype/toascii.o 

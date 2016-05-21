@@ -20,6 +20,7 @@ build:boot/bootsect.bin tools/install-boot $(HD)
 	-mkdir /mnt/etc
 	-mkdir /mnt/home
 	-mkdir /mnt/lib
+	-mkdir /mnt/src
 	-sudo mknod /mnt/dev/tty1 c 4 1
 	-sudo mknod /mnt/dev/com1 c 4 2
 	cp   kernel/kernel.bin /mnt/boot/kernel
@@ -27,7 +28,6 @@ build:boot/bootsect.bin tools/install-boot $(HD)
 	cp   command/init /mnt/bin/init
 	cp   command/sh /mnt/bin/sh
 	cp   command/ls /mnt/bin/ls
-	cp   command/echo /mnt/bin/echo
 	cp   command/cat /mnt/bin/cat
 	cp   command/sync /mnt/bin/sync
 	cp   command/mkdir /mnt/bin/mkdir
@@ -37,7 +37,7 @@ build:boot/bootsect.bin tools/install-boot $(HD)
 	cp   command/rm /mnt/bin/rm
 	cp   command/ed /mnt/bin/ed
 	cp   command/link /mnt/bin/link
-	cp   command/t1   /mnt/bin/t1
+	cp   command/*     /mnt/src/
 	sudo umount /mnt
 	./tools/install-boot boot/bootsect.bin $(HD)
 	
@@ -45,9 +45,9 @@ clean:
 	-rm -f boot/bootsect.bin
 	-rm -f tools/install-boot
 	-rm -f $(HD)
-	make clean -C kernel
-	make clean -C libc
-	make clean -C command
+	@make clean -C kernel
+	@make clean -C libc
+	@make clean -C command
 
 count:
 	@echo dirs:  $(shell ls -lR |grep ^d |wc -l)

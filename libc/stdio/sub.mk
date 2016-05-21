@@ -22,5 +22,6 @@ LIBC_OBJ+=stdio/__iotab.o \
 	  stdio/ungetc.o  \
 	  stdio/fgetpos.o \
 	  stdio/fsetpos.o \
-	  stdio/printf.o
+	  stdio/printf.o  \
+	  stdio/vsprintf.o
 	  

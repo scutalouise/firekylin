@@ -36,6 +36,8 @@ int main(int argc, char **argv)
 		_exit(0);
 	}
 	while((size=get_line())){
+		if(size==1)
+			break;
 		write(fd,buf,size);
 	}
 	close(fd);

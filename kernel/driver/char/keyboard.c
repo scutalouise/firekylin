@@ -92,7 +92,8 @@ void do_keyboard(struct trapframe *tf)
 				PUTCH(console.raw,s);
 				wake_up(&(console.raw.wait));
 			}
-			printk("%c",s);
+			if(s!=0x1b)
+				printk("%c",s);
 			break;
 		}
 	} else {

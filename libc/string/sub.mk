@@ -1,16 +1,20 @@
-LIBC_OBJ+=string/memcpy.o \
-          string/memset.o \
-	  string/memcmp.o \
-	  string/memchr.o \
-	  string/strcat.o \
-	  string/strcpy.o \
-          string/strlen.o \
-	  string/strcmp.o \
-	  string/strncat.o \
-	  string/strncpy.o \
-          string/strnlen.o \
-	  string/strncmp.o \
-	  string/vsprintf.o \
-          string/strerror.o \
-          string/strchr.o \
-          string/strfmt.o
+LIBC_OBJ+=string/memchr.o  \
+	  string/memcmp.o  \
+          string/memset.o  \
+	  string/memcpy.o  \
+	  string/memmove.o \
+          string/strlen.o  \
+	  string/strcat.o  \
+	  string/strcpy.o  \
+	  string/strcmp.o  \
+	  string/stricmp.o \
+          string/strnlen.o  \
+	  string/strncat.o  \
+	  string/strncpy.o  \
+	  string/strncmp.o  \
+	  string/strnicmp.o \
+	  string/strchr.o   \
+	  string/strrchr.o  \
+	  string/strstr.o   \
+	  string/strerror.o
+          

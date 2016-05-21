@@ -36,4 +36,10 @@ libc.a: $(LIBC_OBJ)
 	@ar rcs   libc.a     $(LIBC_OBJ) 
 
 clean: 
-	-rm libc.a $(LIBC_OBJ)
+	@echo libc cleaning...
+	@-rm libc.a $(LIBC_OBJ)
+
+count:
+	@echo dirs:  $(shell ls -lR |grep ^d |wc -l)
+	@echo files: $(shell ls -lR |grep ^- |wc -l)
+	@echo lines: $(shell find . -name *.[chs] |xargs grep -v ^$$ |wc -l)

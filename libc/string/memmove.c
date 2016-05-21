@@ -6,7 +6,7 @@
 
 #include <string.h>
 
-void *memmove(void *s1, const void *s2, size_t n)
+void *memmove(void *s1, void *s2, size_t n)
 {
 	char *p1 = (char*) s1;
 	char *p2 = (char*) s2;

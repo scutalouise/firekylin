@@ -29,11 +29,11 @@ static char * _i_compute(printval_u_t val, int base, char *s, int nrdigits)
 {
 	int c;
 
-	c= val % base ;
-	val /= base ;
+	c = val % base;
+	val /= base;
 	if (val || nrdigits > 1)
 		s = _i_compute(val, base, s, nrdigits - 1);
-	*s++ = (c>9 ? c-10+'a' : c+'0');
+	*s++ = (c > 9 ? c - 10 + 'a' : c + '0');
 	return s;
 }
 
@@ -133,24 +133,15 @@ static char * o_print(va_list *ap, int flags, char *s, char c, int precision,
 	return s;
 }
 
-int __doprintf(FILE *iop,const char *fmt, va_list ap)
+int __doprintf(FILE *iop, const char *fmt, va_list ap)
 {
-	register char *s;
-	register int j;
-	int i, c, width, precision, zfill, flags, between_fill;
+	int i, j, c, width, precision, zfill, flags, between_fill;
 	int nrchars = 0;
 	const char *oldfmt;
-	char *s1, buf[1025];
+	char *s, *s1, buf[1025];
 
 	while ((c = *fmt++)) {
 		if (c != '%') {
-#ifdef	CPM
-			if (c == '\n') {
-				if (putc('\r', iop) == EOF)
-				return nrchars ? -nrchars : -1;
-				nrchars++;
-			}
-#endif
 			if (putc(c, iop) == EOF)
 				return nrchars ? -nrchars : -1;
 			nrchars++;
@@ -239,13 +230,6 @@ int __doprintf(FILE *iop,const char *fmt, va_list ap)
 
 		switch (c = *fmt++) {
 			default:
-#ifdef	CPM
-				if (c == '\n') {
-					if (putc('\r', iop) == EOF)
-					return nrchars ? -nrchars : -1;
-					nrchars++;
-				}
-#endif
 				if (putc(c, iop) == EOF)
 					return nrchars ? -nrchars : -1;
 				nrchars++;
@@ -270,10 +254,10 @@ int __doprintf(FILE *iop,const char *fmt, va_list ap)
 					precision--;
 				}
 				break;
-			//case 'p':
-			//	set_pointer(flags);
+				//case 'p':
+				//	set_pointer(flags);
 				/* fallthrough */
-			//case 'b':
+				//case 'b':
 			case 'o':
 			case 'u':
 			case 'x':
@@ -333,14 +317,9 @@ int __doprintf(FILE *iop,const char *fmt, va_list ap)
 		 */
 		between_fill = 0;
 		if ((flags & FL_ZEROFILL)
-				&& (((c == 'x' || c == 'X') && (flags & FL_ALT)
-						&& j > 1) || (c == 'p')
-						|| ((flags & FL_SIGNEDCONV)
-								&& (*s1 == '+'
-										|| *s1
-												== '-'
-										|| *s1
-												== ' '))))
+			&& (((c == 'x' || c == 'X') && (flags & FL_ALT)
+					&& j > 1) || (c == 'p') || ((flags & FL_SIGNEDCONV)
+					&& (*s1 == '+' || *s1 == '-'|| *s1== ' '))))
 			between_fill++;
 
 		if ((i = width - j) > 0)

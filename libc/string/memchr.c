@@ -10,7 +10,7 @@ void * memchr(const void * buf, int chr, size_t n)
 {
 	char *s = (char *) buf;
 
-	while (n-- && *s != chr) {
+	while (--n && *s != chr) {
 		s++;
 	}
 
