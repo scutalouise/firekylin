@@ -12,10 +12,9 @@
 #include <sys/stat.h>
 #include <errno.h>
 
-extern int sys_close(int fd);
-
 static int dupfd(int fd, unsigned int arg)
 {
+	extern int sys_close(int fd);
 	struct task *current;
 
 	if (arg > NR_OPEN)
@@ -33,7 +32,6 @@ static int dupfd(int fd, unsigned int arg)
 		current->file[fd]->f_count++;
 		return arg;
 	}
-
 	return -EMFILE;
 }
 

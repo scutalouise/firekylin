@@ -54,26 +54,27 @@ extern FILE *stderr;
 int myprintf(char *fmt,...);
 #define printf  myprintf
 
-extern int fileno(FILE *iop);
-extern int __fillbuf(FILE *iop);
-extern int __flushbuf(int c, FILE * iop);
+
+extern int  __fillbuf(FILE *iop);
+extern int  __flushbuf(int c, FILE * iop);
 extern FILE * fopen(char *name, char *mode);
-extern int fclose(FILE *fp);
-extern int fflush(FILE *iop);
-extern int fgetc(FILE *iop);
-extern int fgetpos(FILE *fp, fpos_t *pos);
+extern int    fclose(FILE *fp);
+extern int    fflush(FILE *iop);
+extern int    fgetc(FILE *iop);
+extern int    fgetpos(FILE *fp, fpos_t *pos);
 extern char * fgets(char *s, size_t n, FILE *iop);
-extern int fputc(int c,FILE *iop);
-extern int fputs(const char *s, FILE *iop);
-extern int fread(void *ptr, size_t size, int count, FILE *iop);
-extern int fseek(FILE *iop, off_t offset, int whence);
-extern int fsetpos(FILE *iop, fpos_t *pos);
-extern long ftell(FILE *iop);
-extern int fwrite(void *ptr, size_t size, int count, FILE * iop);
-extern void rewind(FILE *iop);
-extern void setbuf(FILE *iop, char *buf);
-extern int setvbuf(FILE *iop, char *buf, int mode, size_t size);
-extern int ungetc(int ch, FILE *iop);
+extern int    fputc(int c,FILE *iop);
+extern int    fputs(const char *s, FILE *iop);
+extern int    fread(void *ptr, size_t size, int count, FILE *iop);
+extern int    fseek(FILE *iop, off_t offset, int whence);
+extern int    fsetpos(FILE *iop, fpos_t *pos);
+extern long   ftell(FILE *iop);
+extern int    fwrite(void *ptr, size_t size, int count, FILE * iop);
+extern void   rewind(FILE *iop);
+extern void   setbuf(FILE *iop, char *buf);
+extern int    setvbuf(FILE *iop, char *buf, int mode, size_t size);
+extern int    fileno(FILE *iop);
+extern int    ungetc(int ch, FILE *iop);
 
 #define	getc(p)		(--(p)->_cnt >= 0 ? \
 		          (int) (*(p)->_ptr++) : __fillbuf(p))

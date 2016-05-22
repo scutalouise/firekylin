@@ -26,3 +26,20 @@ void write_block(struct buffer* buf)
 		panic("dev %x not exsit", buf->b_dev);
 	blk_table[major]->write(buf);
 }
+
+void char_dev_init(void)
+{
+	extern void tty_init(void);
+
+	tty_init();
+
+}
+
+void blk_dev_init(void)
+{
+	extern void rd_init(void);
+	extern void hd_init(void);
+
+	rd_init();
+	hd_init();
+}

@@ -18,11 +18,6 @@ static int find_bit(char *addr, int size)
 	return -1;
 }
 
-int test_bit(char *addr, int bit)
-{
-	return *(addr + bit / 8) & (1 << bit % 8);
-}
-
 static void set_bit(char *addr, int bit)
 {
 	*(addr + bit / 8) = *(addr + bit / 8) | (1 << (bit % 8));

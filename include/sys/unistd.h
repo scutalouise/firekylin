@@ -20,6 +20,9 @@
 #define STDOUT_FILENO	1	/* file descriptor of stdout */
 #define STDERR_FILENO	2	/* file descriptor of stderr */
 
+#define PIPE_READ_ID	0
+#define PIPE_WRITE_ID	1
+
 extern int errno;
 extern char **environ;
 

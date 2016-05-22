@@ -10,27 +10,11 @@
 #include <errno.h>
 
 #define NR_SUPER	4
-struct super super_table[NR_SUPER];
+static struct super super_table[NR_SUPER];
+static sleeplock_t super_lock;
 
-static unsigned long super_busy = 0;
-static struct task * super_wait = NULL;
-
-static inline void lock_super_table(void)
-{
-	irq_lock();
-	while (super_busy)
-		sleep_on(&super_wait);
-	super_busy = 1;
-	irq_unlock();
-}
-
-static inline void unlock_super_table(void)
-{
-	irq_lock();
-	super_busy = 0;
-	wake_up(&super_wait);
-	irq_unlock();
-}
+#define lock_super_table()	require_lock(&super_lock);
+#define unlock_super_table()	release_lock(&super_lock);
 
 static inline void lock_super(struct super *sb)
 {

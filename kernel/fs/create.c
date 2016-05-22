@@ -10,23 +10,21 @@
 #include <sys/fcntl.h>
 #include <errno.h>
 
-int sys_mknod(char *filename, mode_t mode,dev_t dev)
+int sys_mknod(char *filename, mode_t mode, dev_t dev)
 {
 	struct inode *dir_inode;
 	char *basename;
 	int res;
 
-//	if (!S_ISCHR(mode) || !S_ISBLK(mode) || !S_ISREG(mode)
-//			|| !S_ISFIFO(mode))
-//		return -EINVAL;
-
+	if (S_ISDIR(mode) || S_ISLNK(mode))
+		return -EINVAL;
 	if (!(dir_inode = namei(filename, &basename)))
 		return -ENOENT;
 	if (!*basename) {
 		iput(dir_inode);
 		return -ENOENT;
 	}
-	res=dir_inode->i_op->mknod(dir_inode, basename, mode,dev );
+	res = dir_inode->i_op->mknod(dir_inode, basename, mode, dev);
 	iput(dir_inode);
 	return res;
 }
@@ -44,8 +42,8 @@ int sys_mkdir(char *pathname, mode_t mode)
 		return -EINVAL;
 	}
 
-	mode=S_IFDIR|(mode &07777);
-	res=dir_inode->i_op->mkdir(dir_inode, basename, mode);
+	mode = S_IFDIR | (mode & 07777);
+	res = dir_inode->i_op->mkdir(dir_inode, basename, mode);
 	iput(dir_inode);
 	return res;
 }
@@ -58,12 +56,10 @@ int sys_link(char *name, char *newname)
 
 	if (!(inode = namei(name, NULL)))
 		return -ENOENT;
-
 	if (S_ISDIR(inode->i_mode)) {
 		iput(inode);
 		return -EPERM;
 	}
-
 	if (!(new_dir_inode = namei(newname, &basename))) {
 		iput(inode);
 		return -EACCESS;
@@ -78,7 +74,7 @@ int sys_link(char *name, char *newname)
 		iput(new_dir_inode);
 		return -EACCESS;
 	}
-	res=new_dir_inode->i_op->link(new_dir_inode, basename, inode);
+	res = new_dir_inode->i_op->link(new_dir_inode, basename, inode);
 	iput(inode);
 	iput(new_dir_inode);
 	return res;
@@ -97,7 +93,7 @@ int sys_unlink(char *pathname)
 		return -EACCESS;
 	}
 
-	res=dir_inode->i_op->unlink(dir_inode, basename);
+	res = dir_inode->i_op->unlink(dir_inode, basename);
 	iput(dir_inode);
 	return res;
 }
@@ -128,11 +124,11 @@ int sys_rename(char *old, char *new)
 		return -ENOENT;
 	iunlock(old_dir_inode);
 	new_dir_inode = namei(new, &new_basename);
+
 	if (!old_dir_inode) {
 		iput(ilock(old_dir_inode));
 		return -ENOENT;
 	}
-
 	if (old_dir_inode != new_dir_inode) {
 		iput(new_dir_inode);
 		iput(ilock(old_dir_inode));

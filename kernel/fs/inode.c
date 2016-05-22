@@ -16,7 +16,6 @@ sleeplock_t inode_lock;
 #define lock_inode_table()	require_lock(&inode_lock);
 #define unlock_inode_table()	release_lock(&inode_lock);
 
-
 struct inode * ilock(struct inode * inode)
 {
 	if (!inode) {

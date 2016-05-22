@@ -25,8 +25,8 @@ extern char _edata[];
 extern char _end[];
 
 extern void arch_init();
-extern void tty_init();
-extern void hd_init(void);
+extern void char_dev_init();
+extern void blk_dev_init();
 extern void mm_init();
 extern void buffer_init();
 extern void sched_init();
@@ -86,7 +86,6 @@ static void time_init()
 	BCD_BIN(month);
 	BCD_BIN(year);
 	start_time = mktimek(year, month, day, hour, min, sec);
-	printk("start time:%d-%d-%d %d:%d:%d\n",year,month,day,hour,min,sec);
 }
 
 void start(void)
@@ -94,11 +93,10 @@ void start(void)
 	memset(_edata, 0, (_end-_edata));
 
 	arch_init();
-	tty_init();
 	time_init();
-	hd_init();
+	char_dev_init();
+	blk_dev_init();
 	mm_init();
-	buffer_init();
 	sched_init();
 	clock_init();
 
@@ -106,6 +104,7 @@ void start(void)
 		__asm__("__hlt:hlt ; jmp __hlt");
 	}
 
+	buffer_init();
 	mount_root();
 
 	sys_exec("/bin/init", NULL, NULL);

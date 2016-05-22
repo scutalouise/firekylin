@@ -121,7 +121,7 @@ static void do_hd(struct trapframe *tf)
 			outs(HD_DATA, hd_req.buf, 512);
 			return;
 		}
-		hd_req.bh->b_flag = B_VALID;
+		hd_req.bh->b_flag &=~B_DIRTY ;
 		wake_up(&(hd_req.bh->b_wait));
 		hd_req.buf = NULL;
 		hd_req.busy = 0;

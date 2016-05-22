@@ -100,7 +100,6 @@ void brelse(struct buffer *buf)
 
 struct buffer * bread(dev_t dev,long block)
 {
-
 	struct buffer *buf=getblk(dev,block);
 
 	if(buf==NULL)

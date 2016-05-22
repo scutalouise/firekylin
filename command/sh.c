@@ -75,7 +75,7 @@ int parcmd(char *buf, char **argv)
 		if (*buf != 0)
 			*buf++ = 0;
 	}
-	return i-1;
+	return i;
 }
 
 struct cmd_struct builtins[3] = { { "cd", do_cd }, { "echo", do_echo }, {

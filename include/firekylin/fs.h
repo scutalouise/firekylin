@@ -123,4 +123,8 @@ extern struct inode  * idup(struct inode *inode);
 extern struct inode  * namei(char *path, char **basename);
 extern void            iput(struct inode *inode);
 
+#define NR_FILE 	64
+extern struct file file_table[NR_FILE];
+extern sleeplock_t file_table_lock;
+
 #endif

@@ -67,7 +67,6 @@ struct utimebuf {
 	time_t ctime;
 };
 
-extern int create(char *filename, mode_t mode, long arg);
 extern int stat(char *filename, struct stat *statbuf);
 extern int fstat(int fd, struct stat *statbuf);
 extern int chown(char *filename, uid_t uid, gid_t gid);

@@ -9,16 +9,12 @@
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
 #include <sys/stat.h>
+#include <sys/fcntl.h>
+#include <sys/unistd.h>
 #include <errno.h>
 
-#define NR_FILE 	64
-
 struct file file_table[NR_FILE];
-
-int sys_access(char *filename, int mode)
-{
-	return -ERROR;
-}
+sleeplock_t file_table_lock;
 
 int char_open(dev_t dev)
 {
@@ -46,8 +42,39 @@ int blk_open(dev_t dev)
 	return 0;
 }
 
-int sys_open(char *path, int flag,mode_t mode)
+int sys_access(char *filename, int mode)
 {
+	struct inode *inode;
+	mode_t tmp_mode = 0;
+	struct task *current;
+
+	if (!(inode = namei(filename, NULL)))
+		return -EACCESS;
+	if (mode == F_OK) {
+		iput(inode);
+		return 0;
+	}
+
+	mode &= 7;
+	current = CURRENT_TASK();
+	if (current->uid == inode->i_uid)
+		tmp_mode |= (mode) << 6;
+	if (current->gid == inode->i_gid)
+		tmp_mode |= (mode) << 3;
+	tmp_mode |= (mode);
+
+	if (tmp_mode & inode->i_mode) {
+		iput(inode);
+		return 0;
+	}
+
+	iput(inode);
+	return -EACCESS;
+}
+
+int sys_open(char *path, int flag, mode_t mode)
+{
+	extern int sys_mknod(char *filename, mode_t mode, dev_t dev);
 	int fd;
 	struct file *file;
 	struct inode *inode;
@@ -66,16 +93,20 @@ int sys_open(char *path, int flag,mode_t mode)
 	if (file >= file_table + NR_FILE)
 		return -EINVAL;
 
-	if (!(inode = namei(path, NULL)))
-		return -ENOENT;
+	if (!(inode = namei(path, NULL))) {
+		if (!(flag & O_CREAT)) {
+			if (sys_mknod(path, S_IFREG | (mode & 07777), 0) < 0)
+				return -EAGAIN;
+		}
+		inode = namei(path, NULL);
+	}
+
 	iunlock(inode);
 	file->f_count = 1;
 	file->f_inode = inode;
 	file->f_pos = 0;
 	file->f_mode = flag;
-
 	current->file[fd] = file;
-
 	return fd;
 }
 

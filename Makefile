@@ -23,6 +23,12 @@ build:boot/bootsect.bin tools/install-boot $(HD)
 	-mkdir /mnt/src
 	-sudo mknod /mnt/dev/tty1 c 4 1
 	-sudo mknod /mnt/dev/com1 c 4 2
+	-sudo mknod /mnt/dev/ram0 b 1 0
+	-sudo mknod /mnt/dev/hda  b 3 0
+	-sudo mknod /mnt/dev/hda1 b 3 1
+	-sudo mknod /mnt/dev/hda2 b 3 2
+	-sudo mknod /mnt/dev/hda3 b 3 3
+	-sudo mknod /mnt/dev/hda4 b 3 4
 	cp   kernel/kernel.bin /mnt/boot/kernel
 	cp   kernel/kernel.map /mnt/boot/kernel.map
 	cp   command/init /mnt/bin/init
