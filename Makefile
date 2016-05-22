@@ -23,7 +23,12 @@ build:boot/bootsect.bin tools/install-boot $(HD)
 	-mkdir /mnt/src
 	-sudo mknod /mnt/dev/tty1 c 4 1
 	-sudo mknod /mnt/dev/com1 c 4 2
-	-sudo mknod /mnt/dev/ram0 b 1 0
+	-sudo mknod /mnt/dev/ram  c 1 0
+	-sudo mknod /mnt/dev/port c 1 1
+	-sudo mknod /mnt/dev/kmem c 1 2
+	-sudo mknod /mnt/dev/null c 1 3
+	-sudo mknod /mnt/dev/full c 1 4
+	-sudo mknod /mnt/dev/rd0  b 1 0 
 	-sudo mknod /mnt/dev/hda  b 3 0
 	-sudo mknod /mnt/dev/hda1 b 3 1
 	-sudo mknod /mnt/dev/hda2 b 3 2

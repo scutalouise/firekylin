@@ -30,9 +30,10 @@ void write_block(struct buffer* buf)
 void char_dev_init(void)
 {
 	extern void tty_init(void);
+	extern void mem_init(void);
 
 	tty_init();
-
+	mem_init();
 }
 
 void blk_dev_init(void)
