@@ -1,65 +1,65 @@
 /*
- *	libc/stdio/__fillbuf.c
- *
- *	(C) 2016 ximo<ximoos@foxmail.com>. Port from minix
+ * __fillbuf.c - fill a buffer
  */
 
 #include "stdio_loc.h"
 
-int __fillbuf(FILE *iop)
+int __fillbuf(FILE *stream)
 {
-	static char ch[FOPEN_MAX];
+	static unsigned char ch[FOPEN_MAX];
+	int i;
 
-	iop->_cnt = 0;
-	if (fileno(iop) < 0)
+	stream->_count = 0;
+	if (fileno(stream) < 0)
 		return EOF;
-	if (io_testflag(iop, (_IOEOF | _IOERR )))
+	if (io_testflag(stream, (_IOEOF | _IOERR )))
 		return EOF;
-	if (!io_testflag(iop, _IOREAD)) {
-		iop->_flag |= _IOERR;
+	if (!io_testflag(stream, _IOREAD)) {
+		stream->_flags |= _IOERR;
 		return EOF;
 	}
-	if (io_testflag(iop, _IOWRITING)) {
-		iop->_flag |= _IOERR;
+	if (io_testflag(stream, _IOWRITING)) {
+		stream->_flags |= _IOERR;
 		return EOF;
 	}
 
-	if (!io_testflag(iop, _IOREADING))
-		iop->_flag |= _IOREADING;
+	if (!io_testflag(stream, _IOREADING))
+		stream->_flags |= _IOREADING;
 
-	if (!io_testflag(iop, _IONBF) && !iop->_buf) {
-		iop->_buf = (char *) malloc(BUFSIZ);
-		if (!iop->_buf) {
-			iop->_flag |= _IONBF;
+	if (!io_testflag(stream, _IONBF) && !stream->_buf) {
+		stream->_buf = (unsigned char *) malloc(BUFSIZ);
+		if (!stream->_buf) {
+			stream->_flags |= _IONBF;
 		} else {
-			iop->_flag |= _IOMYBUF;
-			iop->_bufsiz = BUFSIZ;
+			stream->_flags |= _IOMYBUF;
+			stream->_bufsiz = BUFSIZ;
 		}
 	}
 
 	/* flush line-buffered output when filling an input buffer */
-	for (int i = 0; i < FOPEN_MAX; i++) {
-		if (io_testflag(&__iotab[i], _IOLBF))
-			if (io_testflag(&__iotab[i], _IOWRITING))
-				(void) fflush(&__iotab[i]);
+	for (i = 0; i < FOPEN_MAX; i++) {
+		if (__iotab[i] && io_testflag(__iotab[i], _IOLBF))
+			if (io_testflag(__iotab[i], _IOWRITING))
+				(void) fflush(__iotab[i]);
 	}
 
-	if (!iop->_buf) {
-		iop->_buf = &ch[fileno(iop)];
-		iop->_bufsiz = 1;
+	if (!stream->_buf) {
+		stream->_buf = &ch[fileno(stream)];
+		stream->_bufsiz = 1;
 	}
-	iop->_ptr = iop->_buf;
-	iop->_cnt = read(iop->_fd, (char *) iop->_buf, iop->_bufsiz);
+	stream->_ptr = stream->_buf;
+	stream->_count = read(stream->_fd, (char *) stream->_buf,
+			stream->_bufsiz);
 
-	if (iop->_cnt <= 0) {
-		if (iop->_cnt == 0) {
-			iop->_flag |= _IOEOF;
+	if (stream->_count <= 0) {
+		if (stream->_count == 0) {
+			stream->_flags |= _IOEOF;
 		} else
-			iop->_flag |= _IOERR;
+			stream->_flags |= _IOERR;
 
 		return EOF;
 	}
-	iop->_cnt--;
+	stream->_count--;
 
-	return *iop->_ptr++;
+	return *stream->_ptr++;
 }

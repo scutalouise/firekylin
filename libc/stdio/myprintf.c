@@ -1,15 +1,14 @@
 /*
- *    kernel/util.c
+ *	libc/stdio/myprintf.c
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ *	Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
+#include <sys/unistd.h>
 #include <stdarg.h>
-#include <firekylin/kernel.h>
 
-extern int tty_write(dev_t dev,char * buf,off_t off,size_t size);
-
-static char printk_buf[512];
+#include <stdarg.h>
+#include <string.h>
 
 static void itos(char **buf, unsigned int num, int base)
 {
@@ -33,7 +32,7 @@ static void itos(char **buf, unsigned int num, int base)
 	}
 }
 
-static int sformat(char* buf, char* fmt, va_list ap)
+static int vsprintf(char* buf, char* fmt, va_list ap)
 {
 	char *str = buf;
 	char *s;
@@ -70,26 +69,14 @@ static int sformat(char* buf, char* fmt, va_list ap)
 	return (int) (str - buf);
 }
 
-int printk(char* fmt, ...)
+int myprintf(char *fmt,...)
 {
+	char buf[1024];
 	va_list ap;
 	int i;
 
 	va_start(ap, fmt);
-	i = sformat(printk_buf, fmt, ap);
-	tty_write(1, printk_buf, 0, i);
+	i = vsprintf(buf, fmt, ap);
+	write(0,buf,i);
 	return i;
-}
-
-void panic(char* fmt, ...)
-{
-	va_list ap;
-	int i;
-
-	printk("\n\nKernel Panic: ");
-	va_start(ap, fmt);
-	i = sformat(printk_buf, fmt, ap);
-	tty_write(1,printk_buf, 0,i);
-	irq_disable();
-	__asm__("hlt");
 }

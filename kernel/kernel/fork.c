@@ -26,7 +26,6 @@ int sys_fork(long unuesd)
 	task->pid = ++last_pid;
 	task->parent = current;
 	
-
 	task->utime=0;
 	task->stime=0;
 	task->cutime=0;

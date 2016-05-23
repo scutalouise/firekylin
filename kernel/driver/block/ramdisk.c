@@ -9,7 +9,6 @@
 #include <firekylin/sched.h>
 #include <firekylin/trap.h>
 #include <firekylin/driver.h>
-#include <firekylin/hd.h>
 #include <firekylin/mm.h>
 #include <firekylin/fs.h>
 
@@ -55,4 +54,3 @@ void rd_init(void)
 	memset((char*) rd_start, 0, rd_sectors * 512);
 	blk_table[DEV_BLK_RAMDISK] = &rd;
 }
-

@@ -70,36 +70,36 @@ static int mem_full(int rw, char *buf, off_t off, size_t size)
 int mem_read(dev_t dev, char * buf, off_t off, size_t size)
 {
 	switch (MINOR(dev)) {
-		case MEM_RAM:
-			return mem_ram(MEM_READ, buf, off, size);
-		case MEM_PORT:
-			return mem_port(MEM_READ, buf, off, size);
-		case MEM_KMEM:
-			return mem_kmem(MEM_READ, buf, off, size);
-		case MEM_NULL:
-			return mem_null(MEM_READ, buf, off, size);
-		case MEM_FULL:
-			return mem_full(MEM_READ, buf, off, size);
-		default:
-			return -EIO;
+	case MEM_RAM:
+		return mem_ram(MEM_READ, buf, off, size);
+	case MEM_PORT:
+		return mem_port(MEM_READ, buf, off, size);
+	case MEM_KMEM:
+		return mem_kmem(MEM_READ, buf, off, size);
+	case MEM_NULL:
+		return mem_null(MEM_READ, buf, off, size);
+	case MEM_FULL:
+		return mem_full(MEM_READ, buf, off, size);
+	default:
+		return -EIO;
 	}
 }
 
 int mem_write(dev_t dev, char * buf, off_t off, size_t size)
 {
 	switch (MINOR(dev)) {
-		case MEM_RAM:
-			return mem_ram(MEM_WRITE, buf, off, size);
-		case MEM_PORT:
-			return mem_port(MEM_WRITE, buf, off, size);
-		case MEM_KMEM:
-			return mem_kmem(MEM_WRITE, buf, off, size);
-		case MEM_NULL:
-			return mem_null(MEM_WRITE, buf, off, size);
-		case MEM_FULL:
-			return mem_full(MEM_WRITE, buf, off, size);
-		default:
-			return -EIO;
+	case MEM_RAM:
+		return mem_ram(MEM_WRITE, buf, off, size);
+	case MEM_PORT:
+		return mem_port(MEM_WRITE, buf, off, size);
+	case MEM_KMEM:
+		return mem_kmem(MEM_WRITE, buf, off, size);
+	case MEM_NULL:
+		return mem_null(MEM_WRITE, buf, off, size);
+	case MEM_FULL:
+		return mem_full(MEM_WRITE, buf, off, size);
+	default:
+		return -EIO;
 	}
 }
 

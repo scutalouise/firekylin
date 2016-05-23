@@ -7,6 +7,15 @@
 #ifndef _ARCH_PORTIO_H
 #define _ARCH_PORTIO_H
 
+#define CMOSREAD(value,index)			\
+__asm__("mov $0x70,%%dx\t\n"  			\
+        "out %%al,%%dx\t\n"			\
+        "inc %%dx\t\n"				\
+        "in  %%dx,%%al\t\n"			\
+        :"=a"(value)				\
+        :"a"(index)				\
+        :"dx")
+
 static inline char inb(short port)
 {
 	char __res;

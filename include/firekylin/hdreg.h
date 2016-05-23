@@ -1,11 +1,11 @@
 /*
- *    include/firekylin/hd.h
+ *    include/firekylin/hdreg.h
  *
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
-#ifndef _HD_H
-#define _HD_H
+#ifndef _HDREG_H
+#define _HDREG_H
 
 #define HD_DATA		0x1f0	/* _CTL when writing */
 #define HD_ERROR	0x1f1	/* see err-bits */
@@ -49,18 +49,5 @@
 #define WIN_DIAGNOSE	0x90
 #define WIN_SPECIFY	0x91
 #define WIN_IDENTIFY	0xEC
-
-struct partition {
-	unsigned char boot_ind;
-	unsigned char head;
-	unsigned char sector;
-	unsigned char cyl;
-	unsigned char sys_ind;
-	unsigned char end_head;
-	unsigned char end_sector;
-	unsigned char end_cyl;
-	unsigned int  start_sect;
-	unsigned int  nr_sects;
-};
 
 #endif

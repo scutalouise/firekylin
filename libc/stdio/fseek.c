@@ -1,33 +1,32 @@
 /*
- *	libc/stdio/fseek.c
- *
- *	(C) 2016 ximo<ximoos@foxmail.com>. Port from minix
+ * fseek.c - perform an fseek
  */
 
 #include "stdio_loc.h"
 
-int fseek(FILE *iop, off_t offset, int whence)
+int fseek(FILE *stream, off_t offset, int whence)
 {
 	int adjust = 0;
 	long pos;
 
-	iop->_flag &= ~(_IOEOF | _IOERR);
+	stream->_flags &= ~(_IOEOF | _IOERR);
+	/* Clear both the end of file and error flags */
 
-	if (io_testflag(iop, _IOREADING)) {
-		if (whence == SEEK_CUR && iop->_buf && !io_testflag(iop, _IONBF))
-			adjust = iop->_cnt;
-		iop->_cnt = 0;
-	}
+	if (io_testflag(stream, _IOREADING)) {
+		if (whence == SEEK_CUR
+		    && stream->_buf
+		    && !io_testflag(stream,_IONBF))
+			adjust = stream->_count;
+		stream->_count = 0;
+	} else if (io_testflag(stream,_IOWRITING)) {
+		fflush(stream);
+	} else	/* neither reading nor writing. The buffer must be empty */
+		/* EMPTY */ ;
 
-	if (io_testflag(iop, _IOWRITING)) {
-		fflush(iop);
-	}
+	pos = lseek(fileno(stream), offset - adjust, whence);
+	if (io_testflag(stream, _IOREAD) && io_testflag(stream, _IOWRITE))
+		stream->_flags &= ~(_IOREADING | _IOWRITING);
 
-	pos = lseek(fileno(iop), offset - adjust, whence);
-
-	if (io_testflag(iop, _IOREAD) && io_testflag(iop, _IOWRITE))
-		iop->_flag &= ~(_IOREADING | _IOWRITING);
-
-	iop->_ptr = iop->_buf;
+	stream->_ptr = stream->_buf;
 	return ((pos == -1) ? -1 : 0);
 }

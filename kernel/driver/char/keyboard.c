@@ -66,34 +66,34 @@ void do_keyboard(struct trapframe *tf)
 		else
 			s=key_map[tmp];
 		switch (s) {
-			case CTRL_L:
-				ctrll=1;
-				break;
-			case CTRL_R:
-				ctrlr=1;
-				break;
-			case SHIFT_L:
-				shiftl = 1;
-				break;
-			case SHIFT_R:
-				shiftr = 1;
-				break;
-			case CAPLK:
-				cap = !cap;
-				break;
-			default:
-				if (cap) {
-					if (s >= 'a' && s <= 'z')
-						s = s - 32;
-					else if (s >= 'A' && s <= 'Z')
-						s = s + 32;
-				}
-			if(!isfull(console.raw)){
-				PUTCH(console.raw,s);
+		case CTRL_L:
+			ctrll = 1;
+			break;
+		case CTRL_R:
+			ctrlr = 1;
+			break;
+		case SHIFT_L:
+			shiftl = 1;
+			break;
+		case SHIFT_R:
+			shiftr = 1;
+			break;
+		case CAPLK:
+			cap = !cap;
+			break;
+		default:
+			if (cap) {
+				if (s >= 'a' && s <= 'z')
+					s = s - 32;
+				else if (s >= 'A' && s <= 'Z')
+					s = s + 32;
+			}
+			if (!isfull(console.raw)) {
+				PUTCH(console.raw, s);
 				wake_up(&(console.raw.wait));
 			}
-			if(s!=0x1b)
-				printk("%c",s);
+			if (s != 0x1b)
+				printk("%c", s);
 			break;
 		}
 	} else {
@@ -103,18 +103,18 @@ void do_keyboard(struct trapframe *tf)
 			tmp &= 0x7f;
 			tmp = key_map[tmp];
 			switch (tmp) {
-				case CTRL_L:
-					ctrll = 0;
-					break;
-				case CTRL_R:
-					ctrlr = 0;
-					break;
-				case SHIFT_L:
-					shiftl = 0;
-					break;
-				case SHIFT_R:
-					shiftr = 0;
-					break;
+			case CTRL_L:
+				ctrll = 0;
+				break;
+			case CTRL_R:
+				ctrlr = 0;
+				break;
+			case SHIFT_L:
+				shiftl = 0;
+				break;
+			case SHIFT_R:
+				shiftr = 0;
+				break;
 			}
 		}
 	}
@@ -123,5 +123,5 @@ void do_keyboard(struct trapframe *tf)
 void keyboard_init(void)
 {
 	set_trap_handle(0x21, &do_keyboard);
-	outb(0x21, inb(0x21)&~2);
+	outb(0x21, inb(0x21) & ~2);
 }

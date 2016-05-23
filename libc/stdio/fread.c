@@ -1,40 +1,26 @@
 /*
- *	libc/stdio/fread.c
- *
- *	(C) 2016 ximo<ximoos@foxmail.com>. Port from newlibc
+ * fread.c - read a number of members into an array
  */
 
 #include "stdio_loc.h"
 
-int fread(void *ptr, size_t size, int count, FILE *iop)
+size_t fread(FILE *stream, void *ptr, size_t size, int count)
 {
-	int s;
+	char *cp = ptr;
 	int c;
+	size_t ndone = 0;
+	size_t s;
 
-	s = size * count;
-
-	while (s > 0) {
-		if (iop->_cnt < s) {
-			if (iop->_cnt > 0) {
-				memcpy(ptr, iop->_ptr, iop->_cnt);
-				ptr += iop->_cnt;
-				s -= iop->_cnt;
-			}
-			/*
-			 * filbuf clobbers _cnt & _ptr,
-			 * so don't waste time setting them.
-			 */
-			if ((c = __fillbuf(iop)) == EOF)
-				break;
-			*(char *) ptr++ = c;
-			s--;
+	if (size)
+		while (ndone < count) {
+			s = size;
+			do {
+				if ((c = __getc(stream)) != EOF)
+					*cp++ = c;
+				else
+					return ndone;
+			} while (--s);
+			ndone++;
 		}
-		if (iop->_cnt >= s) {
-			memcpy(ptr, iop->_ptr, s);
-			iop->_ptr += s;
-			iop->_cnt -= s;
-			return (count);
-		}
-	}
-	return (size != 0 ? count - ((s + size - 1) / size) : 0);
+	return ndone;
 }

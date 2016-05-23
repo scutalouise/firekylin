@@ -18,6 +18,8 @@ int main(int argc, char **argv)
 	while (1) {
 		if (!fork()) {
 			open("/dev/tty1", O_RDWR, 0);
+			dup(0);
+			dup(0);
 			execve("/bin/sh", NULL, envp);
 			_exit(0);
 		}

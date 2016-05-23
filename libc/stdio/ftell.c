@@ -1,27 +1,25 @@
 /*
- *	libc/stdio/ftell.c
- *
- *	(C) 2016 ximo<ximoos@foxmail.com>. Port from minix
+ * ftell.c - obtain the value of the file-position indicator of a stream
  */
 
-#include "stdio_loc.h"
+#include	"stdio_loc.h"
 
-long ftell(FILE *iop)
+off_t ftell(FILE *stream)
 {
 	long result;
-	int adjust;
+	int adjust = 0;
 
-	if (io_testflag(iop, _IOREADING))
-		adjust = -iop->_cnt;
-	else if (io_testflag(iop, _IOWRITING) && iop->_buf
-	&& !io_testflag(iop,_IONBF))
-		adjust = iop->_ptr - iop->_buf;
-	else
-		adjust = 0;
+	if (io_testflag(stream,_IOREADING))
+		adjust = -stream->_count;
+	else if (io_testflag(stream,_IOWRITING)
+		    && stream->_buf
+		    && !io_testflag(stream,_IONBF))
+		adjust = stream->_ptr - stream->_buf;
+	else adjust = 0;
 
-	result = lseek(fileno(iop), (off_t) 0, SEEK_CUR);
+	result = lseek(fileno(stream), (off_t)0, SEEK_CUR);
 
-	if (result == -1)
+	if ( result == -1 )
 		return result;
 
 	result += (long) adjust;

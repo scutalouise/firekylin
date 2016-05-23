@@ -1,9 +1,3 @@
-/*
- *    include/firekylin/dma.h
- *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
- */
-
 #ifndef _DMA_H
 #define _DMA_H
 
@@ -65,5 +59,105 @@
 #define DMA_MODE_READ       0x44        /* I/O to memory, no autoinit, increment, single mode */
 #define DMA_MODE_WRITE      0x48        /* memory to I/O, no autoinit, increment, single mode */
 #define DMA_MODE_CASCADE    0xC0        /* pass thru DREQ->HRQ, DACK<-HLDA only */
+
+#include <arch/portio.h>
+
+static inline void dma_enable(unsigned int dmanr)
+{
+	if (dmanr <= 3)
+		outb(DMA1_MASK, dmanr);
+	else
+		outb(DMA2_MASK, dmanr & 3);
+}
+
+static inline void dma_disable(unsigned int dmanr)
+{
+	if (dmanr <= 3)
+		outb( DMA1_MASK, dmanr | 4);
+	else
+		outb( DMA2_MASK, (dmanr & 3) | 4);
+}
+
+static inline void dma_clearFF(unsigned int dmanr)
+{
+	if (dmanr <= 3)
+		outb(DMA1_CLEAR_FF, 0);
+	else
+		outb(DMA2_CLEAR_FF, 0);
+}
+
+static inline void dma_setmode(unsigned int dmanr, char mode)
+{
+	if (dmanr <= 3)
+		outb( DMA1_MODE, mode | dmanr);
+	else
+		outb( DMA2_MODE, mode | (dmanr & 3));
+}
+
+static inline void dma_setpage(unsigned int dmanr, char pagenr)
+{
+	switch (dmanr) {
+		case 0:
+			outb(DMA_PAGE_0, pagenr);
+			break;
+		case 1:
+			outb( DMA_PAGE_1, pagenr);
+			break;
+		case 2:
+			outb( DMA_PAGE_2, pagenr);
+			break;
+		case 3:
+			outb( DMA_PAGE_3, pagenr);
+			break;
+		case 5:
+			outb( DMA_PAGE_5, pagenr & 0xfe);
+			break;
+		case 6:
+			outb( DMA_PAGE_6, pagenr & 0xfe);
+			break;
+		case 7:
+			outb( DMA_PAGE_7, pagenr & 0xfe);
+			break;
+	}
+}
+
+static inline void dma_setaddr(unsigned int dmanr, unsigned int a)
+{
+	SetDmaPage(dmanr, a >> 16);
+	if (dmanr <= 3) {
+		outb(((dmanr & 3) << 1) + DMA1_BASE, a & 0xff);
+		outb(((dmanr & 3) << 1) + DMA1_BASE, (a >> 8) & 0xff);
+	} else {
+		outb(((dmanr & 3) << 2) + DMA2_BASE, (a >> 1) & 0xff);
+		outb(((dmanr & 3) << 2) + DMA2_BASE, (a >> 9) & 0xff);
+	}
+}
+
+static inline void dma_setcount(unsigned int dmanr, unsigned int count)
+{
+	count--;
+	if (dmanr <= 3) {
+		outb(((dmanr & 3) << 1) + 1 + DMA1_BASE, count & 0xff);
+		outb(((dmanr & 3) << 1) + 1 + DMA1_BASE, (count >> 8) & 0xff);
+	} else {
+		outb(((dmanr & 3) << 2) + 2 + DMA2_BASE, (count >> 1) & 0xff);
+		outb(((dmanr & 3) << 2) + 2 + DMA2_BASE, (count >> 9) & 0xff);
+	}
+}
+
+static inline int dma_getresidue(unsigned int dmanr)
+{
+	int io_port = (dmanr <= 3) ?
+			((dmanr & 3) << 1) + 1 + DMA1_BASE :
+			((dmanr & 3) << 2) + 2 + DMA2_BASE;
+
+	/* using short to get 16-bit wrap around */
+	unsigned short count;
+
+	count = 1 + inb(io_port);
+	count += inb(io_port) << 8;
+
+	return (dmanr <= 3) ? count : (count << 1);
+}
 
 #endif

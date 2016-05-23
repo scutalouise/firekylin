@@ -1,0 +1,47 @@
+This is the  C stdio lib ,most of them are ported from MINIX3.
+why do I port from MINIX3 ,not from other such as glibc ,newlibc,
+uclibc ,BSD ,etc. since I read the source of the, but they have too 
+much code , also they would have more functions. but they are so
+big and difficulty to understand,and port . however ,the minix stdio
+lib still keep small and easy.
+
+.
+©À©¤©¤ fclearerr.c
+©À©¤©¤ fclose.c
+©À©¤©¤ feof.c
+©À©¤©¤ ferror.c
+©À©¤©¤ fflush.c
+©À©¤©¤ fgetc.c
+©À©¤©¤ fgetpos.c
+©À©¤©¤ fgets.c
+©À©¤©¤ fileno.c
+©À©¤©¤ __fillbuf.c
+©À©¤©¤ __flushbuf.c
+©À©¤©¤ fopen.c
+©À©¤©¤ fputc.c
+©À©¤©¤ fputs.c
+©À©¤©¤ fread.c
+©À©¤©¤ freopen.c
+©À©¤©¤ frewind.c
+©À©¤©¤ fseek.c
+©À©¤©¤ fsetpos.c
+©À©¤©¤ ftell.c
+©À©¤©¤ fwrite.c
+©À©¤©¤ __iotab.c
+©À©¤©¤ setbuf.c
+©À©¤©¤ setvbuf.c
+©¸©¤©¤ ungetc.c
+
+all of this files are port form minix ,buf I do some modify.
+
+when I bengin to implememt stdio ,I real want to as the same as ANSI C.
+however ,after some days ago , I want to do something within stdio.
+so I changed the inferface of stdio. all the functions the first arg
+would be FILE *stream if it need.
+also I wouldnot to impelement some function,such as gets,puts.etc.
+now fdopen havenot impelement. MINIX do not have .
+I want to impelement by myself, but I really do not do how to set these
+flags. but wo should havenot use it yet.
+
+ok,that will be a jok,I modify the inferface of stdio. Oh, if it can't
+leave,I think I will modify them back.

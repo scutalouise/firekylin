@@ -17,7 +17,7 @@ OBJS=init/head.o init/main.o  \
      kernel/fork.o  kernel/exit.o   kernel/exec.o  \
      driver/char/console.o driver/char/keyboard.o driver/char/serial.o \
      driver/char/tty.o driver/char/mem.o\
-     driver/block/hd.o driver/block/ramdisk.o \
+     driver/block/hd.o driver/block/ramdisk.o driver/block/floppy.o \
      driver/driver.o \
      mm/memory.o \
      fs/buffer.o fs/super.o fs/inode.o fs/read.o fs/stat.o fs/open.o \

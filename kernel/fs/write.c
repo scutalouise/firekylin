@@ -63,25 +63,23 @@ int sys_write(int fd, char *buf, size_t size)
 	if (file->f_mode & O_APPEND)
 		file->f_pos = inode->i_size;
 	switch (inode->i_mode & S_IFMT) {
-		case S_IFREG:
-			res = write_file(inode, buf, file->f_pos, size);
-			break;
-		case S_IFDIR:
-			res = -EISDIR;
-			break;
-		case S_IFCHR:
-			res = write_char(inode->i_rdev, buf, file->f_pos,
-					size);
-			break;
-		case S_IFBLK:
-			res = write_blk(inode->i_rdev, buf, file->f_pos,
-					size);
-			break;
-		case S_IFIFO:
-			res= write_pipe(inode,buf,size);
-			break;
-		default:
-			res = -EIO;
+	case S_IFREG:
+		res = write_file(inode, buf, file->f_pos, size);
+		break;
+	case S_IFDIR:
+		res = -EISDIR;
+		break;
+	case S_IFCHR:
+		res = write_char(inode->i_rdev, buf, file->f_pos, size);
+		break;
+	case S_IFBLK:
+		res = write_blk(inode->i_rdev, buf, file->f_pos, size);
+		break;
+	case S_IFIFO:
+		res = write_pipe(inode, buf, size);
+		break;
+	default:
+		res = -EIO;
 	}
 
 	if (res > 0)

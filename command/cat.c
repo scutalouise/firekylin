@@ -16,14 +16,19 @@ int main(int argc, char *argv[])
 	char buf[1024];
 	size_t size;
 	int fd;
+	FILE *fp;
+	char ch;
 
 	if(argc<2)
 		return 0;
-	if((fd=open(argv[1],O_READ,0))<0)
-		return printf("%s\n",strerror(errno));
 
-	while((size=read(fd,buf,1024)))
+	fp=fopen(argv[1],"rw+");
+	if(!fp){
+		printf("fopen error");
+		exit(0);
+	}
+	while((fgets(fp,buf,1024)))
 	{
-		write(0,buf,size);
+		fputs(stdout,buf);
 	}
 }

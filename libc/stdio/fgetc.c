@@ -1,12 +1,10 @@
 /*
- *	libc/stdio/fgetc.c
- *
- *	(C) 2016 ximo<ximoos@foxmail.com>. Port from minix
+ * fgetc - get an unsigned character and return it as an int
  */
 
 #include "stdio_loc.h"
 
-int fgetc(FILE *iop)
+int fgetc(FILE *stream)
 {
-	return getc(iop);
+	return __getc(stream);
 }

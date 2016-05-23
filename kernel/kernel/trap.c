@@ -161,15 +161,6 @@ void set_trap_handle(int index, void (*fn)(struct trapframe *tf))
 
 void execption(unsigned long unuesd)
 {
-//	static char *msg[] = { "divide zero", "debug", "nmi", "breakpoint",
-//			"overflow", "bound", "invalid opcade",
-//			"device not invalid", "double fault",
-//			"coprocessor overrun", "invalid TSS",
-//			"segment not exsit", "stack error",
-//			"general protection", "page fault", "reserved error",
-//			"coprocessor error", "align check", "machine check",
-//			"simd float error" };
-
 	struct trapframe *tf = (struct trapframe*) &unuesd;
 
 	if (trap_handle[tf->nr] != NULL) {

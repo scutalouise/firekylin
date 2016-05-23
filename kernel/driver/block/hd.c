@@ -8,8 +8,8 @@
 #include <firekylin/sched.h>
 #include <firekylin/trap.h>
 #include <firekylin/driver.h>
-#include <firekylin/hd.h>
 #include <firekylin/fs.h>
+#include <firekylin/hdreg.h>
 
 struct request{
 	unsigned long LBA;

@@ -133,7 +133,6 @@ int minix1_look_up(struct inode *dir_inode, char *filename,
 		iput(dir_inode);
 		*res_inode = NULL;
 		return 1;
-
 	}
 
 	if (de->ino == dir_inode->i_ino) {

@@ -1,14 +1,12 @@
 /*
- *	libc/stdio/fileno.c
- *
- *	(C) 2016 ximo<ximoos@foxmail.com>. Port from minix
+ * fileno .c - map a stream to a file descriptor
  */
 
 #include "stdio_loc.h"
 
 #undef fileno
 
-int fileno(FILE *iop)
+int fileno(FILE *stream)
 {
-	return iop->_fd;
+	return stream->_fd;
 }

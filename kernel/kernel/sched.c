@@ -152,9 +152,6 @@ int sys_sbrk(unsigned int inc)
 	unsigned long addr;
 	struct task *current;
 	
-	if (inc < 0)
-		return -1;
-	
 	current=CURRENT_TASK();
 	res =current->sbrk;
 	inc=(inc+0xf)&0xfffffff0;

@@ -1,24 +1,22 @@
 /*
- *	libc/stdio/ungetc.c
- *
- *	(C) 2016 ximo<ximoos@foxmail.com>. Port from minix
+ * ungetc.c - push a character back onto an input stream
  */
 
 #include "stdio_loc.h"
 
-int ungetc(int ch, FILE *iop)
+int ungetc(FILE *stream, int ch)
 {
-	char *p;
+	unsigned char *p;
 
-	if (ch == EOF || !io_testflag(iop, _IOREADING))
+	if (ch == EOF || !io_testflag(stream, _IOREADING))
 		return EOF;
-	if (iop->_ptr == iop->_buf) {
-		if (iop->_cnt != 0)
+	if (stream->_ptr == stream->_buf) {
+		if (stream->_count != 0)
 			return EOF;
-		iop->_ptr++;
+		stream->_ptr++;
 	}
-	iop->_cnt++;
-	p = --(iop->_ptr);
+	stream->_count++;
+	p = --(stream->_ptr); /* ??? Bloody vax assembler !!! */
 
 	if (*p != (unsigned char) ch)
 		*p = (unsigned char) ch;

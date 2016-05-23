@@ -39,7 +39,7 @@ int sys_lseek(int fd, long off, int where)
 {
 	struct file *file;
 	if (fd > NR_OPEN || !(file = (CURRENT_TASK() )->file[fd]))
-			return -EBADF;
+		return -EBADF;
 	switch (where) {
 		case SEEK_SET:
 			if (off < 0)

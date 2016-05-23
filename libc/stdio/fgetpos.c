@@ -1,14 +1,12 @@
 /*
- *	libc/stdio/fgetpos.c
- *
- *	(C) 2016 ximo<ximoos@foxmail.com>. Port from minix
+ * fgetpos.c - get the position in the file
  */
 
 #include "stdio_loc.h"
 
-int fgetpos(FILE *fp, fpos_t *pos)
+int fgetpos(FILE *stream, fpos_t *pos)
 {
-	*pos = ftell(fp);
+	*pos = ftell(stream);
 	if (*pos == -1)
 		return -1;
 	return 0;

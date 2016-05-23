@@ -8,16 +8,8 @@
 #include <firekylin/sched.h>
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
+#include <arch/portio.h>
 #include <time.h>
-
-#define CMOSREAD(value,index)			\
-__asm__("mov $0x70,%%dx\t\n"  			\
-        "out %%al,%%dx\t\n"			\
-        "inc %%dx\t\n"				\
-        "in  %%dx,%%al\t\n"			\
-        :"=a"(value)				\
-        :"a"(index)				\
-        :"dx")
 
 #define BCD_BIN(c)	(c=c/16*10+c%16)
 
@@ -88,6 +80,8 @@ static void time_init()
 	start_time = mktimek(year, month, day, hour, min, sec);
 }
 
+extern void fd_init();
+
 void start(void)
 {
 	memset(_edata, 0, (_end-_edata));
@@ -97,6 +91,8 @@ void start(void)
 	char_dev_init();
 	blk_dev_init();
 	mm_init();
+	fd_init();
+
 	sched_init();
 	clock_init();
 

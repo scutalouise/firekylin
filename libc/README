@@ -74,5 +74,29 @@ stdlib:	abs()
 	malloc()
 	free()
 	getenv()
-	
-	
+
+stdio:	stdin
+	stdout
+	stderr
+	fopen()
+	freopen()
+	fclose()
+	fflush()
+	fgetc()
+	fgets()
+	fputc()
+	fputs()
+	fread()
+	fwrite()
+	fseek()
+	ftell()
+	frewind()
+	setbuf()
+	setvbuf()
+	fgetpos()
+	fsetpos()
+	ungetc()
+	fileno()
+	ferror()
+	fclearerr()
+	feof()

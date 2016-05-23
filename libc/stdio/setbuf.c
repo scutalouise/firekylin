@@ -1,12 +1,10 @@
 /*
- *	libc/stdio/setvbuf.c
- *
- *	(C) 2016 ximo<ximoos@foxmail.com>. Port from minix
+ * setbuf.c - control buffering of a stream
  */
 
 #include "stdio_loc.h"
 
-void setbuf(FILE *iop, char *buf)
+void setbuf(FILE *stream, char *buf)
 {
-	setvbuf(iop, buf, (buf ? _IOFBF : _IONBF), (size_t) BUFSIZ);
+	(void) setvbuf(stream, buf, (buf ? _IOFBF : _IONBF), (size_t) BUFSIZ);
 }

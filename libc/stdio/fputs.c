@@ -1,20 +1,17 @@
 /*
- *	libc/stdio/fgets.c
- *
- *	Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * fputs - print a string
  */
 
 #include "stdio_loc.h"
 
-int fputs(const char *s, FILE *iop)
+int fputs(FILE *stream, char *s)
 {
-	register int i = 0;
+	int i = 0;
 
 	while (*s)
-		if (putc(*s++, iop) == EOF)
+		if (__putc(stream,*s++) == EOF)
 			return EOF;
 		else
 			i++;
-
 	return i;
 }

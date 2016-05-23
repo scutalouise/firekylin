@@ -40,31 +40,31 @@ void do_rs(struct trapframe *tf)
 		iir=inb(0x3fa);
 		if(iir&1)
 			break;
-		switch(iir&0x6){
-			case 0:
-				inb(0x3f8+6);
+		switch (iir & 0x6) {
+		case 0:
+			inb(0x3f8 + 6);
+			break;
+		case 2:
+			if (!isempty(com1.out)) {
+				GETCH(com1.out, data);
+				outb(0x3f8, data);
 				break;
-			case 2:
-				if(!isempty(com1.out)){
-					GETCH(com1.out,data);
-					outb(0x3f8,data);
-					break;
-				}
-				outb(inb(0x3f8+1),0xd);
-				wake_up(&(com1.out.wait));
-				break;
-			case 4:
-				data=inb(0x3f8);
-				if(!isfull(com1.raw)){
-					PUTCH(com1.raw,data);
-					wake_up(&(com1.raw.wait));
-					//PUTCH(com1.out,data);
-					//rs_write(&com1);
-				}
-				break;
-			case 6:
-				inb(0x3f8+5);
-				break;
+			}
+			outb(inb(0x3f8 + 1), 0xd);
+			wake_up(&(com1.out.wait));
+			break;
+		case 4:
+			data = inb(0x3f8);
+			if (!isfull(com1.raw)) {
+				PUTCH(com1.raw, data);
+				wake_up(&(com1.raw.wait));
+				//PUTCH(com1.out,data);
+				//rs_write(&com1);
+			}
+			break;
+		case 6:
+			inb(0x3f8 + 5);
+			break;
 		}
 	}
 	outb(0x20,0x20);

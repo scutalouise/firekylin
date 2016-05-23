@@ -24,22 +24,22 @@ int main(int argc, char **argv)
 	}
 
 	while ((de = readdir(dp))) {
-		if(stat(de->d_name, &statbuf)<0)
+		if (stat(de->d_name, &statbuf) < 0)
 			break;
 		printf("%s\t", de->d_name);
 		switch (statbuf.st_mode & S_IFMT) {
-			case S_IFREG:
-				printf("%s\t", "FILE");
-				break;
-			case S_IFDIR:
-				printf("%s\t", "DIR");
-				break;
-			case S_IFBLK:
-				printf("%s\t", "BLK");
-				break;
-			case S_IFCHR:
-				printf("%s\t", "CHAR");
-				break;
+		case S_IFREG:
+			printf("%s\t", "FILE");
+			break;
+		case S_IFDIR:
+			printf("%s\t", "DIR");
+			break;
+		case S_IFBLK:
+			printf("%s\t", "BLK");
+			break;
+		case S_IFCHR:
+			printf("%s\t", "CHAR");
+			break;
 		}
 		printf("\n");
 	}

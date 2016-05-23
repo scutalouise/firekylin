@@ -1,12 +1,10 @@
 /*
- *	libc/stdio/fputc.c
- *
- *	Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * fputc.c - print an unsigned character
  */
 
 #include "stdio_loc.h"
 
-int fputc(int c,FILE *iop)
+int fputc(FILE *stream, int c)
 {
-	return putc(c,iop);
+	return __putc(stream, c);
 }

@@ -63,25 +63,23 @@ int sys_read(int fd, char *buf, size_t size)
 	inode = idup(file->f_inode);
 
 	switch (inode->i_mode & S_IFMT) {
-		case S_IFREG:
-		case S_IFDIR:
-			if(file->f_pos+size >inode->i_size)
-					size=inode->i_size-file->f_pos;
-			res = read_file(inode, buf, file->f_pos, size);
-			break;
-		case S_IFCHR:
-			res = read_char(inode->i_rdev, buf, file->f_pos,
-					size);
-			break;
-		case S_IFBLK:
-			res = read_blk(inode->i_rdev, buf, file->f_pos,
-					size);
-			break;
-		case S_IFIFO:
-			res = read_pipe(inode, buf, size);
-			break;
-		default:
-			res = -EIO;
+	case S_IFREG:
+	case S_IFDIR:
+		if (file->f_pos + size > inode->i_size)
+			size = inode->i_size - file->f_pos;
+		res = read_file(inode, buf, file->f_pos, size);
+		break;
+	case S_IFCHR:
+		res = read_char(inode->i_rdev, buf, file->f_pos, size);
+		break;
+	case S_IFBLK:
+		res = read_blk(inode->i_rdev, buf, file->f_pos, size);
+		break;
+	case S_IFIFO:
+		res = read_pipe(inode, buf, size);
+		break;
+	default:
+		res = -EIO;
 	}
 
 	iput(inode);

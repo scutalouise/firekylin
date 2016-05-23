@@ -1,13 +1,28 @@
-/*
- *	libc/stdio/_iotab.c
- *
- *	(C) 2016 ximo<ximoos@foxmail.com>. Port from minix
- */
 
 #include "stdio_loc.h"
 
-FILE __iotab[FOPEN_MAX] = {
-	{ 0, 0, 0, _IOREAD,           NULL, NULL,  }, 	/* stdin  */
-	{ 1, 0, 0, _IOWRITE,          NULL, NULL,  }, 	/* stdout */
-	{ 2, 0, 0, _IOWRITE | _IONBF, NULL, NULL,  }, 	/* stderr */
+static struct __iobuf __stdin = {
+	0, 0, _IOREAD, 0,
+	(unsigned char *)NULL, (unsigned char *)NULL, 
 };
+
+static struct __iobuf __stdout = {
+	0, 1, _IOWRITE, 0,
+	(unsigned char *)NULL, (unsigned char *)NULL, 
+};
+
+static struct __iobuf __stderr = {
+	0, 2, _IOWRITE | _IOLBF, 0,
+	(unsigned char *)NULL, (unsigned char *)NULL, 
+};
+
+FILE *__iotab[FOPEN_MAX] = {
+	&__stdin,
+	&__stdout,
+	&__stderr,
+	0
+};
+
+FILE *stdin=&__stdin;
+FILE *stdout=&__stdout;
+FILE *stderr=&__stderr;

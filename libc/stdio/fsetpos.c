@@ -1,12 +1,10 @@
 /*
- *	libc/stdio/fsetpos.c
- *
- *	(C) 2016 ximo<ximoos@foxmail.com>. Port from minix
+ * fsetpos.c - set the position in the file
  */
 
 #include "stdio_loc.h"
 
-int fsetpos(FILE *iop, fpos_t *pos)
+int fsetpos(FILE *stream, fpos_t *pos)
 {
-	return fseek(iop, *pos, SEEK_SET);
+	return fseek(stream, *pos, SEEK_SET);
 }

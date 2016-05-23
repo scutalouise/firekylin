@@ -1,21 +1,31 @@
 /*
- *	libc/stdio/fclose.c
- *
- *	(C) 2016 ximo<ximoos@foxmail.com>. Port from minix
+ * fclose.c - flush a stream and close the file
  */
 
 #include "stdio_loc.h"
 
-int fclose(FILE *fp)
+int fclose(FILE *stream)
 {
-	int retval = 0;
+	int i, retval = 0;
 
-	if (fflush(fp))
+	for (i=0; i<FOPEN_MAX; i++){
+		if (stream == __iotab[i]) {
+			__iotab[i] = 0;
+			break;
+		}
+	}
+
+	if (i >= FOPEN_MAX)
+		return EOF;
+
+	if (fflush(stream))
 		retval = EOF;
-	if (close(fileno(fp)))
+	if (close(fileno(stream)))
 		retval = EOF;
-	if ( io_testflag(fp,_IOMYBUF) && fp->_buf)
-		free((void *) fp->_buf);
-	fp->_buf = NULL;
+	if ( io_testflag(stream , _IOMYBUF) && stream->_buf )
+		free((void *)stream->_buf);
+	stream->_buf = NULL;
+	if (stream != stdin && stream != stdout && stream != stderr)
+		free((void *)stream);
 	return retval;
 }

@@ -1,70 +1,76 @@
 /*
- *	libc/stdio/fflush.c
- *
- *	(C) 2016 ximo<ximoos@foxmail.com>. Port from minix
+ * fflush.c - flush stream(s)
  */
 
 #include "stdio_loc.h"
 
-int fflush(FILE *iop)
+int fflush(FILE *stream)
 {
-	int count, c1, retval = 0;
+	int count, c1, i, retval = 0;
 
-	if (!iop) {
-		for (int i = 0; i < FOPEN_MAX; i++)
-			if (__iotab[i] && fflush(__iotab[i]))
-				retval = EOF;
-		return retval;
+	if (!stream) {
+	    for(i= 0; i < FOPEN_MAX; i++)
+		if (__iotab[i] && fflush(__iotab[i]))
+			retval = EOF;
+	    return retval;
 	}
 
-	if (!iop->_buf || (!io_testflag(iop, _IOREADING)
-			&& !io_testflag(iop, _IOWRITING)))
+	if (!stream->_buf
+	    || (!io_testflag(stream, _IOREADING)
+		&& !io_testflag(stream, _IOWRITING)))
 		return 0;
-	if (io_testflag(iop, _IOREADING)) {
-		/* (void) fseek(iop, 0L, SEEK_CUR); */
+	if (io_testflag(stream, _IOREADING)) {
+		/* (void) fseek(stream, 0L, SEEK_CUR); */
 		int adjust = 0;
-		if (io_testflag(iop, _IOFIFO)) {
+		if (io_testflag(stream, _IOFIFO)) {
 			/* Can't seek in a pipe. */
 			return 0;
 		}
-		if (iop->_buf && !io_testflag(iop, _IONBF))
-			adjust = -iop->_cnt;
-		iop->_cnt = 0;
-		if (lseek(fileno(iop), (off_t) adjust, SEEK_CUR) == -1
-				&& errno != ESPIPE) {
-			iop->_flag |= _IOERR;
+		if (stream->_buf && !io_testflag(stream,_IONBF))
+			adjust = -stream->_count;
+		stream->_count = 0;
+		if (lseek(fileno(stream), (off_t) adjust, SEEK_CUR) == -1 &&
+		  errno != ESPIPE) {
+			stream->_flags |= _IOERR;
 			return EOF;
 		}
 		errno = 0;
-		if (io_testflag(iop, _IOWRITE))
-			iop->_flag &= ~(_IOREADING | _IOWRITING);
-		iop->_ptr = iop->_buf;
+		if (io_testflag(stream, _IOWRITE))
+			stream->_flags &= ~(_IOREADING | _IOWRITING);
+		stream->_ptr = stream->_buf;
 		return 0;
-	} else if (io_testflag(iop, _IONBF))
-		return 0;
-
-	if (io_testflag(iop, _IOREAD)) /* "a" or "+" mode */
-		iop->_flag &= ~_IOWRITING;
-
-	count = iop->_ptr - iop->_buf;
-	iop->_ptr = iop->_buf;
-
-	if (count <= 0)
+	} else if (io_testflag(stream, _IONBF))
 		return 0;
 
-	if (io_testflag(iop, _IOAPPEND)) {
-		if (_lseek(fileno(iop), 0L, SEEK_END) == -1) {
-			iop->_flag |= _IOERR;
+	if (io_testflag(stream, _IOREAD))		/* "a" or "+" mode */
+		stream->_flags &= ~_IOWRITING;
+
+	count = stream->_ptr - stream->_buf;
+	stream->_ptr = stream->_buf;
+
+	if ( count <= 0 )
+		return 0;
+
+	if (io_testflag(stream, _IOAPPEND)) {
+		if (lseek(fileno(stream), 0L, SEEK_END) == -1) {
+			stream->_flags |= _IOERR;
 			return EOF;
 		}
 	}
-	c1 = _write(iop->_fd, (char *) iop->_buf, count);
+	c1 = write(stream->_fd, (char *)stream->_buf, count);
 
-	iop->_cnt = 0;
+	stream->_count = 0;
 
-	if (count == c1)
+	if ( count == c1 )
 		return 0;
 
-	iop->_flag |= _IOERR;
-	return EOF;
+	stream->_flags |= _IOERR;
+	return EOF; 
+}
+
+void __cleanup(void)
+{
+	for(int i= 0; i < FOPEN_MAX; i++)
+		if (__iotab[i] && io_testflag(__iotab[i], _IOWRITING))
+			(void) fflush(__iotab[i]);
 }
