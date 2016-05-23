@@ -12,10 +12,13 @@ int atexit_func_num = 0;
 
 void exit(int exit_code)
 {
-	atexit_func_t fn;
-	for (int i = 0; i < atexit_func_num; i++) {
-		fn = atexit_func_tab[i];
-		(*fn)();
-	}
+	//atexit_func_t fn;
+	//printf("exit:comehere");
+	//for (int i = 0; i < atexit_func_num; i++) {
+	//	printf("\nexit3:comehere");
+	//	fn = atexit_func_tab[i];
+	//	(fn)();
+	//}
+	//printf("\nexit2:comehere");
 	_exit(exit_code);
 }

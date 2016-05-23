@@ -35,12 +35,14 @@ void put_page(long addr)
 
 	if (addr & 0xfff)
 		panic("Try to free Not align 4kB page :%x", addr);
-	if (addr < 0x400000)
-		panic("Try to free kernel page:%x", addr);
+	if (addr < 0x400000){
+		printk("Try to free kernel page:%x\n", addr);
+		return ;
+	}
 
 	tmp = (addr - 0x400000) >> 12;
 	if (page_table[tmp].count != 1) {
-		panic("Try to err page:%x", addr);
+		printk("Try to err page:%x", addr);
 	}
 	page_table[tmp].count--;
 }
@@ -82,6 +84,9 @@ void do_page_fault(struct trapframe *tf)
 	struct task *current;
 
 	__asm__("movl %%cr2,%%eax":"=a"(cr2));
+
+	if(cr2==0)
+		return ;
 
 	if (cr2 > 0x41000000 || cr2 < 0x40000000) {
 		printk("CS:EIP=%x:%x\t EFLAGS=%x\t SS:ESP=%x:%x\t", tf->cs,
@@ -125,9 +130,11 @@ void alloc_mm(long pdtr, long addr, long size)
  */
 void free_mm(void)
 {
+	unsigned long tmp;
 	struct task *current = CURRENT_TASK();
 	for (long addr = current->stack; addr < current->sbrk; addr += 4096) {
-		put_page(unmap_page(addr, current->pdtr));
+		if((tmp=unmap_page(addr, current->pdtr)))
+			put_page(tmp);
 	}
 	memset((char*)__va(current->pdtr), 0, 3072);
 }

@@ -123,7 +123,7 @@ static inline void dma_setpage(unsigned int dmanr, char pagenr)
 
 static inline void dma_setaddr(unsigned int dmanr, unsigned int a)
 {
-	SetDmaPage(dmanr, a >> 16);
+	dma_setpage(dmanr, a >> 16);
 	if (dmanr <= 3) {
 		outb(((dmanr & 3) << 1) + DMA1_BASE, a & 0xff);
 		outb(((dmanr & 3) << 1) + DMA1_BASE, (a >> 8) & 0xff);

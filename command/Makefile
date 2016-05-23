@@ -13,13 +13,11 @@ CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../include
 LIB=../libc/libc.a
 
-OBJS=init sh ls cat sync mkdir touch cp ll rm ed link
+OBJS=init sh ls cat sync mkdir touch cp rm ed link
 
 .s.o:
-	@echo         AS	$<
 	@$(AS) $(SFLAGS) -o $@  $<
 .c.o:
-	@echo         CC	$<
 	@$(CC) $(CFLAGS) -o $@  $<
 
 command: $(OBJS)
@@ -28,6 +26,8 @@ init: init.o
 	$(LD) -o  $@  $<  $(LIB)
 sh: sh.o
 	$(LD) -o  $@  $<  $(LIB)
+tsh: tsh.o
+	$(LD) -o  $@  $<  $(LIB)	
 echo: echo.o
 	$(LD) -o  $@  $<  $(LIB)
 cat: cat.o
@@ -42,15 +42,13 @@ cp:cp.o
 	$(LD) -o  $@  $<  $(LIB)
 ls:ls.o
 	$(LD) -o  $@  $<  $(LIB)
-ll:ll.o
-	$(LD) -o  $@  $<  $(LIB)
 rm:rm.o
 	$(LD) -o  $@  $<  $(LIB)
 ed:ed.o
 	$(LD) -o  $@  $<  $(LIB)
 link:link.o
 	$(LD) -o  $@  $<  $(LIB)
-t1:t1.o
+t2:t2.o
 	$(LD) -o  $@  $<  $(LIB)
 ed2:ed2.o
 	$(LD) -o  $@  $<  $(LIB)

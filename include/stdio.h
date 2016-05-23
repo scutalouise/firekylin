@@ -53,6 +53,7 @@ extern FILE * stdout;
 extern FILE * stderr;
 
 extern FILE * fopen(char *name, const char *mode);
+extern FILE * fdopen(int fd, const char *mode);
 extern FILE * freopen(FILE *stream, char *name, const char *mode);
 extern int    fclose(FILE *stream);
 extern int    fflush(FILE *stream);
@@ -75,8 +76,12 @@ extern int    ferror(FILE *stream);
 extern void   fclearerr(FILE *stream);
 extern int    feof(FILE *stream);
 
-int myprintf(char *fmt, ...);
-#define printf  myprintf
+extern int    printf(char *fmt, ...);
+extern int    sprintf(char *buf, char*fmt, ...);
+extern int    fprintf(FILE *stream, char *buf, ...);
+
+//int myprintf(char *fmt, ...);
+//#define printf  myprintf
 
 #define fileno(p)	((p)->_fd)
 #define	feof(p)		(((p)->_flags & _IOEOF) != 0)
@@ -85,5 +90,6 @@ int myprintf(char *fmt, ...);
 
 #define getchar()	fgetc(stdin)
 #define putchar(c)	fputc(stdout,c)
+#define puts(s)		fputs(stdout,s)
 
 #endif

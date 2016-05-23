@@ -2,6 +2,7 @@ LIBC_OBJ+=stdio/__iotab.o    \
 	  stdio/__fillbuf.o  \
 	  stdio/__flushbuf.o \
 	  stdio/fopen.o      \
+	  stdio/fdopen.o     \
 	  stdio/freopen.o    \
 	  stdio/fclose.o     \
 	  stdio/fflush.o     \
@@ -23,5 +24,7 @@ LIBC_OBJ+=stdio/__iotab.o    \
 	  stdio/ferror.o     \
 	  stdio/fclearerr.o  \
 	  stdio/feof.o       \
-	  stdio/myprintf.o  
+	  stdio/printf.o     \
+	  stdio/sprintf.o    \
+	  stdio/fprintf.o    
 	  

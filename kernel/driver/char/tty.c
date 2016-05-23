@@ -29,7 +29,7 @@ int tty_read(dev_t dev, char * buf, off_t off, size_t size)
 {
 	struct tty_struct *tty;
 	long left = size;
-	char ch;
+	int ch;
 
 	tty = getty(dev);
 	irq_lock()
@@ -42,6 +42,10 @@ int tty_read(dev_t dev, char * buf, off_t off, size_t size)
 				irq_unlock();
 				return size - left+1;
 			}
+			if (ch == -1) {
+				irq_unlock();
+				return size - left;
+						}
 		} else {
 			sleep_on(&(tty->raw.wait));
 			continue;

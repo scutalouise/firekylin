@@ -45,3 +45,6 @@ flags. but wo should havenot use it yet.
 
 ok,that will be a jok,I modify the inferface of stdio. Oh, if it can't
 leave,I think I will modify them back.
+ 
+add fdopen... oh . I really do not konw why minix do not put fdopen in
+stdio dir.

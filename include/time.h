@@ -44,5 +44,8 @@ struct timespec {
 
 extern time_t mktime(struct tm *tmptr);
 extern time_t time(time_t *tloc);
+extern char * ctime(const time_t *tp);
+extern struct tm *gmtime(time_t *t);
+extern char * asctime(const struct tm * time);
 
 #endif

@@ -44,7 +44,6 @@ build:boot/bootsect.bin tools/install-boot $(HD)
 	cp   command/mkdir /mnt/bin/mkdir
 	cp   command/touch /mnt/bin/touch
 	cp   command/cp /mnt/bin/cp
-	cp   command/ll /mnt/bin/ll
 	cp   command/rm /mnt/bin/rm
 	cp   command/ed /mnt/bin/ed
 	cp   command/link /mnt/bin/link

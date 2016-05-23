@@ -1,10 +1,10 @@
 #include <arch/portio.h>
+#include <arch/dma.h>
+#include <arch/fdreg.h>
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 #include <firekylin/trap.h>
 #include <firekylin/driver.h>
-#include <firekylin/dma.h>
-#include <firekylin/fdreg.h>
 #include <firekylin/fs.h>
 
 char fd_buffer[1024]; 			/* 软盘高速缓冲区地址指针 */

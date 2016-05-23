@@ -1,5 +1,5 @@
 /*
- *	libc/dirent/execvp.c
+ *	libc/unistd/execvp.c
  *
  *	Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
@@ -45,9 +45,8 @@ int execvpe(const char * file, char ** argv, char ** envp)
 			if (!(st.st_mode & S_IFREG))
 				continue;
 		//if (!access(tmp_path,1))
-		printf("execvpe file:%s\n",tmp_path);
 		return execve(tmp_path,argv,envp);
 	}
-	errno = ENOEXEC;
+	errno = ENOENT;
 	return -1;
 }

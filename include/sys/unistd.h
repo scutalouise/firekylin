@@ -51,5 +51,6 @@ extern int sync(void);
 extern int unlink(char *name);
 extern int mknod(char *name, mode_t mode,dev_t dev);
 extern int execvpe(const char * file, char ** argv, char ** envp);
+extern int pipe(int fd[2]);
 
 #endif

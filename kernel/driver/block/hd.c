@@ -4,12 +4,12 @@
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
+#include <arch/hdreg.h>
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 #include <firekylin/trap.h>
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
-#include <firekylin/hdreg.h>
 
 struct request{
 	unsigned long LBA;

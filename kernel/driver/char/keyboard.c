@@ -89,6 +89,8 @@ void do_keyboard(struct trapframe *tf)
 					s = s + 32;
 			}
 			if (!isfull(console.raw)) {
+				if(s==C('D'))
+					s=-1;
 				PUTCH(console.raw, s);
 				wake_up(&(console.raw.wait));
 			}

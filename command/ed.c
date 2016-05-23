@@ -11,18 +11,11 @@
 #include <stdio.h>
 #include <errno.h>
 
-char buf[100];
-int get_line()
-{
-	int size;
-	size=read(0,buf,100);
-	return size;
-}
-
 int main(int argc, char **argv)
 {
 	int fd;
 	int size;
+	char buf[100];
 	if(argc<2){
 		printf("Usage:ed name ...");
 	}
@@ -35,9 +28,8 @@ int main(int argc, char **argv)
 		printf("%s",strerror(errno));
 		_exit(0);
 	}
-	while((size=get_line())){
-		if(size==1)
-			break;
+	while(fgets(stdin,buf,100)){
+		size=strlen(buf);
 		write(fd,buf,size);
 	}
 	close(fd);

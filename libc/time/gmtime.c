@@ -7,9 +7,11 @@
 #include <time.h>
 
 static int days_per_mth[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+static struct tm st;
 
-struct tm *gmtime(time_t *t, struct tm *stm)
+struct tm *gmtime(time_t *t)
 {
+	struct tm *stm=&st;
 	time_t time = *t;
 
 	int year, mday, i;

@@ -16,5 +16,6 @@ LIBC_OBJ+=string/memchr.o  \
 	  string/strchr.o   \
 	  string/strrchr.o  \
 	  string/strstr.o   \
-	  string/strerror.o
+	  string/strerror.o \
+	  string/strformat.o
           
