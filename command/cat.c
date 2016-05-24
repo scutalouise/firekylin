@@ -14,10 +14,7 @@
 int main(int argc, char *argv[])
 {
 	char buf[1024];
-	size_t size;
-	int fd;
 	FILE *fp;
-	char ch;
 
 	if(argc<2)
 		return 0;

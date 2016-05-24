@@ -21,14 +21,24 @@ build:boot/bootsect.bin tools/install-boot $(HD)
 	-mkdir /mnt/home
 	-mkdir /mnt/lib
 	-mkdir /mnt/src
-	-sudo mknod /mnt/dev/tty1 c 4 1
-	-sudo mknod /mnt/dev/com1 c 4 2
 	-sudo mknod /mnt/dev/ram  c 1 0
 	-sudo mknod /mnt/dev/port c 1 1
 	-sudo mknod /mnt/dev/kmem c 1 2
 	-sudo mknod /mnt/dev/null c 1 3
 	-sudo mknod /mnt/dev/full c 1 4
-	-sudo mknod /mnt/dev/rd0  b 1 0 
+	-sudo mknod /mnt/dev/tty  c 2 0
+	-sudo mknod /mnt/dev/tty1 c 2 1
+	-sudo mknod /mnt/dev/tty2 c 2 2
+	-sudo mknod /mnt/dev/tty3 c 2 3
+	-sudo mknod /mnt/dev/tty4 c 2 4
+	-sudo mknod /mnt/dev/tty5 c 2 5
+	-sudo mknod /mnt/dev/tty6 c 2 6
+	-sudo mknod /mnt/dev/tty7 c 2 7
+	-sudo mknod /mnt/dev/com1 c 2 8
+	-sudo mknod /mnt/dev/com2 c 2 9
+	-sudo mknod /mnt/dev/rd0  b 1 0
+	-sudo mknod /mnt/dev/fd0  b 2 0
+	-sudo mknod /mnt/dev/fd1  b 2 1
 	-sudo mknod /mnt/dev/hda  b 3 0
 	-sudo mknod /mnt/dev/hda1 b 3 1
 	-sudo mknod /mnt/dev/hda2 b 3 2
@@ -47,6 +57,7 @@ build:boot/bootsect.bin tools/install-boot $(HD)
 	cp   command/rm /mnt/bin/rm
 	cp   command/ed /mnt/bin/ed
 	cp   command/link /mnt/bin/link
+	cp   command/t2 /mnt/bin/t2
 	cp   command/*     /mnt/src/
 	sudo umount /mnt
 	./tools/install-boot boot/bootsect.bin $(HD)

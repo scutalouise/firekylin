@@ -44,7 +44,6 @@
 //	printf("---%d",atexit_func_num);
 //}
 
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/fcntl.h>
@@ -56,26 +55,24 @@
 #include <string.h>
 #include <time.h>
 
-#define PARAM_NONE 0 //无参数
-#define PARAM_A    1 //-a
-#define PARAM_L    2 //-l
-#define MAXROWLEN  80 //一行最多显示的字符数
+#define PARAM_NONE 0
+#define PARAM_A    1
+#define PARAM_L    2
+#define MAXROWLEN  80
 
-int g_leave_len = MAXROWLEN; //一行是剩余长度，用于输出对齐
-int g_maxlen;                //存放某目录下最长文件名的长度
+int g_leave_len = MAXROWLEN;
+int g_maxlen;
 
 void my_error(const char* errstring, int line)
 {
-	fprintf(stderr, "line:%d", line);
-	//perror(errstring);
+	fprintf(stderr, "line:%d %s", line, errstring);
 	exit(1);
 }
 
-//打印单个文件，且没有-l参数
 void display_single(char *name)
 {
 	int i, len;
-	//如果本行不足以打印一个文件名则换行
+
 	if (g_leave_len < g_maxlen) {
 		printf("\n");
 		g_leave_len = MAXROWLEN;
@@ -95,14 +92,12 @@ void display_single(char *name)
 
 }
 
-/*获取文件属性并打印*/
 void display_attribute(struct stat buf, char *name)
 {
 	char buf_time[32];
-	struct passwd *psd;
-	struct group *grp;
+	//struct passwd *psd;
+	//struct group *grp;
 
-	//获取文件类型
 	if (S_ISLNK(buf.st_mode))
 		printf("1");
 	else if (S_ISREG(buf.st_mode))
@@ -118,7 +113,6 @@ void display_attribute(struct stat buf, char *name)
 	else if (S_ISSOCK(buf.st_mode))
 		printf("s");
 
-	//获取文件权限
 	if (buf.st_mode & S_IRUSR)
 		printf("r");
 	else
@@ -173,7 +167,6 @@ void display_attribute(struct stat buf, char *name)
 	printf(" %s", buf_time);
 }
 
-//根据flag参数显示文件内容，调用display_single或者display_attribute
 void display(int flag, char *pathname)
 {
 	int i, j;
@@ -193,8 +186,7 @@ void display(int flag, char *pathname)
 	}
 
 	if (flag == PARAM_NONE) {
-		if (name[0] != '.')                //不显示隐藏文件
-				{
+		if (name[0] != '.') {
 			display_single(name);
 		}
 	} else if (flag == PARAM_A) {

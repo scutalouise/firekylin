@@ -7,6 +7,7 @@
 #include <sys/unistd.h>
 #include <sys/fcntl.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
@@ -109,6 +110,7 @@ int main(void)
 	printf("More info:http://bbs.firekylin.cc\n\r");
 
 	while (1) {
+
 		printf("%s", ps1);
 		if (get_cmd(buf)) {
 			argc = parcmd(buf, argv);

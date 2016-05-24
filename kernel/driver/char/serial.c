@@ -9,8 +9,6 @@
 #include <firekylin/driver.h>
 #include <firekylin/tty.h>
 
-struct tty_struct com1;
-
 void init_rs_contrl(unsigned short port)
 {
 	outb(port+3,0x80);
@@ -45,22 +43,22 @@ void do_rs(struct trapframe *tf)
 			inb(0x3f8 + 6);
 			break;
 		case 2:
-			if (!isempty(com1.out)) {
-				GETCH(com1.out, data);
-				outb(0x3f8, data);
-				break;
-			}
+			///if (!isempty(com1.out)) {
+			//	GETCH(com1.out, data);
+			//	outb(0x3f8, data);
+			//	break;
+			//}
 			outb(inb(0x3f8 + 1), 0xd);
-			wake_up(&(com1.out.wait));
+			//wake_up(&(com1.out.wait));
 			break;
 		case 4:
 			data = inb(0x3f8);
-			if (!isfull(com1.raw)) {
-				PUTCH(com1.raw, data);
-				wake_up(&(com1.raw.wait));
+			//if (!isfull(com1.raw)) {
+				//PUTCH(com1.raw, data);
+				//wake_up(&(com1.raw.wait));
 				//PUTCH(com1.out,data);
 				//rs_write(&com1);
-			}
+			//}
 			break;
 		case 6:
 			inb(0x3f8 + 5);
@@ -75,5 +73,5 @@ void rs_init(void)
 	init_rs_contrl(0x3f8);
 	set_trap_handle(0x24,do_rs);
 	outb(0x21,inb(0x21)&(~0x10));
-	com1.write=rs_write;
+	//com1.write=rs_write;
 }

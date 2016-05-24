@@ -80,8 +80,6 @@ static void time_init()
 	start_time = mktimek(year, month, day, hour, min, sec);
 }
 
-extern void fd_init();
-
 void start(void)
 {
 	memset(_edata, 0, (_end-_edata));
@@ -91,8 +89,6 @@ void start(void)
 	char_dev_init();
 	blk_dev_init();
 	mm_init();
-	fd_init();
-
 	sched_init();
 	clock_init();
 

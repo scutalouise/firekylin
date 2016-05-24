@@ -70,6 +70,7 @@ static int sformat(char* buf, char* fmt, va_list ap)
 	return (int) (str - buf);
 }
 
+extern unsigned fg_console;
 int printk(char* fmt, ...)
 {
 	va_list ap;
@@ -77,7 +78,7 @@ int printk(char* fmt, ...)
 
 	va_start(ap, fmt);
 	i = sformat(printk_buf, fmt, ap);
-	tty_write(1, printk_buf, 0, i);
+	tty_write(fg_console+1, printk_buf, 0, i);
 	return i;
 }
 
@@ -89,7 +90,7 @@ void panic(char* fmt, ...)
 	printk("\n\nKernel Panic: ");
 	va_start(ap, fmt);
 	i = sformat(printk_buf, fmt, ap);
-	tty_write(1,printk_buf, 0,i);
+	tty_write(fg_console+1,printk_buf, 0,i);
 	irq_disable();
 	__asm__("hlt");
 }

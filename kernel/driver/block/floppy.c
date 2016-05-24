@@ -16,8 +16,6 @@ static char  fd_reply[MAX_REPLIES]; 	/* 软驱回应缓冲区 */
 #define ST2 (fd_reply[2])           	/* 软驱回应2号字节 */
 #define ST3 (fd_reply[3])           	/* 软驱回应3号字节 */
 
-static char *floppy_inc_name; 		/* 软驱型号名 */
-static char *floppy_type;
 static int   floppy_motor = 0; 		/* 软驱马达状态字节 */
 
 int fd_result(void)
@@ -36,6 +34,7 @@ int fd_result(void)
 		}
 	}
 	panic("Get floppy status times out !\n");
+	return 0;
 }
 
 int fd_sendbyte(int value)
@@ -69,48 +68,6 @@ int fd_getbyte(void)
 	return 0;
 }
 
-int fd_getinfo(void)
-{
-	int i;
-	int CmType, FdType;
-
-	fd_sendbyte(0x10);
-	i = fd_getbyte();
-
-	switch (i) {
-		case 0x80:
-			floppy_inc_name = "NEC765A controller";
-			break;
-		case 0x90:
-			floppy_inc_name = "NEC765B controller";
-			break;
-		default:
-			floppy_inc_name = "Enhanced controller";
-			break;
-	}
-
-	CMOSREAD(CmType,0x10);        //read floppy type from cmos
-	FdType = (CmType >> 4) & 0x07;
-
-	if (FdType == 0)
-		printk("Floppy driver not found!");
-
-	switch (FdType) {
-		case 0x02: // 1.2MB
-			floppy_type = "1.2MB";
-			break;
-
-		case 0x04: // 1.44MB
-			floppy_type = "1.44MB";
-			break;
-
-		case 0x05: // 2.88MB
-			floppy_type = "2.88MB";
-			break;
-	}
-	return 1;
-}
-
 void fd_motorOn(void)
 {
 	if (!floppy_motor) {
@@ -141,35 +98,29 @@ void fd_setmode(void)
 	outb(FD_DCR,0);
 }
 
-void block_to_hts(int block, int *head, int *track, int *sector)
-{
-	*head = (block % (18 * 2)) / 18;
-	*track = block / (18 * 2);
-	*sector = block % 18 + 1;
-}
-
 void fd_setupDMA(void)
 {
-	//irq_lock();
-	//DisableDma(2);
-	//ClearDmaFF(2);
-	//SetDmaMode(2, DMA_MODE_READ);
-	//SetDmaAddr(2, (unsigned long) fd_buffer);
-	//SetDmaCount(2, 512);
-	//EnableDma(2);
-	//irq_unlock();
+	irq_lock();
+	dma_disable(2);
+	dma_clearFF(2);
+	dma_setmode(2, DMA_MODE_READ);
+	dma_setaddr(2, (unsigned long) fd_buffer);
+	dma_setcount(2, 1024);
+	dma_enable(2);
+	irq_unlock();
 }
 
-void fd_read_cmd(int blk)
+void fd_cmd(int cmd,int block)
 {
 	int head,track,sector;
-
-	block_to_hts(blk, &head, &track, &sector);
+	head = (block % (18 * 2)) / 18;
+	track = block / (18 * 2);
+	sector = block % 18 + 1;
 
 	fd_motorOn();
 	fd_setupDMA();
 	fd_setmode();
-	fd_sendbyte(FD_READ);
+	fd_sendbyte(cmd);
 	fd_sendbyte(head * 4 + 0);
 	fd_sendbyte(track); 	/*  Cylinder  */
 	fd_sendbyte(head); 	/*  Head  */
@@ -181,29 +132,61 @@ void fd_read_cmd(int blk)
 	return;
 }
 
+struct request{
+	unsigned char busy;
+	unsigned char cmd;
+	unsigned char nr_sect;
+	unsigned char errors;
+	unsigned long start_sect;
+	char          *buf;
+	struct buffer *bh;
+	struct task   *wait;
+};
+
+static struct request fd_req;
+
+static inline void lock_fd()
+{
+	irq_lock();
+	while(fd_req.busy)
+		sleep_on(&fd_req.wait);
+	fd_req.busy=1;
+	irq_unlock();
+}
+
+static inline void unlock_fd()
+{
+	irq_lock();
+	fd_req.busy=0;
+	fd_req.busy=1;
+	irq_unlock();
+}
+
 void fd_read(struct buffer *buf)
 {
 
-	fd_read_cmd(512);
+	lock_fd();
+	fd_req.cmd=FD_READ;
+	fd_req.bh=buf;
+	fd_cmd(FD_READ,0);
+	unlock_fd();
+}
 
-	//task_ioblock(); /* 当前任务将陷入io等待中 */
-
-	/* --------结果检查-------- */
+void do_fd(struct trapframe *tf)
+{
+	outb(0xa0, 0x20);
+	outb(0x20, 0x20);
 
 	fd_result();
-
 	if (ST1 != 0 || ST2 != 0) {
-		panic("ST0 %d ST1 %d ST2 %d\n", ST0, ST1, ST2);
+			panic("ST0 %d ST1 %d ST2 %d\n", ST0, ST1, ST2);
 	}
-	/* --------结果检查完成-------- */
 
-	memcpy(buf->b_data, fd_buffer, 1024);
+	memcpy(fd_req.bh->b_data, fd_buffer, 1024);
 
 	fd_motorOff();
 }
 
 void fd_init(void)
 {
-	fd_getinfo();
-	printk("Floppy Inc : %s  Floppy Type : %s",floppy_inc_name,floppy_type);
 }

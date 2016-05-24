@@ -52,8 +52,9 @@ static int shiftr;
 static int ctrlr;
 static int ctrll;
 static int cap;
+extern void select_con(int con);
 
-void do_keyboard(struct trapframe *tf)
+static void do_kbd(struct trapframe *tf)
 {
 	unsigned char tmp, s;
 	outb(0x20, 0x20);
@@ -81,6 +82,15 @@ void do_keyboard(struct trapframe *tf)
 		case CAPLK:
 			cap = !cap;
 			break;
+		case F1:
+		case F2:
+		case F3:
+		case F4:
+		case F5:
+		case F6:
+		case F7:
+			select_con(s-F1);
+			break;
 		default:
 			if (cap) {
 				if (s >= 'a' && s <= 'z')
@@ -88,14 +98,8 @@ void do_keyboard(struct trapframe *tf)
 				else if (s >= 'A' && s <= 'Z')
 					s = s + 32;
 			}
-			if (!isfull(console.raw)) {
-				if(s==C('D'))
-					s=-1;
-				PUTCH(console.raw, s);
-				wake_up(&(console.raw.wait));
-			}
-			if (s != 0x1b)
-				printk("%c", s);
+			PUTCH(tty_table[fg_console+1].raw,s);
+			copy_to_cook(&tty_table[fg_console+1]);
 			break;
 		}
 	} else {
@@ -122,8 +126,8 @@ void do_keyboard(struct trapframe *tf)
 	}
 }
 
-void keyboard_init(void)
+void kbd_init(void)
 {
-	set_trap_handle(0x21, &do_keyboard);
+	set_trap_handle(0x21, &do_kbd);
 	outb(0x21, inb(0x21) & ~2);
 }

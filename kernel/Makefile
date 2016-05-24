@@ -36,10 +36,12 @@ kernel.bin: $(OBJS)
 	@echo         LD      OBJS
 	@ld -m elf_i386 -e _start -Ttext 0xC0010000 --oformat binary \
 	    -Map kernel.map -o kernel.bin $(OBJS)	
+	@ld -m elf_i386 -e _start -Ttext 0xC0010000  \
+	    -Map kernel.map -o kernel.elf $(OBJS)	
 	
 clean:
 	@echo kernel cleaning...
-	@-rm kernel.map kernel.bin $(OBJS)
+	@-rm kernel.map kernel.bin kernel.elf $(OBJS)
 
 count:
 	@echo dirs:  $(shell ls -lR |grep ^d |wc -l)

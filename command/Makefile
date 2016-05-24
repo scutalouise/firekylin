@@ -13,7 +13,7 @@ CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../include
 LIB=../libc/libc.a
 
-OBJS=init sh ls cat sync mkdir touch cp rm ed link
+OBJS=init sh ls cat sync mkdir touch cp rm ed link t2
 
 .s.o:
 	@$(AS) $(SFLAGS) -o $@  $<
