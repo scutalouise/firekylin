@@ -77,7 +77,13 @@ static void gdt_init(void)
 	short tmp[3] = { sizeof(gdt_table) - 1, 0, 0 };
 	tmp[1] = ((long) &gdt_table) & 0xffff;
 	tmp[2] = (((long) &gdt_table) >> 16) & 0xffff;
-	__asm__("lgdt %0"::"m"(tmp));
+	__asm__("lgdt %0;"
+		"jmp  $0x8,$next;"
+		"next:movl $0x10,%%eax;"
+		"movw %%ax,%%ds;"
+		"movw %%ax,%%es;"
+		"movw %%ax,%%fs;"
+		"movw %%ax,%%gs"::"m"(tmp));
 }
 
 static void idt_init(void)

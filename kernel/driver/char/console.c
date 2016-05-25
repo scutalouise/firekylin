@@ -31,7 +31,7 @@ void con_init()
 	for (int cur_console = 0; cur_console < MAX_CON; cur_console++) {
 		origin = base = 0xc00b8000 + 25 * 80 * 2 * cur_console;
 		x = y = 0;
-		color = 14;
+		color = 8;
 	}
 }
 

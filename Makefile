@@ -6,69 +6,27 @@
 
 AS=nasm
 CC=gcc -fno-builtin -std=c99
-HD=hd.img
 
-build:boot/bootsect.bin tools/install-boot $(HD)
+all:
 	make -C kernel
 	make -C libc
 	make -C command
-	mkfs.minix -1 $(HD)
-	sudo mount -t minix $(HD) -o loop /mnt
-	-mkdir /mnt/boot
-	-mkdir /mnt/bin
-	-mkdir /mnt/dev
-	-mkdir /mnt/etc
-	-mkdir /mnt/home
-	-mkdir /mnt/lib
-	-mkdir /mnt/src
-	-sudo mknod /mnt/dev/ram  c 1 0
-	-sudo mknod /mnt/dev/port c 1 1
-	-sudo mknod /mnt/dev/kmem c 1 2
-	-sudo mknod /mnt/dev/null c 1 3
-	-sudo mknod /mnt/dev/full c 1 4
-	-sudo mknod /mnt/dev/tty  c 2 0
-	-sudo mknod /mnt/dev/tty1 c 2 1
-	-sudo mknod /mnt/dev/tty2 c 2 2
-	-sudo mknod /mnt/dev/tty3 c 2 3
-	-sudo mknod /mnt/dev/tty4 c 2 4
-	-sudo mknod /mnt/dev/tty5 c 2 5
-	-sudo mknod /mnt/dev/tty6 c 2 6
-	-sudo mknod /mnt/dev/tty7 c 2 7
-	-sudo mknod /mnt/dev/com1 c 2 8
-	-sudo mknod /mnt/dev/com2 c 2 9
-	-sudo mknod /mnt/dev/rd0  b 1 0
-	-sudo mknod /mnt/dev/fd0  b 2 0
-	-sudo mknod /mnt/dev/fd1  b 2 1
-	-sudo mknod /mnt/dev/hda  b 3 0
-	-sudo mknod /mnt/dev/hda1 b 3 1
-	-sudo mknod /mnt/dev/hda2 b 3 2
-	-sudo mknod /mnt/dev/hda3 b 3 3
-	-sudo mknod /mnt/dev/hda4 b 3 4
-	cp   kernel/kernel.bin /mnt/boot/kernel
-	cp   kernel/kernel.map /mnt/boot/kernel.map
-	cp   command/init /mnt/bin/init
-	cp   command/sh /mnt/bin/sh
-	cp   command/ls /mnt/bin/ls
-	cp   command/cat /mnt/bin/cat
-	cp   command/sync /mnt/bin/sync
-	cp   command/mkdir /mnt/bin/mkdir
-	cp   command/touch /mnt/bin/touch
-	cp   command/cp /mnt/bin/cp
-	cp   command/rm /mnt/bin/rm
-	cp   command/ed /mnt/bin/ed
-	cp   command/link /mnt/bin/link
-	cp   command/t2 /mnt/bin/t2
-	cp   command/*     /mnt/src/
-	sudo umount /mnt
-	./tools/install-boot boot/bootsect.bin $(HD)
+	
+install:
+	make install -C kernel
+	make install -C libc
+	make install -C command
+	sync
+	sync
+	cp   ~/hd.vhd hd.vhd
+	sync
+	sync
 	
 clean:
-	-rm -f boot/bootsect.bin
-	-rm -f tools/install-boot
-	-rm -f $(HD)
-	@make clean -C kernel
-	@make clean -C libc
-	@make clean -C command
+	make clean -C kernel
+	make clean -C libc
+	make clean -C command
+	-rm  hd.vhd
 
 count:
 	@echo dirs:  $(shell ls -lR |grep ^d |wc -l)
@@ -80,6 +38,3 @@ boot/bootsect.bin:boot/bootsect.s
 	
 tools/install-boot:tools/install-boot.c
 	$(CC) -o $@  $<
-	
-$(HD):
-	dd if=/dev/zero of=$(HD) bs=1024 count=4096

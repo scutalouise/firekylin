@@ -8,6 +8,8 @@ AS=nasm
 CC=gcc
 LD=ld -m elf_i386 -T ldscript
 
+PREFIX=~/part1/bin
+
 SFLAGS=-f elf32
 CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../include
@@ -22,6 +24,19 @@ OBJS=init sh ls cat sync mkdir touch cp rm ed link t2
 
 command: $(OBJS)
 
+install: $(OBJS)
+	cp init   $(PREFIX)/init
+	cp sh     $(PREFIX)/sh
+	cp ls     $(PREFIX)/ls
+	cp cat    $(PREFIX)/cat
+	cp sync   $(PREFIX)/sync
+	cp mkdir  $(PREFIX)/mkdir
+	cp touch  $(PREFIX)/touch
+	cp cp	  $(PREFIX)/cp
+	cp rm     $(PREFIX)/rm
+	cp ed     $(PREFIX)/ed
+	cp link   $(PREFIX)/link
+	
 init: init.o
 	$(LD) -o  $@  $<  $(LIB)
 sh: sh.o

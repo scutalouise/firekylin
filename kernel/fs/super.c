@@ -18,7 +18,8 @@ static sleeplock_t super_lock;
 
 static inline void lock_super(struct super *sb)
 {
-	irq_lock();
+	irq_lock()
+	;
 	while (sb->s_flag & S_BUSY)
 		sleep_on(&sb->s_wait);
 	sb->s_flag |= S_BUSY;
@@ -27,7 +28,8 @@ static inline void lock_super(struct super *sb)
 
 static inline void unlock_super(struct super *sb)
 {
-	irq_lock();
+	irq_lock()
+	;
 	sb->s_flag &= ~S_BUSY;
 	wake_up(&sb->s_wait);
 	irq_unlock();
@@ -37,11 +39,13 @@ struct super * get_super(dev_t dev)
 {
 	struct super *super = super_table;
 
-	lock_super_table();
+	lock_super_table()
+	;
 	while (super < super_table + NR_SUPER) {
 		if (super->s_dev == dev) {
 			super->s_count++;
-			unlock_super_table();
+			unlock_super_table()
+			;
 			lock_super(super);
 			return super;
 		}
@@ -80,7 +84,7 @@ void mount_root(void)
 	struct task *task = CURRENT_TASK();
 
 	super->s_dev = ROOT_DEV;
-	super->s_op=&minix_fs_operation;
+	super->s_op = &minix_fs_operation;
 	super->s_op->super_read(super);
 	root_inode = iunlock(iget(ROOT_DEV, 1));
 	task->pwd = iunlock(idup(root_inode));

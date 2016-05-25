@@ -35,9 +35,9 @@ void put_page(long addr)
 
 	if (addr & 0xfff)
 		panic("Try to free Not align 4kB page :%x", addr);
-	if (addr < 0x400000){
+	if (addr < 0x400000) {
 		printk("Try to free kernel page:%x\n", addr);
-		return ;
+		return;
 	}
 
 	tmp = (addr - 0x400000) >> 12;
@@ -57,7 +57,7 @@ void map_page(long va, long pa, long pdtr)
 
 	if (!(p[va >> 22 & 0x3ff] & 1)) { //PTE not exist.
 		tmp = get_page();
-		memset((char*)__va(tmp), 0, 4096);
+		memset((char*) __va(tmp), 0, 4096);
 		p[va >> 22 & 0x3ff] = tmp + 7;
 	}
 
@@ -85,13 +85,13 @@ void do_page_fault(struct trapframe *tf)
 
 	__asm__("movl %%cr2,%%eax":"=a"(cr2));
 
-	if(cr2==0)
-		return ;
+	if (cr2 == 0)
+		return;
 
 	if (cr2 > 0x41000000 || cr2 < 0x40000000) {
 		printk("CS:EIP=%x:%x\t EFLAGS=%x\t SS:ESP=%x:%x\t", tf->cs,
 				tf->eip, tf->eflags, tf->ss, tf->esp);
-		panic("cr2=%x\n",cr2);
+		panic("cr2=%x\n", cr2);
 	}
 
 	current = CURRENT_TASK();
@@ -105,12 +105,13 @@ long copy_mm(void)
 	long ret = get_page();
 	struct task *current = CURRENT_TASK();
 
-	memset((char*)__va(ret), 0, 3072);
-	memcpy((char*)__va(ret)+3072, (char*)__va(current->pdtr) + 3072, 1024);
+	memset((char*) __va(ret), 0, 3072);
+	memcpy((char*) __va(ret) + 3072, (char*) __va(current->pdtr) + 3072,
+			1024);
 
 	for (addr = current->stack; addr < current->sbrk; addr += 4096) {
 		tmp_addr = get_page();
-		memcpy((char*)__va(tmp_addr), (char*)addr, 4096);
+		memcpy((char*) __va(tmp_addr), (char*) addr, 4096);
 		map_page(addr, tmp_addr, ret);
 	}
 	return ret;
@@ -133,17 +134,17 @@ void free_mm(void)
 	unsigned long tmp;
 	struct task *current = CURRENT_TASK();
 	for (long addr = current->stack; addr < current->sbrk; addr += 4096) {
-		if((tmp=unmap_page(addr, current->pdtr)))
+		if ((tmp = unmap_page(addr, current->pdtr)))
 			put_page(tmp);
 	}
-	memset((char*)__va(current->pdtr), 0, 3072);
+	memset((char*) __va(current->pdtr), 0, 3072);
 }
 
 void mm_init(void)
 {
 	unsigned long i, *p;
 
-	memsize = ((*(int*) 0xc0008000) & 0xffff) * 1024 + 0x100000;
+	memsize = 64 << 20;
 	NR_PAGE = min((memsize >> 12), MAX_NR_PAGES);
 
 	p = (unsigned long*) 0xC0000000;
@@ -158,5 +159,4 @@ void mm_init(void)
 	}
 
 	set_trap_handle(14, do_page_fault);
-	printk("memsize:%dMB\n",memsize>>20);
 }

@@ -10,6 +10,7 @@ CC=gcc
 SFLAGS=-f elf32
 CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../include
+PREFIX=~/part1/boot
 
 OBJS=init/head.o init/main.o  \
      kernel/entry.o kernel/trap.o   kernel/util.o  \
@@ -35,9 +36,12 @@ OBJS=init/head.o init/main.o  \
 kernel.bin: $(OBJS)
 	@echo         LD      OBJS
 	@ld -m elf_i386 -e _start -Ttext 0xC0010000 --oformat binary \
-	    -Map kernel.map -o kernel.bin $(OBJS)	
+	    -Map kernel.map -o kernel.bin $(OBJS)
 	@ld -m elf_i386 -e _start -Ttext 0xC0010000  \
 	    -Map kernel.map -o kernel.elf $(OBJS)	
+	
+install:kernel.bin
+	cp kernel.bin $(PREFIX)/kernel.bin
 	
 clean:
 	@echo kernel cleaning...

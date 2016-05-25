@@ -10,6 +10,8 @@ CC=gcc
 SFLAGS=-f elf32
 CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../include
+      
+PREFIX=~/part1/lib
 
 include assert/sub.mk
 include crt/sub.mk
@@ -34,6 +36,9 @@ include unistd/sub.mk
 libc.a: $(LIBC_OBJ)
 	@echo         AR       OBJS
 	@ar rcs   libc.a     $(LIBC_OBJ) 
+
+install:libc.a
+	cp libc.a $(PREFIX)/libc.a
 
 clean: 
 	@echo libc cleaning...

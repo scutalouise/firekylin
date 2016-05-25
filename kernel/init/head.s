@@ -4,17 +4,61 @@
 ; *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
 ; */
 
-global  _start
-extern  start
+MB2_HEAD_MAGIC		EQU 	0xe85250d6
+MB2_HEAD_ARCH_I386	EQU	0
+MB2_HEAD_TAG_ADDR	EQU	2
+MB2_HEAD_TAG_OPT	EQU	1
+MB2_HEAD_TAG_ENT_ADDR	EQU	3
+MB2_HEAD_TAG_END	EQU	0
+MB2_LOAD_MAGIC		EQU	0x36d76289
 
-section .text
+	bits 32
+
+	section .text
+
+global  _start
+extern  start,gdt_table
+
 _start:
+	jmp real_start
+	align 8
+mbhead_start:
+	dd MB2_HEAD_MAGIC			; magic
+	dd MB2_HEAD_ARCH_I386			; arch
+	dd (mbhead_end-mbhead_start)		; len
+	dd -(MB2_HEAD_MAGIC+MB2_HEAD_ARCH_I386 + (mbhead_end-mbhead_start))
+address_tag_start:
+	dw MB2_HEAD_TAG_ADDR
+	dw MB2_HEAD_TAG_OPT
+	dd address_tag_end-address_tag_start
+	dd 0x10008				; header_addr
+	dd 0x10000				; load_addr
+	dd 0x20000				; load_end_addr
+	dd 0x20000				; bss_end_addr
+address_tag_end:
+enter_address_tag_start:
+	dw MB2_HEAD_TAG_ENT_ADDR
+	dw MB2_HEAD_TAG_OPT
+	dd enter_address_tag_end - enter_address_tag_start
+	dd 0x10000				; entry ponit
+	dd 0  					; padding
+enter_address_tag_end:
+	dw MB2_HEAD_TAG_END
+	dw 0
+	dd 8
+mbhead_end:
+
+real_start:
+	mov esp,0x10000
+	cmp eax,MB2_LOAD_MAGIC
+	je setup_page_table
+
 	mov ax,0x10
 	mov ds,ax
 	mov es,ax
 	mov ss,ax
-	mov esp,0x10000
-		; set simple page table, map 0~4MB
+
+setup_page_table:	; set simple page table, map 0~4MB
 	xor eax,eax
 	xor edi,edi
 	mov ecx,4096

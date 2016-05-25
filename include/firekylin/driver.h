@@ -23,7 +23,7 @@
 #define DEV_BLK_FLOPPY		2
 #define DEV_BLK_IDE		3
 
-#define ROOT_DEV		DEV(DEV_BLK_IDE,0)
+#define ROOT_DEV		DEV(DEV_BLK_IDE,1)
 
 struct char_dev {
 	char *name;
