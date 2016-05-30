@@ -8,7 +8,7 @@
 #define _FS_H
 
 #include <sys/types.h>
-#include <firekylin/sched.h>
+#include <firekylin/lock.h>
 
 #define BUF_SIZE	1024
 struct buffer {
@@ -16,18 +16,21 @@ struct buffer {
 	unsigned int    b_block;
 	unsigned short  b_flag;
 	unsigned short  b_count;
+	sleeplock_t	b_lock;
 	char            b_data[BUF_SIZE];
 	struct buffer * b_hash_prev;
 	struct buffer * b_hash_next;
 	struct buffer * b_free_prev;
 	struct buffer * b_free_next;
-	struct task   * b_wait;
 };
 
 /* Bits of buffer->b_flag */
 #define B_BUSY		0x0001
 #define B_VALID 	0x0002
 #define B_DIRTY 	0x0004
+
+#define lock_buffer(buf)	require_lock(&((buf)->b_lock))
+#define unlock_buffer(buf)	release_lock(&((buf)->b_lock))
 
 #define NR_ZONE		9
 struct inode {
@@ -42,11 +45,11 @@ struct inode {
 	time_t 		     i_atime;
 	time_t 		     i_mtime;
 	time_t 		     i_ctime;
-	unsigned int 	     i_zone[NR_ZONE];
 	unsigned short 	     i_flag;
 	unsigned short 	     i_count;
+	sleeplock_t	     i_lock;
 	struct fs_operation *i_op;
-	struct task         *i_wait;
+	unsigned int 	     i_zone[NR_ZONE];
 };
 
 /* Bits of inode->i_flag */
@@ -66,6 +69,7 @@ struct super {
 	unsigned long        s_max_size;
 	unsigned short       s_flag;
 	unsigned short       s_count;
+	sleeplock_t	     s_lock;
 	struct fs_operation *s_op;
 	struct inode        *s_imount;
 	struct task         *s_wait;
@@ -76,6 +80,9 @@ struct super {
 #define S_VALID		0x0002
 #define S_DIRTY		0x0004
 #define S_WRITEABLE	0x0008
+
+#define lock_super(super)	require_lock(&((super)->s_lock))
+#define unlock_super(super)	release_lock(&((super)->s_lock))
 
 struct fs_operation{
 	int (*super_read)(struct super *super);
@@ -108,20 +115,34 @@ struct dir_entry {
 	char name[NAME_LEN];
 };
 
+static inline struct inode * ilock(struct inode *inode)
+{
+	require_lock(&inode->i_lock);
+	return inode;
+}
+
+static inline struct inode * iunlock(struct inode *inode)
+{
+	release_lock(&inode->i_lock);
+	return inode;
+}
+
+static inline struct inode * idup(struct inode *inode)
+{
+	require_lock(&inode->i_lock);
+	inode->i_count++;
+	return inode;
+}
+
 extern struct fs_operation minix_fs_operation;
 
 extern struct buffer * bread(dev_t dev, long block);
 extern void            brelse(struct buffer * buf);
-
 extern struct super  * get_super(dev_t dev);
 extern void            put_super(struct super *super);
-
 extern struct inode  * iget(dev_t dev, ino_t ino);
-extern struct inode  * ilock(struct inode *inode);
-extern struct inode  * iunlock(struct inode *inode);
-extern struct inode  * idup(struct inode *inode);
-extern struct inode  * namei(char *path, char **basename);
 extern void            iput(struct inode *inode);
+extern struct inode  * namei(char *path, char **basename);
 
 #define NR_FILE 	64
 extern struct file file_table[NR_FILE];

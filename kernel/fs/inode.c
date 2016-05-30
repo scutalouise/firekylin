@@ -9,47 +9,12 @@
 #include <firekylin/fs.h>
 
 #define NR_INODE	32
-struct inode inode_table[NR_INODE];
-struct inode *root_inode;
-sleeplock_t inode_lock;
+struct inode            inode_table[NR_INODE];
+struct inode          * root_inode;
+sleeplock_t             inode_table_lock;
 
-#define lock_inode_table()	require_lock(&inode_lock);
-#define unlock_inode_table()	release_lock(&inode_lock);
-
-struct inode * ilock(struct inode * inode)
-{
-	if (!inode) {
-		panic("ilock:inode is null");
-	}
-	irq_lock();
-	while (inode->i_flag & I_BUSY)
-		sleep_on(&inode->i_wait);
-	inode->i_flag |= I_BUSY;
-	irq_unlock();
-	return inode;
-}
-
-struct inode * iunlock(struct inode * inode)
-{
-	if (!inode) {
-		panic("iunlock:inode is null");
-	}
-	irq_lock();
-	inode->i_flag &= ~I_BUSY;
-	wake_up(&inode->i_wait);
-	irq_unlock();
-	return inode;
-}
-
-struct inode * idup(struct inode *inode)
-{
-	if (!inode) {
-		panic("idup:inode is null");
-	}
-	ilock(inode);
-	inode->i_count++;
-	return inode;
-}
+#define lock_inode_table()	require_lock(&inode_table_lock);
+#define unlock_inode_table()	release_lock(&inode_table_lock);
 
 struct inode * iget(dev_t dev, ino_t ino)
 {
@@ -84,7 +49,6 @@ no_dev:
 			}
 			inode->i_dev = dev;
 			inode->i_ino = ino;
-			inode->i_flag =I_BUSY ;
 			if (dev){
 				super=get_super(dev);
 				inode->i_op=super->s_op;
@@ -154,10 +118,8 @@ void sync_inode()
 
 	while (inode < inode_table + NR_INODE) {
 		ilock(inode);
-		if (inode->i_flag & I_DIRTY) {
+		if (inode->i_flag & I_DIRTY)
 			inode->i_op->inode_write(inode);
-			inode->i_flag &= ~I_DIRTY;
-		}
 		iunlock(inode);
 		inode++;
 	}

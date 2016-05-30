@@ -137,7 +137,6 @@ struct inode * minix1_alloc_inode(dev_t dev)
 		inode->i_atime=inode->i_mtime=inode->i_ctime=current_time();
 		inode->i_op=fs_op;
 		memset(inode->i_zone,0,4*NR_ZONE);
-		inode->i_wait=NULL;
 		return inode;
 	}
 	put_super(super);

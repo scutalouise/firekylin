@@ -105,3 +105,8 @@ int sys_sigwait()
 	sched();
 	return -EINTR;
 }
+
+int sys_sigctl(int cmd ,long arg)
+{
+	return 0;
+}

@@ -5,22 +5,20 @@
  */
 
 #include <firekylin/kernel.h>
-#include <firekylin/lock.h>
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
-#include <sys/types.h>
 #include <errno.h>
 
 #define NR_BUFFER	64
 #define READ_BUF	1
 #define WRITE_BUF	2
 
-struct buffer buffer_table[NR_BUFFER];
-struct buffer * free_list_head;
-sleeplock_t buffer_lock;
+static struct buffer    buffer_table[NR_BUFFER];
+static struct buffer  * free_list_head;
+static sleeplock_t      buffer_table_lock;
 
-#define lock_buffer_table()	require_lock(&buffer_lock);
-#define unlock_buffer_table()	release_lock(&buffer_lock);
+#define lock_buffer_table()	require_lock(&buffer_table_lock);
+#define unlock_buffer_table()	release_lock(&buffer_table_lock);
 
 static void rw_block(int cmd, struct buffer* buf)
 {
@@ -33,24 +31,7 @@ static void rw_block(int cmd, struct buffer* buf)
 		blk_table[major]->write(buf);
 }
 
-static inline void lock_buffer(struct buffer *buf)
-{
-	irq_lock();
-	while (buf->b_flag & B_BUSY)
-		sleep_on(&buf->b_wait);
-	buf->b_flag |= B_BUSY;
-	irq_unlock();
-}
-
-static inline void unlock_buffer(struct buffer *buf)
-{
-	irq_lock();
-	buf->b_flag &= ~B_BUSY;
-	wake_up(&buf->b_wait);
-	irq_unlock();
-}
-
-struct buffer * getblk(dev_t dev, int block)
+static struct buffer * getblk(dev_t dev, int block)
 {
 	struct buffer *buf;
 
@@ -121,7 +102,16 @@ struct buffer * bread(dev_t dev, long block)
 
 	if (!(buf->b_flag & B_VALID)) {
 		rw_block(READ_BUF, buf);
-		lock_buffer(buf);
+		/*
+		 * lock buffer without to check how hold the lock.
+		 * buffer would be unlock by driver.
+		 */
+		irq_lock();
+		while(buf->b_lock.pid){
+			sleep_on(&(buf->b_lock.wait));
+		}
+		buf->b_lock.pid=(CURRENT_TASK())->pid;
+		irq_unlock();
 	}
 	return buf;
 }
@@ -134,11 +124,11 @@ int sys_sync()
 	sync_inode();
 	for (bh = buffer_table; bh < buffer_table + NR_BUFFER; bh++) {
 		lock_buffer(bh);
-		if (bh->b_flag & B_DIRTY) {
+		if (bh->b_flag & B_DIRTY)
+			/*
+			 *  buffer shold be unlock in write_block.
+			 */
 			rw_block(READ_BUF, bh);
-			bh->b_flag &= ~B_DIRTY;
-		}
-		unlock_buffer(bh);
 	}
 	return 0;
 }
@@ -156,7 +146,8 @@ void buffer_init(void)
 		buf->b_hash_next = NULL;
 		buf->b_free_prev = buf - 1;
 		buf->b_free_next = buf + 1;
-		buf->b_wait = NULL;
+		buf->b_lock.pid = 0;
+		buf->b_lock.wait=NULL;
 	}
 
 	buffer_table[0].b_free_prev = &buffer_table[NR_BUFFER - 1];

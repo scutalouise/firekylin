@@ -16,6 +16,7 @@
 #define PIPE_HEAD(i)	((i)->i_zone[2])
 #define PIPE_TAIL(i)	((i)->i_zone[3])
 #define PIPE_SIZE(i)	((i)->i_zone[4])
+#define PIPE_WAIT(i)	((i)->i_zone[5])
 
 static inline char pipe_getch(struct inode *inode)
 {
@@ -42,13 +43,13 @@ int read_pipe(struct inode *inode, char *buf, size_t size)
 		}
 		PIPE_SIZE(inode) -= chars;
 		left -= chars;
-		wake_up(&inode->i_wait);
+		wake_up(&PIPE_WAIT(inode));
 		if (inode->i_count < 2) {
 			return size - left;
 		}
-		sleep_on(&inode->i_wait);
+		sleep_on(&PIPE_WAIT(inode));
 	}
-	wake_up(&inode->i_wait);
+	wake_up(&PIPE_WAIT(inode));
 	return size - left;
 }
 
@@ -63,13 +64,13 @@ int write_pipe(struct inode *inode, char *buf, size_t size)
 		}
 		PIPE_SIZE(inode) += chars;
 		left -= chars;
-		wake_up(&inode->i_wait);
+		wake_up(&PIPE_WAIT(inode));
 		if (inode->i_count < 2) {
 			return size - left;
 		}
-		sleep_on(&inode->i_wait);
+		sleep_on(&PIPE_WAIT(inode));
 	}
-	wake_up(&inode->i_wait);
+	wake_up(&PIPE_WAIT(inode));
 	return size - left;
 }
 
@@ -79,6 +80,7 @@ int pipe_open(struct inode *inode)
 	PIPE_HEAD(inode)=0;
 	PIPE_TAIL(inode)=0;
 	PIPE_SIZE(inode)=0;
+	PIPE_WAIT(inode)=0;
 	return 0;
 }
 

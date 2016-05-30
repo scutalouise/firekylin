@@ -28,6 +28,7 @@
 #define ERSCH		19
 #define EBUSY		20
 #define ESPIPE		21
+#define ENOTBLK		22
 
 extern int errno;
 

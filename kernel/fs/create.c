@@ -126,18 +126,18 @@ int sys_rename(char *old, char *new)
 	new_dir_inode = namei(new, &new_basename);
 
 	if (!old_dir_inode) {
-		iput(ilock(old_dir_inode));
+		iput(iunlock(old_dir_inode));
 		return -ENOENT;
 	}
 	if (old_dir_inode != new_dir_inode) {
-		iput(new_dir_inode);
 		iput(ilock(old_dir_inode));
+		iput(new_dir_inode);
 		return -1;
 	}
 
 	res = new_dir_inode->i_op->rename(new_dir_inode, old_basename,
 			new_basename);
-	iput(new_dir_inode);
 	iput(ilock(old_dir_inode));
+	iput(new_dir_inode);
 	return res;
 }

@@ -116,7 +116,7 @@ static void do_hd(struct trapframe *tf)
 		if (--hd_req.nr_sect)
 			return;
 		hd_req.bh->b_flag = B_VALID;
-		wake_up(&(hd_req.bh->b_wait));
+		unlock_buffer(hd_req.bh);
 		hd_req.buf = NULL;
 		hd_req.busy = 0;
 		hd_req.bh = NULL;
@@ -131,7 +131,7 @@ static void do_hd(struct trapframe *tf)
 			return;
 		}
 		hd_req.bh->b_flag &= ~B_DIRTY;
-		wake_up(&(hd_req.bh->b_wait));
+		unlock_buffer(hd_req.bh);
 		hd_req.buf = NULL;
 		hd_req.busy = 0;
 		hd_req.bh = NULL;

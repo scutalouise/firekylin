@@ -11,10 +11,9 @@
 #include <sys/types.h>
 #include <errno.h>
 
-extern int sys_close(int fd);
-
 void do_exit(long exitcode)
 {
+	extern int sys_close(int fd);
 	struct task * current=CURRENT_TASK();
 	current->state = TASK_EXIT;
 	current->status=exitcode;
@@ -22,9 +21,9 @@ void do_exit(long exitcode)
 	if(current->parent->state == TASK_WAIT_CHLD){
 		current->parent->state = TASK_RUN;
 	}
-	
+
 	if(current->pwd)
-		iput(ilock(current->pwd));
+		iput(iunlock(current->pwd));
 	for(int i=0;i<NR_OPEN;i++)
 		if(current->file[i])
 			sys_close(i);

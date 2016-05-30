@@ -50,9 +50,9 @@ int sys_ioctl(unsigned int fd, int cmd, long arg)
 
 	res = -EINVAL;
 	if (S_ISCHR(inode->i_mode))
-		res = char_ioctl(inode->i_zone[0], cmd, arg);
+		res = char_ioctl(inode->i_rdev, cmd, arg);
 	if (S_ISBLK(inode->i_mode))
-		res = blk_ioctl(inode->i_zone[0], cmd, arg);
+		res = blk_ioctl(inode->i_rdev, cmd, arg);
 
 	iput(inode);
 	return res;

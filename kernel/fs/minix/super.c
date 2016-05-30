@@ -12,7 +12,6 @@ int minix1_read_super(struct super *super)
 	struct buffer *buf;
 
 	buf = bread(super->s_dev, 1);
-
 	m1_super = (struct minix1_super *) (buf->b_data);
 	if(m1_super->s_magic!=0x138f)
 		panic("Not availbale minix file system %x",m1_super->s_magic);

@@ -29,7 +29,7 @@ static void rd_read(struct buffer *buffer)
 	lock_rd();
 	memcpy(buffer->b_data, start, 1024);
 	buffer->b_flag = B_VALID;
-	wake_up(&buffer->b_wait);
+	unlock_buffer(buffer);
 	unlock_rd();
 }
 
@@ -43,7 +43,7 @@ static void rd_write(struct buffer *buffer)
 	lock_rd();
 	memcpy(start, buffer->b_data, 1024);
 	buffer->b_flag = B_VALID;
-	wake_up(&buffer->b_wait);
+	unlock_buffer(buffer);
 	unlock_rd();
 }
 
