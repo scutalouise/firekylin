@@ -95,8 +95,6 @@ void display_single(char *name)
 void display_attribute(struct stat buf, char *name)
 {
 	char buf_time[32];
-	//struct passwd *psd;
-	//struct group *grp;
 
 	if (S_ISLNK(buf.st_mode))
 		printf("1");

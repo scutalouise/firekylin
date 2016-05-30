@@ -49,7 +49,6 @@ static int add_entry(struct inode *inode, char *name,ino_t ino)
 		panic("find_entry:inode is NULL");
 
 	for (int i = 0; i < 7 + 512; i++) {
-
 		buf = bread(inode->i_dev, minix1_wbmap(inode, i));
 		if (!buf)
 			panic("add_entry:can not read buf");
@@ -72,7 +71,6 @@ static int add_entry(struct inode *inode, char *name,ino_t ino)
 				inode->i_size = size;
 				inode->i_flag |= I_DIRTY;
 			}
-
 			brelse(buf);
 			return 0;
 		}

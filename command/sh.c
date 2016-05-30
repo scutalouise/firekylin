@@ -52,9 +52,21 @@ int do_cd(int argc, char **argv)
 
 int get_cmd(char *buf)
 {
-	int size = read(0, buf, 100);
-	buf[size - 1] = 0;
-	return size - 1;
+	int i = 0;
+	char ch;
+	while (1) {
+		if (read(0, &ch, 1) < 0)
+			return i;
+		if (ch == '\n') {
+			buf[i] = 0;
+			return i;
+		}
+
+		if (ch == '\b' && i > 0)
+			i--;
+		else
+			buf[i++] = ch;
+	}
 }
 
 int parcmd(char *buf, char **argv)

@@ -16,14 +16,15 @@ int main(int argc, char **argv)
 		"PATH=/bin",
 		NULL
 	};
-	while (1) {
-		if (!fork()) {
-			open("/dev/tty1", O_RDWR, 0);
-			dup(0);
-			dup(0);
-			execve("/bin/sh", NULL, envp);
-			_exit(0);
-		}
+	
+	if(!fork()){
+		if(open("/dev/tty1",O_RDWR,0)<0)
+			exit(0);
+		dup(0);
+		dup(0);
+		execve("/bin/sh",NULL,envp);
+	}
+	while (1) {	
 		waitpid(0, NULL, 0);
 	}
 }

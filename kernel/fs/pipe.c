@@ -12,11 +12,11 @@
 #include <sys/unistd.h>
 #include <errno.h>
 
-#define PIPE_BUF(i) 	((i)->i_zone[1])
-#define PIPE_HEAD(i)	((i)->i_zone[2])
-#define PIPE_TAIL(i)	((i)->i_zone[3])
-#define PIPE_SIZE(i)	((i)->i_zone[4])
-#define PIPE_WAIT(i)	((i)->i_zone[5])
+#define PIPE_BUF(i) 	((i)->i_pipe_ext.buf)
+#define PIPE_HEAD(i)	((i)->i_pipe_ext.head)
+#define PIPE_TAIL(i)	((i)->i_pipe_ext.tail)
+#define PIPE_SIZE(i)	((i)->i_pipe_ext.size)
+#define PIPE_WAIT(i)	((i)->i_pipe_ext.wait)
 
 static inline char pipe_getch(struct inode *inode)
 {

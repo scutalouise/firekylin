@@ -124,11 +124,17 @@ int sys_sync()
 	sync_inode();
 	for (bh = buffer_table; bh < buffer_table + NR_BUFFER; bh++) {
 		lock_buffer(bh);
-		if (bh->b_flag & B_DIRTY)
+		if (bh->b_flag & B_DIRTY){
 			/*
 			 *  buffer shold be unlock in write_block.
 			 */
-			rw_block(READ_BUF, bh);
+			rw_block(WRITE_BUF, bh);
+			irq_lock();
+			while(bh->b_lock.pid)
+				sleep_on(&(bh->b_lock.wait));
+			irq_unlock();
+		}
+		unlock_buffer(bh);
 	}
 	return 0;
 }

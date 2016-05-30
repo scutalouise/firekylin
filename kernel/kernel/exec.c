@@ -28,30 +28,30 @@ static long copy_string(char **argv,char **envp)
 {
 	static char *__arg[]={NULL};
 	static long __base=0x400FF000;
-	
+
 	int argv_count=0;
 	int envp_count=0;
 	long arg_page;
 	char *s,*tmp;
 	long *tmpl;
-	
+
 	if(!argv)
 		argv=__arg;
 	if(!envp)
 		envp=__arg;
-	
+
 	argv_count=count(argv);
 	envp_count=count(envp);
-	
+
 	arg_page=__va(get_page());
-	
+
 	tmpl=(long*)arg_page;
 	*tmpl++=argv_count;			/* argc */
 	*tmpl++=__base+4*3;     		/* argv */
 	*tmpl++=__base+4*(3+argv_count+1);	/* envp */
-	
+
 	s=(char*)arg_page+4*( 3+argv_count+1+envp_count+1);
-	
+
 	while(*argv){
 		*tmpl++=__base+(long)s-arg_page;
 		tmp=*argv;
@@ -59,10 +59,10 @@ static long copy_string(char **argv,char **envp)
 			*s++=*tmp++;
 		}
 		*s++=0;
-		argv++;	
+		argv++;
 	}
 	*tmpl++=0;
-	
+
 	while(*envp){
 		*tmpl++=__base+(long)s-arg_page;
 		tmp=*envp;
@@ -73,7 +73,7 @@ static long copy_string(char **argv,char **envp)
 		envp++;
 	}
 	*tmpl++=0;
-	
+
 	return __pa(arg_page);
 }
 
@@ -95,17 +95,17 @@ int sys_exec(char *filename, char **argv, char **envp)
 		return -EACCESS;
 	}
 
-	if (!(inode->i_zone[0]))
-		return -ENOEXEC;
+	//if (!(inode->i_zone[0]))
+	//	return -ENOEXEC;
 
-	if (!(buf = bread(inode->i_dev, inode->i_zone[0])))
+	if (!(buf = bread(inode->i_dev, inode->i_minix_ext.i_zone[0])))
 		return -EIO;
-
-	if (!strncmp(buf->b_data, "\0x7FELF", 4)){
-		brelse(buf);
-		iput(inode);
-		return -ENOEXEC;
-	}
+//
+//	if (!strncmp(buf->b_data, "\0x7FELF", 4)){
+//		brelse(buf);
+//		iput(inode);
+//		return -ENOEXEC;
+//	}
 
 	arg_page=copy_string(argv,envp);
 

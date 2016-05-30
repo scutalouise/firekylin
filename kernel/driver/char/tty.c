@@ -7,21 +7,24 @@
 #include <firekylin/kernel.h>
 #include <firekylin/driver.h>
 #include <firekylin/tty.h>
+#include <arch/kbd.h>
 
 extern void con_init(void);
 extern void kbd_init(void);
 //extern void rs_init(void);
 
 struct tty_struct tty_table[MAX_TTY+1];
-
+extern int __echo__;
 void copy_to_cook(struct tty_struct *tty)
 {
 	char ch;
 	while(!isempty(tty->raw)){
 		GETCH(tty->raw,ch);
 		PUTCH(tty->cook,ch);
-		PUTCH(tty->out,ch);
-		tty->write(tty);
+		if(__echo__){
+			PUTCH(tty->out,ch);
+			tty->write(tty);
+		}
 		wake_up(&(tty->cook.wait));
 	}
 }
@@ -48,7 +51,7 @@ int tty_read(dev_t dev, char * buf, off_t off, size_t size)
 				irq_unlock();
 				return size - left+1;
 			}
-			if (ch == -1) {
+			if (ch == C('D')) {
 				irq_unlock();
 				return size - left;
 						}

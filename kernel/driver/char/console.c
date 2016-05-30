@@ -26,12 +26,14 @@ unsigned int cur_console;
 #define y	(con_table[cur_console].y)
 #define color	(con_table[cur_console].color)
 
+int __echo__=1;
+
 void con_init()
 {
 	for (int cur_console = 0; cur_console < MAX_CON; cur_console++) {
 		origin = base = 0xc00b8000 + 25 * 80 * 2 * cur_console;
 		x = y = 0;
-		color = 8;
+		color = 15;
 	}
 }
 
@@ -127,6 +129,10 @@ int con_write(struct tty_struct *tty)
 					y = tmp_y;
 			} else if (ch == 'C')
 				color = ((tmp_x << 4) & 0xf0) | (tmp_y & 0xf);
+			else if (ch=='E')
+				__echo__=0;
+			else if (ch=='e')
+				__echo__=1;
 		} else
 			write_char(ch);
 		res++;

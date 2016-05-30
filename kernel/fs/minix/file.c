@@ -57,32 +57,32 @@ int minix1_file_write(struct inode *inode, char * buf, size_t size, off_t off,
 
 int minix1_file_truncate(struct inode *inode)
 {
-	struct buffer *buf;
-	unsigned short *p;
-
-	if(!(S_ISREG(inode->i_mode)|| S_ISDIR(inode->i_mode)))
-		return 0;
-	for(int i=0;i<7;i++){
-		if(inode->i_zone[i]){
-			minix1_free_block(inode->i_dev,inode->i_zone[i]);
-			inode->i_zone[i]=0;
-		}
-	}
-
-	if(inode->i_zone[7]){
-		buf=bread(inode->i_dev,inode->i_zone[7]);
-		p=(unsigned short *)buf->b_data;
-		for(int i=0;i<512;i++,p++){
-			if(*p){
-				minix1_free_block(inode->i_dev,*p);
-			}
-		}
-		brelse(buf);
-		minix1_free_block(inode->i_dev,inode->i_zone[7]);
-		inode->i_zone[7]=0;
-	}
-	inode->i_size=0;
-	inode->i_mtime=inode->i_ctime=current_time();
-	inode->i_flag|=I_DIRTY;
-	return 0;
+//	struct buffer *buf;
+//	unsigned short *p;
+//
+//	if(!(S_ISREG(inode->i_mode)|| S_ISDIR(inode->i_mode)))
+//		return 0;
+//	for(int i=0;i<7;i++){
+//		if(inode->i_zone[i]){
+//			minix1_free_block(inode->i_dev,inode->i_zone[i]);
+//			inode->i_zone[i]=0;
+//		}
+//	}
+//
+//	if(inode->i_zone[7]){
+//		buf=bread(inode->i_dev,inode->i_zone[7]);
+//		p=(unsigned short *)buf->b_data;
+//		for(int i=0;i<512;i++,p++){
+//			if(*p){
+//				minix1_free_block(inode->i_dev,*p);
+//			}
+//		}
+//		brelse(buf);
+//		minix1_free_block(inode->i_dev,inode->i_zone[7]);
+//		inode->i_zone[7]=0;
+//	}
+//	inode->i_size=0;
+//	inode->i_mtime=inode->i_ctime=current_time();
+//	inode->i_flag|=I_DIRTY;
+//	return 0;
 }

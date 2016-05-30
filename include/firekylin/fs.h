@@ -32,7 +32,16 @@ struct buffer {
 #define lock_buffer(buf)	require_lock(&((buf)->b_lock))
 #define unlock_buffer(buf)	release_lock(&((buf)->b_lock))
 
-#define NR_ZONE		9
+struct pipe_inode_ext{
+	unsigned long buf;
+	unsigned int  head;
+	unsigned int  tail;
+	unsigned int  size;
+	struct task  *wait;
+};
+
+#include <firekylin/minixfs_ext.h>
+
 struct inode {
 	dev_t 		     i_dev;
 	ino_t 		     i_ino;
@@ -49,7 +58,10 @@ struct inode {
 	unsigned short 	     i_count;
 	sleeplock_t	     i_lock;
 	struct fs_operation *i_op;
-	unsigned int 	     i_zone[NR_ZONE];
+	union{
+		struct minix_inode_ext	i_minix_ext;
+		struct pipe_inode_ext   i_pipe_ext;
+	};
 };
 
 /* Bits of inode->i_flag */
@@ -60,19 +72,14 @@ struct inode {
 
 struct super {
 	dev_t                s_dev;
-	unsigned short       s_inodes;
-	unsigned short       s_zones;
-	unsigned short       s_imap_blocks;
-	unsigned short       s_zmap_blocks;
-	unsigned short       s_first_data_zone;
-	unsigned short       s_log_zone_size;
-	unsigned long        s_max_size;
 	unsigned short       s_flag;
 	unsigned short       s_count;
 	sleeplock_t	     s_lock;
 	struct fs_operation *s_op;
 	struct inode        *s_imount;
-	struct task         *s_wait;
+	union{
+		struct minix_super_ext	s_minix_ext;
+	};
 };
 
 /* Bits of super->s_flag */

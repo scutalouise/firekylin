@@ -27,4 +27,5 @@ LIBC_OBJ+=unistd/getuid.o \
 	  unistd/fcntl.o \
 	  unistd/lseek.o \
 	  unistd/wait.o \
-	  unistd/pipe.o
+	  unistd/pipe.o \
+	  unistd/execl.o

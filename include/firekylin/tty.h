@@ -21,6 +21,7 @@ struct tty_buf {
 	unsigned short head;
 	unsigned short tail;
 	unsigned short count;
+	unsigned short lines;
 	struct task  * wait;
 };
 
@@ -46,5 +47,6 @@ struct tty_struct {
 
 extern struct tty_struct tty_table[MAX_TTY+1];
 extern unsigned int fg_console;
+extern void copy_to_cook(struct tty_struct *tty);
 
 #endif
