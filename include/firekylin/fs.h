@@ -25,7 +25,6 @@ struct buffer {
 };
 
 /* Bits of buffer->b_flag */
-#define B_BUSY		0x0001
 #define B_VALID 	0x0002
 #define B_DIRTY 	0x0004
 
@@ -65,7 +64,6 @@ struct inode {
 };
 
 /* Bits of inode->i_flag */
-#define I_BUSY		0x0001
 #define I_VALID		0x0002
 #define I_DIRTY		0x0004
 #define I_MOUNT		0x0008
@@ -83,7 +81,6 @@ struct super {
 };
 
 /* Bits of super->s_flag */
-#define S_BUSY		0x0001
 #define S_VALID		0x0002
 #define S_DIRTY		0x0004
 #define S_WRITEABLE	0x0008
@@ -114,6 +111,7 @@ struct file {
 	unsigned long  f_count;
 	unsigned long  f_pos;
 	struct inode * f_inode;
+	sleeplock_t    f_lock;
 };
 
 #define NAME_LEN	30

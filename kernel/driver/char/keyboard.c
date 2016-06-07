@@ -1,13 +1,14 @@
 /*
- *    driver/keyboard.c
+ *    driver/char/keyboard.c
  *
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
-#include <arch/kbd.h>
+#include <firekylin/kbd.h>
 #include <firekylin/kernel.h>
 #include <firekylin/trap.h>
 #include <firekylin/tty.h>
+#include <firekylin/portio.h>
 
 static unsigned char key_map[0x80]={
 	0,   0x1b, '1',  '2',  '3',  '4',  '5',  '6',
@@ -40,11 +41,11 @@ static unsigned char shift_map[0x80]={
 static unsigned char ctrl_map[0x80]={
 	0,      0,       0,      0,      0,      0,      0,      0,
 	0,      0,       0,      0,      0,      0,      0,      0,
-	C('Q'),  C('W'), C('E'),  C('R'),  C('T'),  C('Y'),  C('U'),  C('I'),
-	C('O'),  C('P'), 0,      0,      '\r',    0,      C('A'),  C('S'),
-	C('D'),  C('F'), C('G'),  C('H'),  C('J'),  C('K'),  C('L'),  0,
-	0,      0,       0,      C('\\'), C('Z'),  C('X'),  C('C'),  C('V'),
-	C('B'),  C('N'), C('M'),  0,      0,      C('/'),  0,      0,
+	C('Q'), C('W'),  C('E'), C('R'), C('T'), C('Y'), C('U'), C('I'),
+	C('O'), C('P'),  0,      0,      '\r',   0,      C('A'), C('S'),
+	C('D'), C('F'),  C('G'), C('H'), C('J'), C('K'), C('L'), 0,
+	0,      0,       0,      C('\\'),C('Z'), C('X'), C('C'), C('V'),
+	C('B'), C('N'),  C('M'), 0,      0,      C('/'), 0,      0,
 };
 
 static int shiftl;

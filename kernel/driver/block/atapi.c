@@ -1,16 +1,17 @@
 /*
- *    driver/block/hd.c
+ *    driver/block/atapi.c
  *
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
-#include <arch/hdreg.h>
-#include <arch/partion.h>
+#include <firekylin/partion.h>
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 #include <firekylin/trap.h>
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
+#include <firekylin/portio.h>
+#include "atapi.h"
 
 struct request {
 	unsigned long LBA;
@@ -173,12 +174,12 @@ static void hd_identify(void)
 	}
 }
 
-static struct blk_dev ide = { "ATA HD", NULL, NULL, ide_read, ide_write, NULL };
+static struct blk_dev ide = { "ATAPI", NULL, NULL, ide_read, ide_write, NULL };
 
 void hd_init(void)
 {
 	hd_identify();
 	set_trap_handle(0x2e, do_hd);
 	outb(0xa1, inb(0xa1) & 0xbf);
-	blk_table[DEV_BLK_IDE] = &ide;
+	blk_table[DEV_BLK_ATAPI] = &ide;
 }

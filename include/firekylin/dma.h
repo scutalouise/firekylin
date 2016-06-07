@@ -56,11 +56,16 @@
 #define DMA_PAGE_6          0x89
 #define DMA_PAGE_7          0x8A
 
-#define DMA_MODE_READ       0x44        /* I/O to memory, no autoinit, increment, single mode */
-#define DMA_MODE_WRITE      0x48        /* memory to I/O, no autoinit, increment, single mode */
-#define DMA_MODE_CASCADE    0xC0        /* pass thru DREQ->HRQ, DACK<-HLDA only */
+/* I/O to memory, no autoinit, increment, single mode */
+#define DMA_MODE_READ       0x44
 
-#include <arch/portio.h>
+/* memory to I/O, no autoinit, increment, single mode */
+#define DMA_MODE_WRITE      0x48
+
+/* pass thru DREQ->HRQ, DACK<-HLDA only */
+#define DMA_MODE_CASCADE    0xC0
+
+#include <firekylin/portio.h>
 
 static inline void dma_enable(unsigned int dmanr)
 {

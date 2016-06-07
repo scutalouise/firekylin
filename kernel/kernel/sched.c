@@ -4,15 +4,14 @@
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
+#include <sys/types.h>
+#include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 #include <firekylin/mm.h>
-#include <sys/types.h>
-#include <sys/times.h>
-#include <errno.h>
-#include <time.h>
+#include <firekylin/string.h>
 
-static struct tss_struct tss;
+struct tss_struct tss;
 
 struct task * task_table[NR_TASK];
 
@@ -24,7 +23,7 @@ static void init_tss(void)
 	} gdt_table[6];
 
 	long addr=(long)&tss;
-	
+
 	tss.ss0=0x10;
 	gdt_table[5].low=((addr<<16)&0xffff0000) |104;
 	gdt_table[5].high=(addr&0xff000000) | 0xe900 | ((addr>>16)&0xff);
@@ -53,7 +52,7 @@ void sched(void)
 			if (task_table[i]->count > c)
 				c = task_table[i]->count,n = i;
 		}
-		
+
 		if (c) {
 			if ((CURRENT_TASK() ) != task_table[n]) {
 				tss.esp0=(long)task_table[n]+4096;
@@ -63,7 +62,7 @@ void sched(void)
 			}
 			return;
 		}
-		
+
 		for (i = 1; i < NR_TASK; i++) {
 			if (task_table[i]) {
 				task_table[i]->count = task_table[i]->priority;
@@ -150,29 +149,17 @@ int sys_sbrk(unsigned int inc)
 	unsigned int res;
 	unsigned long addr;
 	struct task *current;
-	
+
 	current=CURRENT_TASK();
 	res =current->sbrk;
 	inc=(inc+0xf)&0xfffffff0;
 	current->sbrk += inc;
-	
+
 	addr=(res+0xfff)&0xfffff000;
 	for(;addr<=current->sbrk; addr+=4096){
 		map_page(addr,get_page(),current->pdtr);
 	}
 	return res;
-}
-
-int sys_times(struct tms *tmsptr)
-{
-	struct task *task = CURRENT_TASK();
-	if (tmsptr) {
-		tmsptr->tms_utime = task->utime;
-		tmsptr->tms_stime = task->stime;
-		tmsptr->tms_cutime = task->cutime;
-		tmsptr->tms_cstime = task->cstime;
-	}
-	return task->start;
 }
 
 int sys_alarm(unsigned long seconds)
@@ -183,8 +170,13 @@ int sys_alarm(unsigned long seconds)
 	current=CURRENT_TASK();
 	old=current->alarm;
 
-	current->alarm=seconds ? (clock+seconds*CLOCKS_PER_SEC) : 0;
+	current->alarm=seconds ? (clock+seconds*HZ) : 0;
 	if(old)
-		return (old-clock)/CLOCKS_PER_SEC;
+		return (old-clock)/HZ;
 	return 0;
+}
+
+int sys_times()
+{
+	return -1;
 }

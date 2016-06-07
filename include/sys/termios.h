@@ -1,11 +1,11 @@
 /*
- *    include/termios.h
+ *    include/sys/termios.h
  *
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
-#ifndef _TERMIOS_H
-#define _TERMIOS_H
+#ifndef _SYS_TERMIOS_H
+#define _SYS_TERMIOS_H
 
 #define NCCS 17
 struct termios {

@@ -4,12 +4,12 @@
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
+#include <sys/unistd.h>
+#include <sys/stat.h>
+#include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
-#include <sys/unistd.h>
-#include <sys/stat.h>
-#include <errno.h>
 
 static int char_ioctl(dev_t dev, int cmd, long arg)
 {

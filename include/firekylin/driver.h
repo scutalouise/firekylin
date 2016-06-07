@@ -5,7 +5,7 @@
  */
 
 #ifndef _DRIVER_H
-#define _FRIVER_H
+#define _DRIVER_H
 
 #include <sys/types.h>
 #include <firekylin/fs.h>
@@ -21,9 +21,9 @@
 #define DEV_BLK_MAX		3
 #define DEV_BLK_RAMDISK		1
 #define DEV_BLK_FLOPPY		2
-#define DEV_BLK_IDE		3
+#define DEV_BLK_ATAPI		3
 
-#define ROOT_DEV		DEV(DEV_BLK_IDE,1)
+#define ROOT_DEV		DEV(DEV_BLK_ATAPI,1)
 
 struct char_dev {
 	char *name;

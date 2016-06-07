@@ -10,6 +10,8 @@ MB2_HEAD_TAG_ADDR	EQU	2
 MB2_HEAD_TAG_OPT	EQU	1
 MB2_HEAD_TAG_ENT_ADDR	EQU	3
 MB2_HEAD_TAG_END	EQU	0
+MB2_HEAD_LEN		EQU	mbhead_end-mbhead_start
+MB2_HEAD_CHECK		EQU	MB2_HEAD_MAGIC+MB2_HEAD_ARCH_I386+MB2_HEAD_LEN
 MB2_LOAD_MAGIC		EQU	0x36d76289
 
 	bits 32
@@ -25,8 +27,8 @@ _start:
 mbhead_start:
 	dd MB2_HEAD_MAGIC			; magic
 	dd MB2_HEAD_ARCH_I386			; arch
-	dd (mbhead_end-mbhead_start)		; len
-	dd -(MB2_HEAD_MAGIC+MB2_HEAD_ARCH_I386 + (mbhead_end-mbhead_start))
+	dd MB2_HEAD_LEN		; len
+	dd -MB2_HEAD_CHECK
 address_tag_start:
 	dw MB2_HEAD_TAG_ADDR
 	dw MB2_HEAD_TAG_OPT

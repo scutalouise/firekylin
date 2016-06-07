@@ -1,11 +1,11 @@
 /*
- *    include/arch/string.h
+ *    include/firekylin/string.h
  *
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
-#ifndef _ARCH_STRING_H
-#define _ARCH_STRING_H
+#ifndef _STRING_H
+#define _STRING_H
 
 static inline void memcpy(void *dst, void*src, int size)
 {

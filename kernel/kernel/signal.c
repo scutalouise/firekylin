@@ -4,11 +4,12 @@
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
+#include <sys/signal.h>
+#include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 #include <firekylin/trap.h>
-#include <signal.h>
-#include <errno.h>
+#include <firekylin/string.h>
 
 extern void do_exit(long status);
 
@@ -50,10 +51,10 @@ int sys_sigact(unsigned int signr, struct sigaction *newact,
 
 	if (oldact)
 		memcpy(oldact, &(current->sigtable[signr-1]),
-				sizeof(sigaction));
+				sizeof(struct sigaction));
 	if (newact)
 		memcpy(&(current->sigtable[signr-1]), newact,
-				sizeof(sigaction));
+				sizeof(struct sigaction));
 
 	return 0;
 }
@@ -80,22 +81,7 @@ int sys_sigmask(int how, sigset_t *set, sigset_t *oset)
 	struct task *current;
 
 	current = CURRENT_TASK();
-	if (oset)
-		*oset = current->sig_mask;
-	if (set) {
-		switch (how) {
-			case SIG_BLOCK:
-				current->sig_mask = current->sig_mask | *set;
-				//current->sig_mask&=(~(1<<(SIGKILL-1))|1<<(SIGSTOP-1));
-				break;
-			case SIG_UNBLOCK:
-				current->sig_mask = current->sig_mask
-						& (~(*set));
-				break;
-			case SIG_SETMASK:
-				current->sig_mask = (*set);
-		}
-	}
+
 	return current->sig_mask;
 }
 

@@ -4,13 +4,13 @@
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
+#include <sys/fcntl.h>
+#include <sys/unistd.h>
+#include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 #include <firekylin/mm.h>
 #include <firekylin/fs.h>
-#include <sys/fcntl.h>
-#include <sys/unistd.h>
-#include <errno.h>
 
 #define PIPE_BUF(i) 	((i)->i_pipe_ext.buf)
 #define PIPE_HEAD(i)	((i)->i_pipe_ext.head)

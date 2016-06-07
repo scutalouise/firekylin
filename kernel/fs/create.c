@@ -4,11 +4,11 @@
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
-#include <firekylin/kernel.h>
-#include <firekylin/fs.h>
 #include <sys/stat.h>
 #include <sys/fcntl.h>
-#include <errno.h>
+#include <sys/errno.h>
+#include <firekylin/kernel.h>
+#include <firekylin/fs.h>
 
 int sys_mknod(char *filename, mode_t mode, dev_t dev)
 {

@@ -4,10 +4,10 @@
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
+#include <sys/stat.h>
+#include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/fs.h>
-#include <sys/stat.h>
-#include <errno.h>
 
 static void copy_stat(struct inode *inode ,struct stat *statbuf)
 {

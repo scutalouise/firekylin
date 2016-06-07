@@ -4,12 +4,12 @@
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
+#include <sys/stat.h>
+#include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
-#include <sys/stat.h>
-#include <errno.h>
 
 //extern int pipe_close(struct inode *inode);
 

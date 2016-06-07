@@ -1,9 +1,3 @@
-/*
- *    include/float.h
- *
- *    (C) 2016 ximo<ximoos@foxmail.com> Port form minix2.0
- */
-
 #ifndef _FLOAT_H
 #define _FLOAT_H
 

@@ -10,9 +10,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/fcntl.h>
+#include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/fs.h>
-#include <errno.h>
+#include <firekylin/string.h>
 
 struct minix1_super {
 	unsigned short s_ninodes;

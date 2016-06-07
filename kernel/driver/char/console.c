@@ -1,11 +1,14 @@
 /*
- *    driver/console.c
+ *    driver/char/console.c
  *
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
 #include <firekylin/kernel.h>
+#include <firekylin/portio.h>
 #include <firekylin/tty.h>
+#include <firekylin/lock.h>
+#include <firekylin/string.h>
 
 struct console {
 	unsigned long base;

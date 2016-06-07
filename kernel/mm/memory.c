@@ -9,6 +9,7 @@
 #include <firekylin/sched.h>
 #include <firekylin/mm.h>
 #include <firekylin/fs.h>
+#include <firekylin/string.h>
 
 #define MAX_NR_PAGES	((64-4)*1024*1024/4096)
 

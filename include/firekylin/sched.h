@@ -8,8 +8,8 @@
 #define _SCHED_H
 
 #include <sys/types.h>
-#include <signal.h>
-#include <time.h>
+#include <sys/signal.h>
+#include <sys/param.h>
 
 struct tss_struct {
 	unsigned long link;
@@ -130,7 +130,7 @@ struct task {
 	::"c"(task_table[n]->kesp));	\
     })
 
-#define current_time()	start_time + clock / CLOCKS_PER_SEC;
+#define current_time()	start_time + clock / HZ;
 
 extern struct task * task_table[];
 

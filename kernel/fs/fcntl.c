@@ -4,13 +4,13 @@
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
-#include <firekylin/kernel.h>
-#include <firekylin/driver.h>
-#include <firekylin/fs.h>
 #include <sys/fcntl.h>
 #include <sys/unistd.h>
 #include <sys/stat.h>
-#include <errno.h>
+#include <sys/errno.h>
+#include <firekylin/kernel.h>
+#include <firekylin/driver.h>
+#include <firekylin/fs.h>
 
 static int dupfd(int fd, unsigned int arg)
 {

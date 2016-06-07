@@ -7,10 +7,10 @@
 #include <firekylin/kernel.h>
 #include <firekylin/lock.h>
 #include <firekylin/sched.h>
-#include <firekylin/trap.h>
 #include <firekylin/driver.h>
 #include <firekylin/mm.h>
 #include <firekylin/fs.h>
+#include <firekylin/string.h>
 
 static unsigned long rd_start = __va(0x300000);
 static unsigned long rd_sectors = 0x100000 / 512;

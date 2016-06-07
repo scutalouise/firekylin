@@ -1,11 +1,11 @@
 /*
- *    include/arch/kbd.h
+ *    include/firekylin/kbd.h
  *
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
-#ifndef _ARCH_KBD_H
-#define _ARCH_KBD_H
+#ifndef _KBD_H
+#define _KBD_H
 
 #define CTRL_L 	0x81
 #define CTRL_R 	0x82

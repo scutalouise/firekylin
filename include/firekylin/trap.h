@@ -49,10 +49,10 @@ struct trapframe {
 
 #define T_IRQ           32
 
-#define IRQ_TIMER        (T_IRQ+0)
-#define IRQ_KBD          (T_IRQ+1)
-#define IRQ_COM1         (T_IRQ+4)
-#define IRQ_IDE         (T_IRQ+14)
+#define IRQ_TIMER       32
+#define IRQ_KBD         33
+#define IRQ_COM1        36
+#define IRQ_IDE         46
 
 extern void set_trap_handle(int index, void (*fn)(struct trapframe *tf));
 

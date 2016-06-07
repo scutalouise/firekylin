@@ -4,13 +4,14 @@
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
+#include <sys/param.h>
+#include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 #include <firekylin/trap.h>
-#include <time.h>
-#include <errno.h>
+#include <firekylin/portio.h>
 
-#define LATCH		(1193180/CLOCKS_PER_SEC)
+#define LATCH		(1193180/HZ)
 
 time_t start_time;
 clock_t clock;
@@ -118,5 +119,5 @@ int sys_setime(long *p)
 	if ((CURRENT_TASK() )->uid != 0)
 		return -EPERM;
 
-	return start_time = *p - clock / CLOCKS_PER_SEC;
+	return start_time = *p - clock / HZ;
 }

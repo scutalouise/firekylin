@@ -1,5 +1,5 @@
-#ifndef _FDREG_H
-#define _FDREG_H
+#ifndef _FLOPPY_H
+#define _FLOPPY_H
 
 /* Fd controller regs. */
 #define FD_STATUS		0x3f4

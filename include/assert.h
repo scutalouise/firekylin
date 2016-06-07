@@ -7,14 +7,18 @@
 #ifndef _ASSERT_H
 #define _ASSERT_H
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #ifdef	NDEBUG
 #define assert(expr)
 #else
-extern void __bad_assert(char *expr, char* file, int line);
 
-#define assert(expr) 					\
-	if(!(expr)){					\
-		__bad_assert(#expr,__FILE__,__LINE__); 	\
-	}
+#define assert(expr) 							\
+    if(!(expr)){							\
+	fprintf(stderr, "Assertion failed: %s , file %s, line %d", 	\
+			#expr, __FILE__, __LINE__ );			\
+	abort();							\
+    }
 
 #endif

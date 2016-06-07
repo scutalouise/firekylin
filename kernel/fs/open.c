@@ -4,14 +4,14 @@
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
+#include <sys/stat.h>
+#include <sys/fcntl.h>
+#include <sys/unistd.h>
+#include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
-#include <sys/stat.h>
-#include <sys/fcntl.h>
-#include <sys/unistd.h>
-#include <errno.h>
 
 struct file file_table[NR_FILE];
 sleeplock_t file_table_lock;

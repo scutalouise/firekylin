@@ -29,7 +29,7 @@ extern void panic(char * fmt, ...);
     __asm__("pushl %0;popf"::"m"(__flag))
 
 typedef struct sleeplock {
-	pid_t pid; 		/* which task hold the lock,default 0 */
+	pid_t        pid; 	/* which task hold the lock,default 0 */
 	struct task *wait; 	/* task list wait for this lock       */
 } sleeplock_t;
 

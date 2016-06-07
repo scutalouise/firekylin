@@ -1,5 +1,5 @@
 /*
- *    driver/serial.c
+ *    driver/char/serial.c
  *
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
@@ -8,6 +8,7 @@
 #include <firekylin/trap.h>
 #include <firekylin/driver.h>
 #include <firekylin/tty.h>
+#include <firekylin/portio.h>
 
 void init_rs_contrl(unsigned short port)
 {

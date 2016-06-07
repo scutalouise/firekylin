@@ -8,8 +8,8 @@
 #include <firekylin/sched.h>
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
-#include <arch/portio.h>
-#include <time.h>
+#include <firekylin/portio.h>
+#include <firekylin/string.h>
 
 #define BCD_BIN(c)	(c=c/16*10+c%16)
 
@@ -40,6 +40,8 @@ static int month[] = {
 	(31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31),
 	(31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30)
 };
+
+#define isleap(y)	(((y)%4==0&&(y)%100!=0)||(y)%400==0)
 
 static time_t mktimek(int year, int mon, int day, int hour, int min, int sec)
 {

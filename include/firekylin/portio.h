@@ -1,11 +1,11 @@
 /*
- *    include/arch/portio.h
+ *    include/firekylin/portio.h
  *
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
-#ifndef _ARCH_PORTIO_H
-#define _ARCH_PORTIO_H
+#ifndef _PORTIO_H
+#define _PORTIO_H
 
 #define CMOSREAD(value,index)			\
 __asm__("mov $0x70,%%dx\t\n"  			\

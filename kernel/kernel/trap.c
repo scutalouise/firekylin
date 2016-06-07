@@ -6,7 +6,9 @@
 
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
+#include <firekylin/lock.h>
 #include <firekylin/trap.h>
+#include <firekylin/portio.h>
 
 extern void div_zero(void);
 extern void debug(void);
@@ -58,7 +60,7 @@ static void (*trap_handle[0x30])(struct trapframe *tf);
 struct gdt_desc {
 	unsigned long low;
 	unsigned long high;
-} gdt_table[6] = { 
+} gdt_table[6] = {
 	{ 0, 0 }, 			/* 0x00 NULL  		*/
 	{ 0x0000ffff, 0x00cf9a00 }, 	/* 0x08 Kernel Code 	*/
 	{ 0x0000ffff, 0x00cf9200 }, 	/* 0x10 Kernel Data	*/

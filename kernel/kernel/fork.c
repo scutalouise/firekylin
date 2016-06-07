@@ -4,12 +4,13 @@
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
+#include <sys/types.h>
+#include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 #include <firekylin/mm.h>
 #include <firekylin/fs.h>
-#include <sys/types.h>
-#include <errno.h>
+#include <firekylin/string.h>
 
 static pid_t last_pid = 0;
 
@@ -25,7 +26,7 @@ int sys_fork(long unuesd)
 	task->pdtr = copy_mm();
 	task->pid = ++last_pid;
 	task->parent = current;
-	
+
 	task->utime=0;
 	task->stime=0;
 	task->cutime=0;

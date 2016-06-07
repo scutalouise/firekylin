@@ -4,10 +4,12 @@
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
+#include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/driver.h>
 #include <firekylin/mm.h>
-#include <errno.h>
+#include <firekylin/string.h>
+#include <firekylin/portio.h>
 
 #define MEM_RAM		0
 #define MEM_PORT	1

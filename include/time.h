@@ -8,9 +8,10 @@
 #define _TIME_H
 
 #include <sys/types.h>
+#include <sys/param.h>
 
-#define CLOCKS_PER_SEC 	100
-#define CLK_TCK 	CLOCKS_PER_SEC
+#define CLOCKS_PER_SEC 	HZ
+#define CLK_TCK 	HZ
 
 #define isleap(y)	(((y)%4==0&&(y)%100!=0)||(y)%400==0)
 

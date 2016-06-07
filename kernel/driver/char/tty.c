@@ -7,7 +7,7 @@
 #include <firekylin/kernel.h>
 #include <firekylin/driver.h>
 #include <firekylin/tty.h>
-#include <arch/kbd.h>
+#include <firekylin/kbd.h>
 
 extern void con_init(void);
 extern void kbd_init(void);

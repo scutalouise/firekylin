@@ -5,7 +5,9 @@
  */
 
 #include <stdarg.h>
+#include <sys/types.h>
 #include <firekylin/kernel.h>
+#include <firekylin/lock.h>
 
 extern int tty_write(dev_t dev,char * buf,off_t off,size_t size);
 

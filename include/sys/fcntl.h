@@ -45,6 +45,6 @@ struct flock {
 };
 
 extern int open(char *path, int flag, ...);
-extern int fcntl(int fd, int cmd, long arg);
+extern int fcntl(int fd, int cmd, ...);
 
 #endif

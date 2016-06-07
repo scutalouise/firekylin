@@ -8,7 +8,6 @@
 #define _STDIO_H
 
 #include <sys/types.h>
-#include <stddef.h>
 
 typedef struct __iobuf {
 	int		_count;
@@ -79,9 +78,6 @@ extern int    feof(FILE *stream);
 extern int    printf(char *fmt, ...);
 extern int    sprintf(char *buf, char*fmt, ...);
 extern int    fprintf(FILE *stream, char *buf, ...);
-
-//int myprintf(char *fmt, ...);
-//#define printf  myprintf
 
 #define fileno(p)	((p)->_fd)
 #define	feof(p)		(((p)->_flags & _IOEOF) != 0)

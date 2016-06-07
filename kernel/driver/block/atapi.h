@@ -1,11 +1,5 @@
-/*
- *    include/firekylin/hdreg.h
- *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
- */
-
-#ifndef _HDREG_H
-#define _HDREG_H
+#ifndef _ATAPI_H
+#define _ATAPI_H
 
 #define HD_DATA		0x1f0	/* _CTL when writing */
 #define HD_ERROR	0x1f1	/* see err-bits */

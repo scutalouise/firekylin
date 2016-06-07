@@ -4,12 +4,13 @@
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
+#include <sys/stat.h>
+#include <sys/fcntl.h>
+#include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
-#include <sys/stat.h>
-#include <sys/fcntl.h>
-#include <errno.h>
+#include <firekylin/string.h>
 
 static int write_char(dev_t dev, char *buf, off_t off, size_t size)
 {

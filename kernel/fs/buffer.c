@@ -7,7 +7,6 @@
 #include <firekylin/kernel.h>
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
-#include <errno.h>
 
 #define NR_BUFFER	64
 #define READ_BUF	1

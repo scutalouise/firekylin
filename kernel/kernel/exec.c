@@ -4,12 +4,11 @@
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
 
+#include <sys/stat.h>
+#include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/mm.h>
 #include <firekylin/fs.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <elf.h>
 
 /* define in file fs/read.c */
 extern long exec_load_file(struct inode *inode, struct buffer*bh);

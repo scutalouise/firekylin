@@ -10,10 +10,10 @@
 #include <sys/types.h>
 
 /* Values used by access() */
-#define F_OK	0	/* test file is exist      */
-#define X_OK	1	/* test file is executable */
-#define W_OK	2	/* test file is writable   */
-#define R_OK	4	/* test file is readable   */
+#define F_OK		0	/* test file is exist      */
+#define X_OK		1	/* test file is executable */
+#define W_OK		2	/* test file is writable   */
+#define R_OK		4	/* test file is readable   */
 
 /* standard I/O fileno */
 #define STDIN_FILENO	0	/* file descriptor of stdin  */

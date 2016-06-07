@@ -13,7 +13,6 @@ CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
       
 PREFIX=~/part1/lib
 
-include assert/sub.mk
 include crt/sub.mk
 include ctype/sub.mk
 include dirent/sub.mk
