@@ -12,44 +12,54 @@
 #include <firekylin/mm.h>
 #include <firekylin/fs.h>
 
-#define PIPE_BUF(i) 	((i)->i_pipe_ext.buf)
-#define PIPE_HEAD(i)	((i)->i_pipe_ext.head)
-#define PIPE_TAIL(i)	((i)->i_pipe_ext.tail)
-#define PIPE_SIZE(i)	((i)->i_pipe_ext.size)
-#define PIPE_WAIT(i)	((i)->i_pipe_ext.wait)
+struct pipe_i_ext{
+	unsigned long buf;
+	unsigned int  head;
+	unsigned int  tail;
+	unsigned int  size;
+	struct task  *wait;
+};
+
+extern char __check_inode_ext[INODE_EXT_SIZE-sizeof(struct pipe_i_ext)];
 
 static inline char pipe_getch(struct inode *inode)
 {
 	char ch;
-	ch = *((char*) (PIPE_BUF(inode) + PIPE_HEAD(inode)));
-	PIPE_HEAD(inode) = (PIPE_HEAD(inode) + 1) / 4096;
+	struct pipe_i_ext *i_ext=(struct pipe_i_ext *)inode->i_ext;
+
+	ch = *((char*) (i_ext->buf +i_ext->head ));
+	i_ext->head = (i_ext->head + 1) / 4096;
 	return ch;
 }
 
 static inline void pipe_putch(struct inode *inode, char ch)
 {
-	*((char*) (PIPE_BUF(inode) + PIPE_TAIL(inode))) = ch;
-	PIPE_TAIL(inode) = (PIPE_TAIL(inode) + 1) / 4096;
+	struct pipe_i_ext *i_ext=(struct pipe_i_ext *)inode->i_ext;
+
+	*((char*) (i_ext->buf +i_ext->head )) = ch;
+	i_ext->tail  = ( i_ext->head  + 1) / 4096;
 }
 
 int read_pipe(struct inode *inode, char *buf, size_t size)
 {
 	int chars;
 	int left = size;
+	struct pipe_i_ext *i_ext=(struct pipe_i_ext *)inode->i_ext;
+
 	while (left) {
-		chars = min(left, PIPE_SIZE(inode));
+		chars = min(left, i_ext->size);
 		for (int i = chars; i > 0; i--) {
 			*buf++ = pipe_getch(inode);
 		}
-		PIPE_SIZE(inode) -= chars;
+		i_ext->size -= chars;
 		left -= chars;
-		wake_up(&PIPE_WAIT(inode));
+		wake_up(&i_ext->wait);
 		if (inode->i_count < 2) {
 			return size - left;
 		}
-		sleep_on(&PIPE_WAIT(inode));
+		sleep_on(&i_ext->wait);
 	}
-	wake_up(&PIPE_WAIT(inode));
+	wake_up(&i_ext->wait);
 	return size - left;
 }
 
@@ -57,36 +67,42 @@ int write_pipe(struct inode *inode, char *buf, size_t size)
 {
 	int chars;
 	int left = size;
+	struct pipe_i_ext *i_ext=(struct pipe_i_ext *)inode->i_ext;
+
 	while (left) {
-		chars = min(left,4096- PIPE_SIZE(inode));
+		chars = min(left,4096- i_ext->size);
 		for (int i = chars; i > 0; i--) {
 			pipe_putch(inode,*buf++);
 		}
-		PIPE_SIZE(inode) += chars;
+		i_ext->size += chars;
 		left -= chars;
-		wake_up(&PIPE_WAIT(inode));
+		wake_up(&i_ext->wait);
 		if (inode->i_count < 2) {
 			return size - left;
 		}
-		sleep_on(&PIPE_WAIT(inode));
+		sleep_on(&i_ext->wait);
 	}
-	wake_up(&PIPE_WAIT(inode));
+	wake_up(&i_ext->wait);
 	return size - left;
 }
 
 int pipe_open(struct inode *inode)
 {
-	PIPE_BUF(inode)=__va(get_page());
-	PIPE_HEAD(inode)=0;
-	PIPE_TAIL(inode)=0;
-	PIPE_SIZE(inode)=0;
-	PIPE_WAIT(inode)=0;
+	struct pipe_i_ext *i_ext=(struct pipe_i_ext *)inode->i_ext;
+
+	i_ext->buf=__va(get_page());
+	i_ext->head=0;
+	i_ext->tail=0;
+	i_ext->size=0;
+	i_ext->wait=NULL;
 	return 0;
 }
 
 int pipe_close(struct inode *inode)
 {
-	put_page(__pa(PIPE_BUF(inode)));
+	struct pipe_i_ext *i_ext=(struct pipe_i_ext *)inode->i_ext;
+
+	put_page(__pa(i_ext->buf));
 	return 0;
 }
 

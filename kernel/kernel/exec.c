@@ -9,6 +9,7 @@
 #include <firekylin/kernel.h>
 #include <firekylin/mm.h>
 #include <firekylin/fs.h>
+#include "../fs/minix/minix_fs.h"
 
 /* define in file fs/read.c */
 extern long exec_load_file(struct inode *inode, struct buffer*bh);
@@ -97,7 +98,7 @@ int sys_exec(char *filename, char **argv, char **envp)
 	//if (!(inode->i_zone[0]))
 	//	return -ENOEXEC;
 
-	if (!(buf = bread(inode->i_dev, inode->i_minix_ext.i_zone[0])))
+	if (!(buf = bread(inode->i_dev, minix1_rbmap(inode,0))))
 		return -EIO;
 //
 //	if (!strncmp(buf->b_data, "\0x7FELF", 4)){

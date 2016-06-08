@@ -15,6 +15,16 @@
 #include <firekylin/fs.h>
 #include <firekylin/string.h>
 
+struct minix1_inode {
+	unsigned short i_mode;
+	unsigned short i_uid;
+	unsigned long  i_size;
+	unsigned long  i_time;
+	unsigned char  i_gid;
+	unsigned char  i_nlinks;
+	unsigned short i_zone[9];
+};
+
 struct minix1_super {
 	unsigned short s_ninodes;
 	unsigned short s_nzones;
@@ -26,17 +36,25 @@ struct minix1_super {
 	unsigned short s_magic;
 };
 
-struct minix1_inode {
-	unsigned short i_mode;
-	unsigned short i_uid;
-	unsigned long  i_size;
-	unsigned long  i_time;
-	unsigned char  i_gid;
-	unsigned char  i_nlinks;
+struct minix_i_ext{
 	unsigned short i_zone[9];
 };
 
+struct minix_s_ext{
+	unsigned short s_ninodes;
+	unsigned short s_nzones;
+	unsigned short s_imap_blocks;
+	unsigned short s_zmap_blocks;
+	unsigned short s_firstdatazone;
+	unsigned short s_log_zone_size;
+	unsigned long  s_max_size;
+	unsigned short s_magic;
+};
+
 #define INODES_PER_BLOCK	(1024/sizeof(struct minix1_inode))
+
+extern char __check_inode_ext[INODE_EXT_SIZE-sizeof(struct minix_i_ext)];
+extern char __check_super_ext[SUPER_EXT_SIZE-sizeof(struct minix_s_ext)];
 
 extern int minix1_read_super(struct super *super);
 extern int minix1_write_super(struct super *super);

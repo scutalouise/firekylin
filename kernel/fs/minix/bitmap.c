@@ -32,15 +32,15 @@ int minix1_free_block(dev_t dev, int block)
 {
 	struct buffer * buf;
 	struct super *super = get_super(dev);
+	struct minix_s_ext *s_ext = (struct minix_s_ext*) super->s_ext;
 
-	if (block < super->s_minix_ext.s_firstdatazone
-			|| block > super->s_minix_ext.s_nzones)
+	if (block < s_ext->s_firstdatazone || block > s_ext->s_nzones)
 		panic("block too big %x", block);
 	buf = bread(dev, block);
 	if (buf->b_count != 1)
 		panic("block is using");
 	brelse(buf);
-	buf = bread(dev, 2 + super->s_minix_ext.s_imap_blocks + block / (8 * 1024));
+	buf = bread(dev, 2 + s_ext->s_imap_blocks + block / (8 * 1024));
 	clr_bit(buf->b_data, block % (8 * 1024));
 	buf->b_flag |= B_DIRTY;
 	brelse(buf);
@@ -51,8 +51,9 @@ int minix1_free_inode(dev_t dev, ino_t ino)
 {
 	struct buffer * buf;
 	struct super *super = get_super(dev);
+	struct minix_s_ext *s_ext = (struct minix_s_ext*) super->s_ext;
 
-	if (ino<1 || ino > super->s_minix_ext.s_ninodes)
+	if (ino<1 || ino > s_ext->s_ninodes)
 		panic("block too big %x", ino);
 
 	buf = bread(dev, 2 + ino / (8 * 1024));
@@ -64,20 +65,20 @@ int minix1_free_inode(dev_t dev, ino_t ino)
 
 int minix1_alloc_block(dev_t dev)
 {
-	struct buffer *bh;
-	struct super *super;
 	int res, tmp;
+	struct buffer *bh;
+	struct super *super = get_super(dev);
+	struct minix_s_ext *s_ext = (struct minix_s_ext*) super->s_ext;
 
-	super=get_super(dev);
-	for(int i=0;i<super->s_minix_ext.s_zmap_blocks;i++){
-		bh=bread(dev,2+super->s_minix_ext.s_imap_blocks+i);
+	for(int i=0;i<s_ext->s_zmap_blocks;i++){
+		bh=bread(dev,2+s_ext->s_imap_blocks+i);
 		if(!bh)
 			panic("alloc_inode: cann't inode block");
 
 		tmp=find_bit(bh->b_data,1024);
 
 		res=i*1024*8+tmp;
-		if(tmp>super->s_minix_ext.s_nzones){
+		if(tmp>s_ext->s_nzones){
 			brelse(bh);
 			put_super(super);
 			return 0;
@@ -85,7 +86,7 @@ int minix1_alloc_block(dev_t dev)
 		set_bit(bh->b_data,tmp);
 		bh->b_flag|=B_DIRTY;
 		brelse(bh);
-		res+=super->s_minix_ext.s_firstdatazone;
+		res+=s_ext->s_firstdatazone;
 		put_super(super);
 		return res;
 	}
@@ -96,15 +97,15 @@ int minix1_alloc_block(dev_t dev)
 struct inode * minix1_alloc_inode(dev_t dev)
 {
 	struct buffer *bh;
-	struct super  *super;
 	struct inode  *inode;
 	struct task   *current;
 	struct fs_operation *fs_op;
 	ino_t res;
 	int tmp;
+	struct super  * super=get_super(dev);
+	struct minix_s_ext *s_ext = (struct minix_s_ext*) super->s_ext;
 
-	super=get_super(dev);
-	for(int i=0;i<super->s_minix_ext.s_imap_blocks;i++){
+	for(int i=0;i<s_ext->s_imap_blocks;i++){
 		bh=bread(dev,2+i);
 		if(!bh)
 			panic("alloc_inode: cann't inode block");
@@ -112,7 +113,7 @@ struct inode * minix1_alloc_inode(dev_t dev)
 		tmp=find_bit(bh->b_data,1024);
 
 		res=i*1024*8+tmp;
-		if(tmp>super->s_minix_ext.s_ninodes){
+		if(tmp>s_ext->s_ninodes){
 			brelse(bh);
 			put_super(super);
 			return NULL;

@@ -84,5 +84,5 @@ int minix1_file_truncate(struct inode *inode)
 //	inode->i_size=0;
 //	inode->i_mtime=inode->i_ctime=current_time();
 //	inode->i_flag|=I_DIRTY;
-//	return 0;
+	return 0;
 }

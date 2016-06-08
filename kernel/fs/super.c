@@ -10,6 +10,8 @@
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
 
+extern struct fs_operation minix_fs_operation;
+
 #define NR_SUPER	4
 static struct super super_table[NR_SUPER];
 static sleeplock_t super_lock;

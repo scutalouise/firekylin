@@ -31,16 +31,7 @@ struct buffer {
 #define lock_buffer(buf)	require_lock(&((buf)->b_lock))
 #define unlock_buffer(buf)	release_lock(&((buf)->b_lock))
 
-struct pipe_inode_ext{
-	unsigned long buf;
-	unsigned int  head;
-	unsigned int  tail;
-	unsigned int  size;
-	struct task  *wait;
-};
-
-#include <firekylin/minixfs_ext.h>
-
+#define INODE_EXT_SIZE	32
 struct inode {
 	dev_t 		     i_dev;
 	ino_t 		     i_ino;
@@ -57,10 +48,7 @@ struct inode {
 	unsigned short 	     i_count;
 	sleeplock_t	     i_lock;
 	struct fs_operation *i_op;
-	union{
-		struct minix_inode_ext	i_minix_ext;
-		struct pipe_inode_ext   i_pipe_ext;
-	};
+	unsigned char        i_ext[INODE_EXT_SIZE];
 };
 
 /* Bits of inode->i_flag */
@@ -68,6 +56,26 @@ struct inode {
 #define I_DIRTY		0x0004
 #define I_MOUNT		0x0008
 
+static inline struct inode * ilock(struct inode *inode)
+{
+	require_lock(&inode->i_lock);
+	return inode;
+}
+
+static inline struct inode * idup(struct inode *inode)
+{
+	require_lock(&inode->i_lock);
+	inode->i_count++;
+	return inode;
+}
+
+static inline struct inode * iunlock(struct inode *inode)
+{
+	release_lock(&inode->i_lock);
+	return inode;
+}
+
+#define SUPER_EXT_SIZE	64
 struct super {
 	dev_t                s_dev;
 	unsigned short       s_flag;
@@ -75,9 +83,7 @@ struct super {
 	sleeplock_t	     s_lock;
 	struct fs_operation *s_op;
 	struct inode        *s_imount;
-	union{
-		struct minix_super_ext	s_minix_ext;
-	};
+	unsigned char        s_ext[SUPER_EXT_SIZE];
 };
 
 /* Bits of super->s_flag */
@@ -87,6 +93,20 @@ struct super {
 
 #define lock_super(super)	require_lock(&((super)->s_lock))
 #define unlock_super(super)	release_lock(&((super)->s_lock))
+
+struct file {
+	unsigned long  f_mode;
+	unsigned long  f_count;
+	unsigned long  f_pos;
+	struct inode * f_inode;
+	sleeplock_t    f_lock;
+};
+
+#define NAME_LEN	30
+struct dir_entry {
+	unsigned short ino;
+	char name[NAME_LEN];
+};
 
 struct fs_operation{
 	int (*super_read)(struct super *super);
@@ -105,41 +125,6 @@ struct fs_operation{
 	int (*rmdir)(struct inode *dir_inode,char *basename);
 	int (*rename)(struct inode *inode,char *old,char *new);
 };
-
-struct file {
-	unsigned long  f_mode;
-	unsigned long  f_count;
-	unsigned long  f_pos;
-	struct inode * f_inode;
-	sleeplock_t    f_lock;
-};
-
-#define NAME_LEN	30
-struct dir_entry {
-	unsigned short ino;
-	char name[NAME_LEN];
-};
-
-static inline struct inode * ilock(struct inode *inode)
-{
-	require_lock(&inode->i_lock);
-	return inode;
-}
-
-static inline struct inode * iunlock(struct inode *inode)
-{
-	release_lock(&inode->i_lock);
-	return inode;
-}
-
-static inline struct inode * idup(struct inode *inode)
-{
-	require_lock(&inode->i_lock);
-	inode->i_count++;
-	return inode;
-}
-
-extern struct fs_operation minix_fs_operation;
 
 extern struct buffer * bread(dev_t dev, long block);
 extern void            brelse(struct buffer * buf);

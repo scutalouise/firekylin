@@ -17,8 +17,7 @@ extern char _edata[];
 extern char _end[];
 
 extern void arch_init();
-extern void char_dev_init();
-extern void blk_dev_init();
+extern void dev_init();
 extern void mm_init();
 extern void buffer_init();
 extern void sched_init();
@@ -88,8 +87,7 @@ void start(void)
 
 	arch_init();
 	time_init();
-	char_dev_init();
-	blk_dev_init();
+	dev_init();
 	mm_init();
 	sched_init();
 	clock_init();
