@@ -13,26 +13,26 @@ global  hwint8,hwint9,hwintA,hwintB,hwintC,hwintD,hwintE,hwintF
 global  syscall
 
 extern  execption
-extern	sys_fork,   sys_exec,    sys_sbrk,    sys_pwait,   sys_exit
-extern 	sys_ptrace, sys_times,   sys_getpid,  sys_setgrp,  sys_setsid
-extern  sys_getuid, sys_setuid,  sys_getgid,  sys_setgid,  sys_sigact
-extern  sys_sigmask,sys_sigsend, sys_sigwait, sys_alarm,   sys_access
-extern  sys_open,   sys_read,    sys_write,   sys_close,   sys_fcntl
-extern  sys_ioctl,  sys_lseek,   sys_pipe,    sys_mknod,   sys_mkdir
-extern  sys_link,   sys_rename,  sys_unlink,  sys_rmdir,   sys_chdir
-extern  sys_mount,  sys_umount,  sys_stat,    sys_fstat,   sys_chmod
-extern  sys_chown,  sys_utime,   sys_sync,    sys_getime,  sys_setime
+extern	sys_fork,   sys_exec,   sys_sbrk,    sys_wait,    sys_exit
+extern 	sys_trace,  sys_alarm,  sys_sigctl,  sys_getpid,  sys_setgrp
+extern  sys_setsid, sys_getuid, sys_setuid,  sys_getgid,  sys_setgid
+extern  sys_access, sys_open,   sys_read,    sys_write,   sys_close
+extern  sys_lseek,  sys_fcntl,  sys_ioctl,   sys_pipe,    sys_mknod
+extern  sys_mkdir,  sys_link,   sys_rename,  sys_unlink,  sys_rmdir
+extern  sys_chdir,  sys_mount,  sys_umount,  sys_stat,    sys_fstat
+extern  sys_chmod,  sys_chown,  sys_utime,   sys_sync,    sys_getime
+extern  sys_setime
 
 syscall_table:
-	dd  sys_fork,   sys_exec,    sys_sbrk,    sys_pwait,   sys_exit
-	dd  sys_ptrace, sys_times,   sys_getpid,  sys_setgrp,  sys_setsid
-	dd  sys_getuid, sys_setuid,  sys_getgid,  sys_setgid,  sys_sigact
-	dd  sys_sigmask,sys_sigsend, sys_sigwait, sys_alarm,   sys_access
-	dd  sys_open,   sys_read,    sys_write,   sys_close,   sys_fcntl
-	dd  sys_ioctl,  sys_lseek,   sys_pipe,    sys_mknod,   sys_mkdir
-	dd  sys_link,   sys_rename,  sys_unlink,  sys_rmdir,   sys_chdir
-	dd  sys_mount,  sys_umount,  sys_stat,    sys_fstat,   sys_chmod
-	dd  sys_chown,  sys_utime,   sys_sync,    sys_getime,  sys_setime
+    dd  sys_fork,   sys_exec,   sys_sbrk,    sys_wait,    sys_exit
+    dd  sys_trace,  sys_alarm,  sys_sigctl,  sys_getpid,  sys_setgrp
+    dd  sys_setsid, sys_getuid, sys_setuid,  sys_getgid,  sys_setgid
+    dd  sys_access, sys_open,   sys_read,    sys_write,   sys_close
+    dd  sys_lseek,  sys_fcntl,  sys_ioctl,   sys_pipe,    sys_mknod
+    dd  sys_mkdir,  sys_link,   sys_rename,  sys_unlink,  sys_rmdir
+    dd  sys_chdir,  sys_mount,  sys_umount,  sys_stat,    sys_fstat
+    dd  sys_chmod,  sys_chown,  sys_utime,   sys_sync,    sys_getime
+    dd  sys_setime
 
 div_zero:
 	push 0

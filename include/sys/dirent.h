@@ -9,11 +9,11 @@
 
 #include <sys/types.h>
 
+#define MAX_MANE_LEN	255
 struct dirent{
 	ino_t  d_ino;
-	off_t  d_off;
 	size_t d_reclen;
-	char   d_name[];
+	char   d_name[MAX_MANE_LEN+1];
 };
 
 #endif

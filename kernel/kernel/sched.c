@@ -175,8 +175,3 @@ int sys_alarm(unsigned long seconds)
 		return (old-clock)/HZ;
 	return 0;
 }
-
-int sys_times()
-{
-	return -1;
-}

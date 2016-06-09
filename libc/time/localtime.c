@@ -6,7 +6,7 @@
 
 #include <time.h>
 
-struct tm *localtime(const time_t * t)
+struct tm *localtime(time_t * t)
 {
         time_t offset= *t;  /* seconds between local time and GMT */
 

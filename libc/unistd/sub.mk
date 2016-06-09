@@ -9,7 +9,6 @@ LIBC_OBJ+=unistd/getuid.o \
 	  unistd/link.o \
           unistd/execve.o \
 	  unistd/_exit.o \
-	  unistd/waitpid.o \
 	  unistd/sbrk.o \
           unistd/fork.o \
 	  unistd/getpid.o  \

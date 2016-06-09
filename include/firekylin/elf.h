@@ -1,5 +1,5 @@
 /*
- *    include/elf.h
+ *    include/firekylin/elf.h
  *
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */

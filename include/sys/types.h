@@ -14,7 +14,6 @@
 typedef unsigned long 	size_t;
 typedef long 		ssize_t;
 
-
 typedef unsigned long 	time_t;
 typedef unsigned long 	clock_t;
 

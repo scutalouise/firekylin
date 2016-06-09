@@ -46,8 +46,8 @@ extern int toascii(int c);
 #define isprint(c)	(__ctype[(c)+1]&(_P|_U|_L|_D))
 #define isascii(c)	((c)<=0x7f)
 
-#define tolower(c)	(isupper(c) ? c+=0x20 : c)
-#define toupper(c)	(islower(c) ? c-=0x20 : c)
+#define tolower(c)	(isupper(c) ? (c)+0x20 : (c))
+#define toupper(c)	(islower(c) ? (c)-0x20 : (c))
 #define toascii(c)	((c)&0x7f)
 
 #endif

@@ -7,5 +7,6 @@
 #include <sys/types.h>
 #include <sys/syscall.h>
 #include <sys/unistd.h>
+#include <errno.h>
 
 __syscall1(uid_t,setuid,uid_t,uid);

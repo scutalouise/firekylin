@@ -7,10 +7,10 @@
 #include <sys/types.h>
 #include <sys/syscall.h>
 #include <sys/unistd.h>
-
-__syscall2(int, sigsend, pid_t, pid, int, signo);
+#include <errno.h>
 
 int kill(pid_t pid, int signo)
 {
-	return sigsend(pid, signo);
+	//return sigsend(pid, signo);
+	return -1;
 }

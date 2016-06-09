@@ -34,34 +34,3 @@ void sys_exit(long status)
 {
 	do_exit((status << 8) & 0xff00);
 }
-
-int sys_pwait(pid_t pid, long *status,int options)
-{
-	int ret;
-	struct task *current=CURRENT_TASK();
-
-	while (1) {
-		for (int i = 0; i < NR_TASK; i++) {
-			if (!task_table[i]
-				|| task_table[i]->state != TASK_EXIT
-				|| task_table[i]->parent->pid!= current->pid) {
-				continue;
-			}
-			ret = task_table[i]->pid;
-			if(status){
-				*status=task_table[i]->status;
-			}
-			put_page(__pa((long )task_table[i]));
-			task_table[i]=NULL;
-			return ret;
-		}
-		current->state=TASK_WAIT_CHLD;
-		sched();
-	}
-	return pid;
-}
-
-int sys_ptrace()
-{
-	return -ERROR;
-}

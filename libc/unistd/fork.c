@@ -7,5 +7,6 @@
 #include <sys/types.h>
 #include <sys/syscall.h>
 #include <sys/unistd.h>
+#include <errno.h>
 
 __syscall0(pid_t,fork);

@@ -7,8 +7,6 @@
 #include <sys/types.h>
 #include <sys/syscall.h>
 #include <sys/unistd.h>
+#include <errno.h>
 
-int wait(long *status)
-{
-	return waitpid(0,status,0);
-}
+__syscall3(pid_t, wait, pid_t, pid, long*, status, int, options);

@@ -7,5 +7,12 @@
 #include <sys/types.h>
 #include <sys/syscall.h>
 #include <sys/unistd.h>
+#include <errno.h>
 
-__syscall3(int, execve, const char*, filename, char **, argv,char **, envp) ;
+static inline 
+__syscall3(int, exec, const char*, path, char **, argv,char **, envp) ;
+
+int execve(const char *path, char **argv, char **envp)
+{
+	return exec(path, argv, envp);
+}

@@ -11,6 +11,7 @@ typedef struct {
 	int quot;
 	int rem;
 } div_t;
+
 typedef struct {
 	long quot;
 	long rem;

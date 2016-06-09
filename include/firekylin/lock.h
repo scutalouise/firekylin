@@ -8,16 +8,12 @@
 #define _LOCK_H
 
 #include <sys/types.h>
+#include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 
-extern int printk(char * fmt, ...);
-extern void panic(char * fmt, ...);
+#define irq_disable()		__asm__("cli")
 
-#define irq_disable() 			\
-    __asm__("cli");
-
-#define irq_enable() 			\
-    __asm__("sti");
+#define irq_enable() 		__asm__("sti")
 
 /* Just should be used once in a function */
 #define irq_lock()			\
@@ -39,7 +35,9 @@ static inline void require_lock(sleeplock_t *lock)
 
 	irq_lock();
 	if(pid==lock->pid){
-		panic("Lock has locked by %d",pid);
+		printk("Lock has locked by %d",pid);
+		irq_unlock();
+		return ;
 	}
 	while(lock->pid){
 		sleep_on(&(lock->wait));

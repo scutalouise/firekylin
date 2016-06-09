@@ -6,6 +6,7 @@
 
 
 typedef void (*atexit_func_t)(void);
+
 extern atexit_func_t atexit_func_tab[];
 extern int atexit_func_num;
 

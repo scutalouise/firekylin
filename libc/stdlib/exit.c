@@ -7,8 +7,9 @@
 #include <sys/unistd.h>
 
 typedef void (*atexit_func_t)(void);
-atexit_func_t atexit_func_tab[32] = { NULL };
-int atexit_func_num = 0;
+
+atexit_func_t atexit_func_tab[32];
+int atexit_func_num ;
 
 void exit(int exit_code)
 {

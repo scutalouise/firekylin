@@ -8,6 +8,7 @@
 #include <sys/syscall.h>
 #include <sys/unistd.h>
 #include <sys/fcntl.h>
+#include <errno.h>
 
 int dup(int fd)
 {

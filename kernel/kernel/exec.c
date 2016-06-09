@@ -118,8 +118,8 @@ int sys_exec(char *filename, char **argv, char **envp)
 
 	current->stack = 0x40FF0000;
 
-	__asm__ ("fninit");
-	__asm__("movl %%eax,%%cr3"::"a"(current->pdtr));
+	__asm__ (" fninit ");
+	__asm__( " movl %%eax,%%cr3"::"a"(current->pdtr));
 	__asm__( " pushl $0x23;"
 	         " pushl $0x400FF000;"
 	         " pushl $0x13200;"

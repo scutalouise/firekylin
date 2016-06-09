@@ -13,7 +13,7 @@ static const char *day[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 static const char *month[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
 		"Aug", "Sep", "Oct", "Nov", "Dec" };
 
-char * asctime(const struct tm * time)
+char * asctime(struct tm * time)
 {
 	static char buf[40];
 	int i=0;

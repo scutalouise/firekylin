@@ -3,46 +3,6 @@
 // *
 // *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
 // */
-//
-//#include <sys/unistd.h>
-//#include <sys/fcntl.h>
-//#include <sys/stat.h>
-//#include <stdio.h>
-//#include <string.h>
-//#include <dirent.h>
-//
-//extern int atexit_func_num;
-//int main(int argc, char **argv)
-//{
-//	struct dirent *de;
-//	char buf[1024];
-//	int fd;
-//	int size = 0;
-//	int entries;
-//
-//	if (argc > 1) {
-//		fd = open(argv[1], O_READ, 0);
-//	} else {
-//		fd = open(".", O_READ, 0);
-//	}
-//	if (fd < 0)
-//		printf("%s\n", strerror(errno));
-//
-//	while ((size = read(fd, buf, 1024))) {
-//
-//		entries = size / sizeof(struct dirent);
-//		de = (struct dirent *) buf;
-//
-//		while (entries--) {
-//			if (de->d_ino)
-//				printf("%s\t", de->d_name);
-//			de++;
-//		}
-//	}
-//
-//	printf("\n");
-//	printf("---%d",atexit_func_num);
-//}
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -150,17 +110,10 @@ void display_attribute(struct stat buf, char *name)
 	else
 		printf("-");
 
-	printf("  ");
-
-	//根据uid和gid获取文件所有者的用户名于组名
-	//psd = getpwuid(buf.st_uid);
-	//grp = getgrgid(buf.st_gid);
-	printf("%4d", buf.st_nlink);
-	//printf("%-8s", psd->pw_name);
-	//printf("%-9s", grp->gr_name);
+	printf("%7d", buf.st_nlink);
 
 	printf("%6d", buf.st_size);
-	strcpy(buf_time, ctime(&buf.st_mtime));               //将格林位置时间转化成正常时间格式
+	strcpy(buf_time, ctime(&buf.st_mtime));
 	buf_time[strlen(buf_time) - 1] = 0;
 	printf(" %s", buf_time);
 }
@@ -299,7 +252,6 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
-	i = 1;
 	for (i = 1; i < argc; i++) {
 		if (argv[i][0] != '-') {
 			strcpy(path, argv[i]);
@@ -321,5 +273,4 @@ int main(int argc, char **argv)
 	}
 
 	return 0;
-
 }

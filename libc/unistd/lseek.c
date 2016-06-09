@@ -8,5 +8,6 @@
 #include <sys/syscall.h>
 #include <sys/unistd.h>
 #include <sys/fcntl.h>
+#include <errno.h>
 
 __syscall3(int, lseek, int, fd, long, off, int, where);

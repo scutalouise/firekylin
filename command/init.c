@@ -25,6 +25,6 @@ int main(int argc, char **argv)
 		execve("/bin/sh",NULL,envp);
 	}
 	while (1) {	
-		waitpid(0, NULL, 0);
+		wait(0, NULL, 0);
 	}
 }

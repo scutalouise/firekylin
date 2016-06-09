@@ -43,10 +43,11 @@ struct timespec {
 #define YEAR   		(365*DAY)
 #define LEAPYEAR 	(366*DAY)
 
-extern time_t mktime(struct tm *tmptr);
-extern time_t time(time_t *tloc);
-extern char * ctime(const time_t *tp);
-extern struct tm *gmtime(time_t *t);
-extern char * asctime(const struct tm * time);
+extern time_t     time(time_t *tloc);
+extern time_t     mktime(struct tm *tmptr);
+extern char *     asctime(struct tm *tmptr);
+extern char *     ctime(time_t *tp);
+extern struct tm* gmtime(time_t *tp);
+extern struct tm* localtime(time_t *tp);
 
 #endif

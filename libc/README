@@ -1,7 +1,7 @@
 
 This is a simple implement of libc for Firekyln kernel.
 
-assert:	assert()	__bad_assert()
+assert:	assert()
 
 ctype:	isupper()
 	islower()

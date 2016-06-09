@@ -32,7 +32,7 @@ extern char*  strchr(const char *s, int c);
 extern char*  strrchr(const char *s, int c);
 extern char*  strstr(const char *s1, const char *s2);
 
-extern char * strerror(int errno);
+extern char*  strerror(int errno);
 
 extern int    strformat(char *buf, size_t size, char *fmt, ...);
 extern int    strvformat(char *buf, size_t size, char *fmt, va_list arg);

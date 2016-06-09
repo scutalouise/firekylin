@@ -17,7 +17,7 @@ static inline void memset(void *s, int c, int size)
 	__asm__("rep stosb" ::"D"(s),"a"(c),"c"(size));
 }
 
-static inline int strncmp(char *s1, char *s2, int n)
+static inline int strncmp(char *s1, char *s2, size_t n)
 {
 	while (n--) {
 		if (*s1 && (*s1 == *s2)) {

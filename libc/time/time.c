@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/syscall.h>
 #include <time.h>
+#include <errno.h>
 
 static inline __syscall1(int, getime, time_t*, time_loc);
 

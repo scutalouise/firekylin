@@ -104,7 +104,7 @@ int execcmd(int argc, char **argv)
 
 	pid = fork();
 	if (pid) {
-		waitpid(pid, NULL, 0);
+		wait(pid, NULL, 0);
 	} else {
 		execvpe(argv[0], argv, NULL);
 		printf("sh:%s\n", strerror(errno));

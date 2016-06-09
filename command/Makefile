@@ -15,7 +15,7 @@ CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../include
 LIB=../libc/libc.a
 
-OBJS=init sh ls cat sync mkdir touch cp rm ed link t2 vi bg bgsh xv6sh
+OBJS=init sh ls cat sync mkdir touch cp rm ed link t2 vi
 
 .s.o:
 	@$(AS) $(SFLAGS) -o $@  $<
@@ -37,9 +37,6 @@ install: $(OBJS)
 	cp ed     $(PREFIX)/ed
 	cp link   $(PREFIX)/link
 	cp vi     $(PREFIX)/vi
-	cp bg     $(PREFIX)/bg
-	cp bgsh   $(PREFIX)/bgsh
-	cp xv6sh  $(PREFIX)/xv6sh
 	
 init: init.o
 	$(LD) -o  $@  $<  $(LIB)
@@ -72,12 +69,6 @@ t2:t2.o
 ed2:ed2.o
 	$(LD) -o  $@  $<  $(LIB)
 vi:vi.o
-	$(LD) -o  $@  $<  $(LIB)
-bg:bg.o
-	$(LD) -o  $@  $<  $(LIB)
-bgsh:bgsh.o
-	$(LD) -o  $@  $<  $(LIB)
-xv6sh:xv6sh.o
 	$(LD) -o  $@  $<  $(LIB)
 		
 clean:

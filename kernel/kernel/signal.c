@@ -11,8 +11,6 @@
 #include <firekylin/trap.h>
 #include <firekylin/string.h>
 
-extern void do_exit(long status);
-
 void do_signal(struct trapframe *tf)
 {
 	struct task *current;
@@ -37,26 +35,6 @@ void do_signal(struct trapframe *tf)
 	}
 
 	current->sig_signal &= ~signal;
-}
-
-int sys_sigact(unsigned int signr, struct sigaction *newact,
-		struct sigaction *oldact)
-{
-	struct task *current;
-
-	if (signr > 32 || signr == SIGKILL)
-		return -EINVAL;
-
-	current = CURRENT_TASK();
-
-	if (oldact)
-		memcpy(oldact, &(current->sigtable[signr-1]),
-				sizeof(struct sigaction));
-	if (newact)
-		memcpy(&(current->sigtable[signr-1]), newact,
-				sizeof(struct sigaction));
-
-	return 0;
 }
 
 int sys_sigsend(pid_t pid, int signr)
