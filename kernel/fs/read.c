@@ -47,6 +47,11 @@ static int read_file(struct inode *inode, char * buf, off_t off, size_t size)
 	return inode->i_op->file_read(inode,buf,size,off,0);
 }
 
+static int read_dir(struct inode *inode, char * buf, off_t off, size_t size)
+{
+	return inode->i_op->file_readdir(inode,buf,size,off,0);
+}
+
 extern int read_pipe(struct inode *inode, char *buf, size_t size);
 
 int sys_read(int fd, char *buf, size_t size)
@@ -65,10 +70,14 @@ int sys_read(int fd, char *buf, size_t size)
 
 	switch (inode->i_mode & S_IFMT) {
 	case S_IFREG:
-	case S_IFDIR:
 		if (file->f_pos + size > inode->i_size)
 			size = inode->i_size - file->f_pos;
 		res = read_file(inode, buf, file->f_pos, size);
+		break;
+	case S_IFDIR:
+		if (file->f_pos + size > inode->i_size)
+			size = inode->i_size - file->f_pos;
+		res = read_dir(inode, buf, file->f_pos, size);
 		break;
 	case S_IFCHR:
 		res = read_char(inode->i_rdev, buf, file->f_pos, size);

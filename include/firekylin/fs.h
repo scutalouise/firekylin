@@ -102,11 +102,7 @@ struct file {
 	sleeplock_t    f_lock;
 };
 
-#define NAME_LEN	30
-struct dir_entry {
-	unsigned short ino;
-	char name[NAME_LEN];
-};
+#include <sys/dirent.h>
 
 struct fs_operation{
 	int (*super_read)(struct super *super);
@@ -115,6 +111,8 @@ struct fs_operation{
 	int (*inode_write)(struct inode *inode);
 	int (*look_up)(struct inode *inode, char *filename, struct inode **res);
 	int (*file_read)(struct inode *inode, char *buf, size_t size,
+			off_t offset, int rw_flag);
+	int (*file_readdir)(struct inode *inode, char *buf, size_t size,
 			off_t offset, int rw_flag);
 	int (*file_write)(struct inode *inode, char *buf, size_t size,
 			off_t offset, int rw_flag);

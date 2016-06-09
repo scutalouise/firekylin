@@ -7,9 +7,7 @@
 #include <sys/fcntl.h>
 #include <sys/stat.h>
 #include <sys/unistd.h>
-#include <dirent.h>
-#include <string.h>
-#include <stdlib.h>
+#include <sys/dirent.h>
 #include <errno.h>
 
 void rewinddir(DIR * dir)
@@ -18,6 +16,5 @@ void rewinddir(DIR * dir)
 		errno = EBADF;
 		return;
 	}
-	dir->d_size = dir->d_off = 0;
-	lseek(dir->d_fd, 0L, SEEK_SET);
+	lseek(dir->dd_fd, 0L, SEEK_SET);
 }

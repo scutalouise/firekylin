@@ -33,6 +33,30 @@ int minix1_file_read(struct inode *inode, char * buf, size_t size, off_t off,
 	return size - left;
 }
 
+int minix1_file_readdir(struct inode *inode, char * buf, size_t size, off_t off,
+		int rw_flag)
+{
+	struct buffer *bh;
+	struct minix1_dirent *minix1_dirent;
+	struct dirent *dirent=(struct dirent *)buf;
+
+	if (off >= inode->i_size)
+		return 0;
+
+	bh = bread(inode->i_dev, minix1_rbmap(inode, off / 1024));
+	if (!bh) {
+		panic("read file error");
+	}
+	minix1_dirent=(struct minix1_dirent *)(bh->b_data + off % 1024);
+
+	dirent->d_ino=minix1_dirent->ino;
+	dirent->d_reclen=MINIX_NAME_LEN;
+	strncpy(dirent->d_name,minix1_dirent->name,MINIX_NAME_LEN);
+
+	brelse(bh);
+	return sizeof(struct minix1_dirent);
+}
+
 int minix1_file_write(struct inode *inode, char * buf, size_t size, off_t off,
 		int rw_flag)
 {

@@ -80,7 +80,7 @@ void iput(struct inode * inode)
 struct inode *namei(char *filepath, char **basename)
 {
 	struct inode *inode;
-	char name[NAME_LEN + 1];
+	char name[MAX_NAME_LEN + 1];
 
 	if (*filepath == '/') {
 		filepath++;
@@ -92,7 +92,7 @@ struct inode *namei(char *filepath, char **basename)
 		if(basename)
 			*basename=filepath;
 
-		for (int i = 0; i < NAME_LEN; i++) {
+		for (int i = 0; i < MAX_NAME_LEN; i++) {
 			if (*filepath == 0 || *filepath == '/') {
 				name[i] = 0;
 				break;

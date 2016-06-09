@@ -7,8 +7,7 @@
 #include <sys/fcntl.h>
 #include <sys/stat.h>
 #include <sys/unistd.h>
-#include <dirent.h>
-#include <string.h>
+#include <sys/dirent.h>
 #include <stdlib.h>
 #include <errno.h>
 
@@ -21,7 +20,8 @@ int closedir(DIR * dir)
 		return -1;
 	}
 
-	fd = dir->d_fd;
+	fd = dir->dd_fd;
 	free(dir);
+
 	return close(fd);
 }

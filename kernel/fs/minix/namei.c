@@ -7,19 +7,19 @@
 #include "minix_fs.h"
 
 static struct buffer * find_entry(struct inode *dir_inode, char *filename,
-		struct dir_entry **res_de)
+		struct minix1_dirent **res_de)
 {
 	struct buffer *buf;
-	struct dir_entry *de;
+	struct minix1_dirent *de;
 
 	for (int i = 0; i < 7 + 512; i++) {
 		buf = bread(dir_inode->i_dev, minix1_rbmap(dir_inode, i));
 		if (!buf)
 			panic("add_entry:can not read buf");
 
-		de = (struct dir_entry *) buf->b_data;
-		for (int j = 0; j < 1024 / sizeof(struct dir_entry); j++) {
-			if (i * 1024 + j * sizeof(struct dir_entry)
+		de = (struct minix1_dirent *) buf->b_data;
+		for (int j = 0; j < 1024 / sizeof(struct minix1_dirent); j++) {
+			if (i * 1024 + j * sizeof(struct minix1_dirent)
 					> dir_inode->i_size) {
 
 				brelse(buf);
@@ -27,7 +27,7 @@ static struct buffer * find_entry(struct inode *dir_inode, char *filename,
 				return NULL;
 			}
 
-			if (!strncmp(de->name, filename, NAME_LEN)) {
+			if (!strncmp(de->name, filename, MINIX_NAME_LEN)) {
 				*res_de = de;
 				return buf;
 			}
@@ -42,7 +42,7 @@ static struct buffer * find_entry(struct inode *dir_inode, char *filename,
 static int add_entry(struct inode *inode, char *name,ino_t ino)
 {
 	struct buffer *buf;
-	struct dir_entry *de;
+	struct minix1_dirent *de;
 	int size=0;
 
 	if (!inode)
@@ -53,19 +53,19 @@ static int add_entry(struct inode *inode, char *name,ino_t ino)
 		if (!buf)
 			panic("add_entry:can not read buf");
 
-		de = (struct dir_entry *) buf->b_data;
-		for (int j = 0; j < 1024 / sizeof(struct dir_entry); j++) {
+		de = (struct minix1_dirent *) buf->b_data;
+		for (int j = 0; j < 1024 / sizeof(struct minix1_dirent); j++) {
 			if (size<inode->i_size && de->ino) {
-				size += sizeof(struct dir_entry);
+				size += sizeof(struct minix1_dirent);
 				de++;
 				continue;
 			}
 
-			strncpy(de->name,name,NAME_LEN);
+			strncpy(de->name,name,MINIX_NAME_LEN);
 			de->ino=ino;
 			buf->b_flag |= B_DIRTY;
 
-			size += sizeof(struct dir_entry);
+			size += sizeof(struct minix1_dirent);
 
 			if (size > inode->i_size) {
 				inode->i_size = size;
@@ -83,7 +83,7 @@ static int add_entry(struct inode *inode, char *name,ino_t ino)
 int count_entry(struct inode *inode)
 {
 	struct buffer *buf;
-	struct dir_entry *de;
+	struct minix1_dirent *de;
 	int count=0;
 
 	for (int i = 0; i < 7 + 512; i++) {
@@ -91,10 +91,10 @@ int count_entry(struct inode *inode)
 		if (!buf)
 			panic("add_entry:can not read buf");
 
-		de = (struct dir_entry *) buf->b_data;
-		for (int j = 0; j < 1024 / sizeof(struct dir_entry); j++) {
+		de = (struct minix1_dirent *) buf->b_data;
+		for (int j = 0; j < 1024 / sizeof(struct minix1_dirent); j++) {
 
-			if (i * 1024 + j * sizeof(struct dir_entry)
+			if (i * 1024 + j * sizeof(struct minix1_dirent)
 					> inode->i_size) {
 
 				brelse(buf);
@@ -118,7 +118,7 @@ int minix1_look_up(struct inode *dir_inode, char *filename,
 {
 	struct buffer *buf;
 	struct inode *inode;
-	struct dir_entry *de;
+	struct minix1_dirent *de;
 
 	if (filename[0] == '.' && filename[1] == 0) {
 		*res_inode = dir_inode;
@@ -154,7 +154,7 @@ int minix1_look_up(struct inode *dir_inode, char *filename,
 int minix1_mknod(struct inode *dir_inode, char *name, mode_t mode, dev_t dev )
 {
 	struct buffer *buf;
-	struct dir_entry *de;
+	struct minix1_dirent *de;
 	struct inode *new_inode;
 
 	if ((buf = find_entry(dir_inode, name, &de))) {
@@ -182,7 +182,7 @@ int minix1_mknod(struct inode *dir_inode, char *name, mode_t mode, dev_t dev )
 int minix1_mkdir(struct inode *dir_inode,char *name,mode_t mode)
 {
 	struct buffer *buf;
-	struct dir_entry *de;
+	struct minix1_dirent *de;
 	struct inode *inode;
 
 	if ((buf = find_entry(dir_inode, name, &de))) {
@@ -204,7 +204,7 @@ int minix1_mkdir(struct inode *dir_inode,char *name,mode_t mode)
 int minix1_link(struct inode *dir_inode,char *name, struct inode *inode)
 {
 	struct buffer *buf;
-	struct dir_entry *de;
+	struct minix1_dirent *de;
 
 	if((buf=find_entry(dir_inode,name,&de))){
 		brelse(buf);
@@ -218,7 +218,7 @@ int minix1_link(struct inode *dir_inode,char *name, struct inode *inode)
 
 int minix1_unlink(struct inode *dir_inode, char *name)
 {
-	struct dir_entry *de;
+	struct minix1_dirent *de;
 	struct buffer *buf;
 	struct inode *del_inode;
 
@@ -254,7 +254,7 @@ int minix1_unlink(struct inode *dir_inode, char *name)
 
 int minix1_rmdir(struct inode *dir_inode, char *name)
 {
-	struct dir_entry *de;
+	struct minix1_dirent *de;
 	struct buffer *buf;
 	struct inode *del_inode;
 
@@ -289,13 +289,13 @@ int minix1_rmdir(struct inode *dir_inode, char *name)
 
 int minix1_rename(struct inode *inode, char *old, char *new)
 {
-	struct dir_entry *de;
+	struct minix1_dirent *de;
 	struct buffer *buf;
 
 	buf = find_entry(inode, old, &de);
 	if (!buf)
 		return -ENOENT;
-	strncpy(de->name, new, NAME_LEN);
+	strncpy(de->name, new, MINIX_NAME_LEN);
 	buf->b_flag |= B_DIRTY;
 	brelse(buf);
 	return 0;

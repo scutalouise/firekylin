@@ -36,6 +36,12 @@ struct minix1_super {
 	unsigned short s_magic;
 };
 
+#define MINIX_NAME_LEN	30
+struct minix1_dirent {
+	unsigned short ino;
+	char name[MINIX_NAME_LEN];
+};
+
 struct minix_i_ext{
 	unsigned short i_zone[9];
 };
@@ -79,5 +85,8 @@ extern int minix1_link(struct inode *dir_inode,char *name, struct inode *inode);
 extern int minix1_unlink(struct inode *dir_inode, char *name);
 extern int minix1_rmdir(struct inode *dir_inode, char *name);
 extern int minix1_rename(struct inode *inode, char *old, char *new);
+extern int minix1_file_readdir(struct inode *inode, char * buf, size_t size, off_t off,
+		int rw_flag);
+
 
 #endif

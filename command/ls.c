@@ -8,12 +8,12 @@
 #include <sys/stat.h>
 #include <sys/fcntl.h>
 #include <sys/unistd.h>
+#include <sys/dirent.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <errno.h>
-#include <dirent.h>
 #include <string.h>
 #include <time.h>
+#include <errno.h>
 
 #define PARAM_NONE 0
 #define PARAM_A    1
