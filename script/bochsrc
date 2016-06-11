@@ -1,0 +1,18 @@
+#
+#      script/bochsrc
+#
+#      Copyright (C) 2016 ximo<ximoos@foxmail.com>
+#
+
+megs:64
+
+romimage: file="D:/Program Files/bochs/BIOS-bochs-latest"
+vgaromimage: file="D:/Program Files/bochs/VGABIOS-lgpl-latest"
+
+floppya: type=1_44, 1_44="fd.img", status=inserted
+
+ata0-master: type=disk, path="hd.vhd", mode=flat, cylinders=120, heads=16, spt=63
+
+#com1: enabled=1, mode=socket-server, dev=localhost:8888
+
+boot:c

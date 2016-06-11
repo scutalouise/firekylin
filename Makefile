@@ -33,8 +33,11 @@ count:
 	@echo files: $(shell ls -lR |grep ^- |wc -l)
 	@echo lines: $(shell find . -name *.[chs] |xargs grep -v ^$$ |wc -l)
 
-boot/bootsect.bin:boot/bootsect.s
-	$(AS) -o $@  $<
+qemu:
+	qemu -hda hd.vhd
+
+bochs:
+	bochs -q -f script/bochsrc
 	
-tools/install-boot:tools/install-boot.c
-	$(CC) -o $@  $<
+bochsdbg:
+	bochsdbg -q -f script/bochsrc

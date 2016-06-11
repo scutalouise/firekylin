@@ -28,7 +28,7 @@ mbhead_start:
 	dd MB2_HEAD_MAGIC			; magic
 	dd MB2_HEAD_ARCH_I386			; arch
 	dd MB2_HEAD_LEN				; len
-	dd -(MB2_HEAD_MAGIC+MB2_HEAD_ARCH_I386+MB2_HEAD_LEN)	; check
+	dd 0x100000000-(MB2_HEAD_MAGIC+MB2_HEAD_ARCH_I386+MB2_HEAD_LEN)	; check
 address_tag_start:
 	dw MB2_HEAD_TAG_ADDR
 	dw MB2_HEAD_TAG_OPT
@@ -51,14 +51,11 @@ enter_address_tag_end:
 mbhead_end:
 
 real_start:
-	mov esp,0x10000
-	cmp eax,MB2_LOAD_MAGIC
-	je setup_page_table
-
-	mov ax,0x10
+	mov ax,0x18
 	mov ds,ax
 	mov es,ax
 	mov ss,ax
+	mov esp,0x10000
 
 setup_page_table:	; set simple page table, map 0~4MB
 	xor eax,eax

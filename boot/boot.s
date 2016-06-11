@@ -49,7 +49,7 @@ load_kernel:
 	je  ok_load
 	mov ax,es
 	add ax,0x20*18
-	mov es,ax	
+	mov es,ax
 		     	; echo .
 	mov ah,0x0e
 	mov bx,0x10
@@ -70,11 +70,6 @@ clear_screen:
 	mov bh,0x07
 	int 0x10
 
-get_mem:
-	mov ah,0x88
-	int 0x15
-	mov word [0],ax ;0x8000
-
 open_A20:
 	cli
 	in  al,   0x92
@@ -84,12 +79,13 @@ open_A20:
 	mov eax,  cr0
 	or  eax,  1
 	mov cr0,  eax
-	jmp dword 8:0x10000
+	jmp dword 0x10:0x10000
 
 info:
 	db "Loading..."
 	align 8
 gdt:
+	dd 0,0
 	dd 0,0
 	dd 0x0000ffff,0x00cf9a00
 	dd 0x0000ffff,0x00cf9200
@@ -100,5 +96,5 @@ gdt_48:
 	dd gdt+0x8000
 
 	times 508-($-$$) db 0
-size:	dw  6
+size:	dw  8
 	dw  0xaa55

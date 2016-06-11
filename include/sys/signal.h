@@ -31,16 +31,11 @@
 #define SIGTTIN		20
 #define	SIGTTOU		21
 
-#define SIG_DFL		((void(*)(int))0)
-#define SIG_IGN		((void(*)(int))1)
+typedef unsigned long 	  sigset_t;
+typedef void        	(*sigfunc_t)(int);
 
-typedef unsigned long sigset_t;
-
-struct sigaction {
-	void (*sa_handle)(int);
-	sigset_t sa_mask;
-	int sa_flags;
-	void (*sa_restoter)(void);
-};
+#define SIG_ERR		((sigfunc_t)-1)
+#define SIG_DFL		((sigfunc_t)0)
+#define SIG_IGN		((sigfunc_t)1)
 
 #endif

@@ -6,7 +6,7 @@
 
 AS=nasm
 CC=gcc
-LD=ld -m elf_i386 -T ldscript
+LD=ld -m elf_i386 -T ../script/ldscript
 
 PREFIX=~/part1/bin
 
@@ -15,7 +15,7 @@ CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../include
 LIB=../libc/libc.a
 
-OBJS=init sh ls cat sync mkdir touch cp rm ed link t2 vi
+OBJS=init sh ls cat sync mkdir touch cp rm ln vi
 
 .s.o:
 	@$(AS) $(SFLAGS) -o $@  $<
@@ -34,8 +34,7 @@ install: $(OBJS)
 	cp touch  $(PREFIX)/touch
 	cp cp	  $(PREFIX)/cp
 	cp rm     $(PREFIX)/rm
-	cp ed     $(PREFIX)/ed
-	cp link   $(PREFIX)/link
+	cp ln     $(PREFIX)/ln
 	cp vi     $(PREFIX)/vi
 	
 init: init.o
@@ -60,16 +59,10 @@ ls:ls.o
 	$(LD) -o  $@  $<  $(LIB)
 rm:rm.o
 	$(LD) -o  $@  $<  $(LIB)
-ed:ed.o
-	$(LD) -o  $@  $<  $(LIB)
-link:link.o
-	$(LD) -o  $@  $<  $(LIB)
-t2:t2.o
-	$(LD) -o  $@  $<  $(LIB)
-ed2:ed2.o
+ln:ln.o
 	$(LD) -o  $@  $<  $(LIB)
 vi:vi.o
 	$(LD) -o  $@  $<  $(LIB)
-		
+
 clean:
 	-rm *.o $(OBJS)

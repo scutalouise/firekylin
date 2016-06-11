@@ -32,7 +32,7 @@ int sys_fork(long unuesd)
 	task->cutime=0;
 	task->cstime=0;
 	task->start=current_time();
-	task->timer.t_time=0;
+
 	stack = (unsigned long *) ((((long) &unuesd) & 0xfff) | (long) task);
 	--stack;		// ret
 	*(--stack) = 0x13200;	// popf
@@ -48,7 +48,7 @@ int sys_fork(long unuesd)
 	__asm__ ("fnsave (%%eax)" ::"a"(stack));
 
 	task->kesp = (unsigned long) stack;
-	task->state = TASK_RUN;
+	task->state = TASK_STATE_READY;
 
 	if(current->pwd)
 		current->pwd->i_count++;

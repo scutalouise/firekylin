@@ -41,52 +41,44 @@ struct tss_struct {
 	unsigned short iobase;
 };
 
-struct timer{
-	clock_t       t_time;
-	void        (*t_fun)(void);
-	struct timer *t_next;
-};
-
-#define NR_OPEN		32
 struct task {
-	long    kesp; 		/* kernel stack_end. 	*/
-	pid_t   pid; 		/* process id.  	*/
-	pid_t   grp; 		/* process group id. 	*/
-	pid_t   sid; 		/* session id.  	*/
-	uid_t   uid; 		/* user id. 		*/
-	gid_t   gid; 		/* user group id. 	*/
-	clock_t start;		/* start time. 		*/
-	clock_t stime; 		/* system time. 	*/
-	clock_t utime; 		/* user   time. 	*/
-	clock_t cstime; 	/* child system time. 	*/
-	clock_t cutime; 	/* child user   time. 	*/
-	clock_t alarm; 		/* alarm. 		*/
-	long    state; 		/* process state. 	*/
-	long    count; 		/* have not used time. 	*/
-	long    priority; 	/* process priority.	*/
-	long    pdtr; 		/* cr3 			*/
-	long    sbrk; 		/* heap end. 		*/
-	long    stack; 		/* stack end. 		*/
-	long 	status; 	/* exit status. 	*/
-	sigset_t sig_mask;
-	sigset_t sig_signal; 	/* Receive signal.	*/
-	struct sigaction sigtable[32];
-	unsigned int tty; 	/* use which tty. 	*/
-	struct inode *pwd; 	/* current dir inode. 	*/
-	struct file *file[NR_OPEN]; /* file open. 	*/
-	struct timer timer;
-	struct task *parent;
-	struct task *next;
+	long          kesp; 		/* kernel stack_end. 	*/
+	pid_t         pid; 		/* process id.  	*/
+	pid_t         grp; 		/* process group id. 	*/
+	pid_t         sid; 		/* session id.  	*/
+	uid_t         uid; 		/* user id. 		*/
+	gid_t         gid; 		/* user group id. 	*/
+	clock_t       start;		/* start time. 		*/
+	clock_t       stime; 		/* system time. 	*/
+	clock_t       utime; 		/* user   time. 	*/
+	clock_t       cstime; 		/* child system time. 	*/
+	clock_t       cutime; 		/* child user   time. 	*/
+	clock_t       alarm; 		/* alarm. 		*/
+	long          state; 		/* process state. 	*/
+	long          count; 		/* have not used time. 	*/
+	long          priority; 	/* process priority.	*/
+	long          pdtr; 		/* cr3 			*/
+	long          sbrk; 		/* heap end. 		*/
+	long          stack; 		/* stack end. 		*/
+	long 	      status; 		/* exit status. 	*/
+	sigset_t      sigarrive;	/* sig arrived map 	*/
+	sigset_t      sigmask;		/* sig mask    map	*/
+	sigset_t      sigsuspend;	/* sig suspend map	*/
+	sigfunc_t     sighandle[NR_SIG];/* sig handle table	*/
+	unsigned int  tty; 		/* control tty. 	*/
+	struct inode *pwd; 		/* current dir inode. 	*/
+	struct file  *file[NR_OPEN]; 	/* file open point. 	*/
+	struct task  *parent;		/* point to father task */
+	struct task  *next;		/* point to list next   */
 };
 
 /* Values of task->state */
-#define TASK_RUN	1
-#define TASK_WAIT	2
-#define TASK_EXIT	3
-#define TASK_WAIT_CHLD	4
-#define TASK_SIGWAIT	5
-
-#define NR_TASK		16
+#define TASK_STATE_UNUSE	0	/* unused or creating.	*/
+#define TASK_STATE_READY	1	/* ready  or running.	*/
+#define TASK_STATE_BLOCK	2	/* wait some resource.	*/
+#define TASK_STATE_PAUSE	3	/* wait singal.		*/
+#define TASK_STATE_STOP		4	/* stop by singal etc.	*/
+#define TASK_STATE_EXIT		5	/* task exit.		*/
 
 #define CURRENT_TASK() 			\
     (struct task*)({ 			\

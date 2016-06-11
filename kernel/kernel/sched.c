@@ -37,7 +37,7 @@ void sched_init(void)
 	init_tss();
 	memset(current, 0, sizeof(struct task));
 	current->count = current->priority = 20;
-	current->state = TASK_RUN;
+	current->state = TASK_STATE_READY;
 	task_table[0] = current;
 }
 
@@ -47,7 +47,8 @@ void sched(void)
 
 	while (1) {
 		for (i = NR_TASK - 1; i > 0; i--) {
-			if (!task_table[i] || task_table[i]->state != TASK_RUN)
+			if (!task_table[i] ||
+			     task_table[i]->state != TASK_STATE_READY)
 				continue;
 			if (task_table[i]->count > c)
 				c = task_table[i]->count,n = i;
@@ -75,7 +76,7 @@ void sleep_on(struct task **p)
 {
 	struct task *task = CURRENT_TASK();
 
-	task->state = TASK_WAIT;
+	task->state = TASK_STATE_BLOCK;
 	if (p) {
 		task->next = *p;
 		*p = task;
@@ -90,7 +91,7 @@ void wake_up(struct task **p)
 		return ;
 	while (*p) {
 		tmp = *p;
-		tmp->state = TASK_RUN;
+		tmp->state = TASK_STATE_READY;
 		*p = tmp->next;
 		tmp->next = NULL;
 	}

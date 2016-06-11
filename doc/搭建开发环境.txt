@@ -1,0 +1,98 @@
+一、安装linux虚拟机
+      如果你是用的windows系统，因为需要使用linux平台下的一些工具进行开发，因而需要一个安装一个linux系统，
+      完成一些工作，如果您本身就使用linux系统，那么可以跳过这一步。
+  1、安装虚拟机：
+           我选用的是VirtualBox，他是免费的，比较小巧，虚拟机和宿主机之间共享文档比较容易。
+  2、在虚拟机中安装linux系统：
+         你可以使用自己喜欢的linux发行版，我使用的ubuntu-server-14.04。
+  3、在虚拟机中安装VirtualBox扩展
+         在安装VirtualBox扩展是可能需要先安装gcc binutils 等一些功能；linux-headers 的头文件，
+         在VirtualBox安装成功后重启虚拟机，即可。
+  4、设置共享文件夹
+        将firekylin的源代码的主目录为共享
+        在虚拟机 个人主目录下 新建一个文件夹，并挂载共享文件夹
+    cd
+    mkdir os
+    sudo mount.vboxsf firekylin os
+       挂载之后os目录即为firekylin源代码的主目录。
+
+二、制作firekylin虚拟磁盘文件
+      如果你觉得麻烦，可以使用我已经制作好的。
+  1、使用虚拟机创建一个新的虚拟硬盘，格式为vhd，采用静态空间分配，大小自己选择，不要太小，也不要太大，适中就行，我用的是256M。
+  2、对新创建的的虚拟磁盘进行分区     使用fdisk命令即可，建立4个主分区。
+  3、安装grub2
+    1、给ubuntu 安装grub2 ：sudo apt-get install grub2
+    2、给虚拟硬盘安装grub2：
+       sudo kpartx -av hd.vhd
+       sudo mkfs.minix -1 /dev/mapper/loop0p1
+       sudo mkfs.minix -1 /dev/mapper/loop0p2
+       sudo mkfs.minix -1 /dev/mapper/loop0p3
+       sudo mkfs.minix -1 /dev/mapper/loop0p4
+       sudo mount -t minix /dev/mapper/loop0p1 /mnt
+       sudo grub-install --boot-directory /mnt/boot /dev/loop0
+    3、在第一个分区创建根文件系统
+       cd /mnt
+       sudo mkdir bin dev etc home lib src
+       cd dev
+       sudo mknod -c ram  1 0
+       sudo mknod -c port  1 1
+       sudo mknod -c kmem 1 2
+       sudo mknod -c null  1 3
+       sudo mknod -c full  1 4
+       sudo mknod -c tty   2 0
+       sudo mknod -c tty1   2 1
+       sudo mknod -c tty2   2 2
+       sudo mknod -c tty3   2 3
+       sudo mknod -c tty4   2 4
+       sudo mknod -c tty5   2 5
+       sudo mknod -c tty6   2 6
+       sudo mknod -c tty7   2 7
+       sudo mknod -c com0  2 8
+       sudo mknod -c com1  2 9
+       sudo mknod -b rd0    1 0
+       sudo mknod -b fd0    2 1
+       sudo mknod -b fd1    2 2
+       sudo mknod -b hda    3 0
+       sudo mknod -b hda1   3 1
+       sudo mknod -b hda2   3 2
+       sudo mknod -b hda3   3 3
+       sudo mknod -b hda4   3 4
+    4、配置grub
+       cd /mnt/boot/grub
+       sudo vi grub.cfg
+                   输入以下内容：
+           set default=0
+           set timeout=10
+           menuentry “firekylin 0.1”{
+              insmod minix
+              echo “Loading ... "
+	      multiboot2 (hd0,1)/boot/kenrel.bin
+              boot
+          }
+    5、数据同步，以确保刚才你的操作已写入文件中。
+       sync
+       sync
+            至此，虚拟磁盘已近制作好了。
+            
+三、安装虚拟磁盘
+    1、将虚拟磁盘移动到个人主目录下。
+    2、在个人主目录下创建4个文件夹 part1，part2，part3，part4。
+    3、将虚拟磁盘中的分区分别挂载到这四个目录
+       sudo kpartx -av hd.vhd
+       sudo mount -t minix  /dev/mapper/loop0p1 part1
+       sudo mount -t minix  /dev/mapper/loop0p2 part2
+       sudo mount -t minix  /dev/mapper/loop0p3 part3
+       sudo mount -t minix  /dev/mapper/loop0p4 part4
+
+四、firekylin编译
+     使用make命令可以编译整个系统。
+     使用sudo make isntall 命令 可以完成编译，并将编译好的目标文件安装到虚拟磁盘第一分区下的特定目录，
+     并将虚拟磁盘在当前目录下做一份copy。
+
+五、运行firekylin
+     可以使用bochs qemu 虚拟机运行firekylin。
+
+注：     1、在配置，编译firekylin过程中用到的工具，并不会都是随系统预装的，这需要自己进行手动安装。
+    2、当系统重启后，虚拟磁盘中分区到part[1-4]目录的挂载关系消失，需要从新进行设置。
+    3、默认使用的loop0设备，但是如果loop0设备已占用，则会用loop1设备，以此类推。
+

@@ -1,5 +1,5 @@
 /*
- *    tools/build.c
+ *    boot/build.c
  *
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define size (80*18*2*512)
+#define SIZE (80*18*2*512)
 
 void copy_file(FILE *img, FILE *sys)
 {
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 
 	copy_file(img, sys);
 
-	fseek(img, size - 1, 0);
+	fseek(img, SIZE - 1, 0);
 	fputc(0, img);
 
 	fclose(img);

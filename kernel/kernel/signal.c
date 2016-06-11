@@ -19,7 +19,7 @@ void do_signal(struct trapframe *tf)
 
 	current = CURRENT_TASK();
 
-	signal = (current->sig_signal) & (~(current->sig_mask));
+	signal = (current->sigarrive) & (~(current->sigarrive));
 
 	if (!signal)
 		return;
@@ -34,7 +34,7 @@ void do_signal(struct trapframe *tf)
 
 	}
 
-	current->sig_signal &= ~signal;
+	current->sigarrive &= ~signal;
 }
 
 int sys_sigsend(pid_t pid, int signr)
@@ -43,9 +43,9 @@ int sys_sigsend(pid_t pid, int signr)
 
 	for (p = task_table; p < task_table + NR_TASK; p++) {
 		if ((*p)->pid == pid) {
-			(*p)->sig_signal |= 1 << (signr - 1);
-			if ((*p)->state == TASK_SIGWAIT) {
-				(*p)->state = TASK_RUN;
+			(*p)->sigarrive |= 1 << (signr - 1);
+			if ((*p)->state == TASK_STATE_READY) {
+				(*p)->state = TASK_STATE_READY;
 				sched();
 			}
 			return 0;
@@ -54,18 +54,9 @@ int sys_sigsend(pid_t pid, int signr)
 	return -ERSCH;
 }
 
-int sys_sigmask(int how, sigset_t *set, sigset_t *oset)
-{
-	struct task *current;
-
-	current = CURRENT_TASK();
-
-	return current->sig_mask;
-}
-
 int sys_sigwait()
 {
-	(CURRENT_TASK() )->state = TASK_SIGWAIT;
+	(CURRENT_TASK() )->state = TASK_STATE_READY;
 	sched();
 	return -EINTR;
 }

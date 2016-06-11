@@ -20,7 +20,7 @@ int sys_wait(pid_t pid, long *status,int options)
 	while (1) {
 		for (int i = 0; i < NR_TASK; i++) {
 			if (!task_table[i]
-				|| task_table[i]->state != TASK_EXIT
+				|| task_table[i]->state != TASK_STATE_EXIT
 				|| task_table[i]->parent->pid!= current->pid) {
 				continue;
 			}
@@ -32,7 +32,7 @@ int sys_wait(pid_t pid, long *status,int options)
 			task_table[i]=NULL;
 			return ret;
 		}
-		current->state=TASK_WAIT_CHLD;
+		current->state=TASK_STATE_PAUSE;
 		sched();
 	}
 	return pid;

@@ -10,6 +10,8 @@
 #include <firekylin/sched.h>
 #include <firekylin/trap.h>
 #include <firekylin/portio.h>
+#include <firekylin/timer.h>
+#include <firekylin/lock.h>
 
 #define LATCH		(1193180/HZ)
 
@@ -18,54 +20,36 @@ clock_t clock;
 
 static struct timer *timer_list;
 
-void rm_timer(struct timer *timer)
+void add_timer(struct timer *timer_ptr)
 {
-	struct timer *timer_tmp;
+	struct timer *tmp=timer_list;
 
-	if(timer_list == timer){
-		timer_list=timer->t_next;
-		return ;
+	irq_lock();
+	if (!timer_list) {
+		timer_list = timer_ptr;
+		timer_ptr->next = NULL;
 	}
-	timer_tmp=timer_list;
-	while(timer_tmp){
-		if(timer_tmp->t_next==timer){
-			timer_tmp->t_next=timer->t_next;
-			return ;
-		}
-		timer_tmp=timer_tmp->t_next;
-	}
+
+	while (tmp->next && (tmp->next->time < timer_ptr->time))
+		tmp = tmp->next;
+	timer_ptr->next = tmp->next;
+	tmp->next = timer_ptr;
+	irq_unlock();
 }
 
-void add_timer(long much, void (*fn)(void))
+void del_timer(struct timer *timer_ptr)
 {
-	struct task *current=CURRENT_TASK();
-	struct timer *timer=&current->timer;
-	struct timer *timer_tmp;
+	struct timer *tmp = timer_list;
 
-	if(timer->t_time)
-		rm_timer(timer);
-
-	timer->t_time=clock+much;
-	timer->t_fun=fn;
-
-	if(!timer_list){
-		timer_list=timer;
-		timer->t_next=NULL;
-		return ;
+	irq_lock();
+	if (timer_list == timer_ptr) {
+		timer_list = timer_ptr->next;
+		return;
 	}
-
-	if(timer_list->t_time<timer->t_time){
-		timer->t_next=timer_list;
-		timer_list=timer;
-		return ;
-	}
-
-	timer_tmp=timer_list;
-	while(timer_tmp->t_next && timer->t_next->t_time <timer->t_time)
-		timer_tmp=timer_tmp->t_next;
-
-	timer->t_next=timer_tmp->t_next;
-	timer_tmp->t_next=timer;
+	while (tmp->next && (tmp->next != timer_ptr))
+		tmp = tmp->next;
+	tmp->next = tmp->next->next;
+	irq_unlock();
 }
 
 static void do_clock(struct trapframe *tf)
@@ -80,15 +64,12 @@ static void do_clock(struct trapframe *tf)
 	}else
 		current->stime++;
 
-	if(timer_list && timer_list->t_time <=clock){
-		void (*fn)(void);
-		timer_list->t_time=0;
-		fn=timer_list->t_fun;
-		timer_list=timer_list->t_next;
-		if(fn){
-			(fn)();
-		}
+	/* do timer */
+	if(timer_list && timer_list->time <=clock){
+		(timer_list->func)(timer_list->data);
+		timer_list=timer_list->next;
 	}
+
 	if (--current->count < 0) {
 		current->count = 0;
 		sched();

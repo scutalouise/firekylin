@@ -1,5 +1,5 @@
 /*
- *    command/link.c
+ *    command/ln.c
  *
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */

@@ -16,11 +16,11 @@ OBJS=init/head.o init/main.o  \
      kernel/entry.o kernel/trap.o   kernel/util.o  \
      kernel/sched.o kernel/signal.o kernel/clock.o \
      kernel/fork.o  kernel/exec.o   kernel/wait.o kernel/exit.o kernel/trace.o \
+     mm/memory.o \
      driver/char/console.o driver/char/keyboard.o driver/char/serial.o \
      driver/char/tty.o driver/char/mem.o\
      driver/block/ramdisk.o driver/block/floppy.o driver/block/atapi.o \
-     driver/driver.o \
-     mm/memory.o \
+     driver/driver.o driver/pci.o \
      fs/buffer.o fs/super.o fs/inode.o fs/read.o fs/stat.o fs/open.o \
      fs/write.o fs/fcntl.o fs/create.o fs/pipe.o fs/ioctl.o fs/close.o \
      fs/minix/super.o fs/minix/inode.o fs/minix/bitmap.o \

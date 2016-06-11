@@ -15,11 +15,11 @@ void do_exit(long exitcode)
 {
 	extern int sys_close(int fd);
 	struct task * current=CURRENT_TASK();
-	current->state = TASK_EXIT;
+	current->state = TASK_STATE_EXIT;
 	current->status=exitcode;
 	free_mm();
-	if(current->parent->state == TASK_WAIT_CHLD){
-		current->parent->state = TASK_RUN;
+	if(current->parent->state == TASK_STATE_PAUSE){
+		current->parent->state = TASK_STATE_READY;
 	}
 
 	if(current->pwd)

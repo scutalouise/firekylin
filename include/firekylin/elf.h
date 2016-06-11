@@ -3,10 +3,10 @@
  *
  *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
  */
- 
- #ifndef _ELF_H
- #define _ELF_H
- 
+
+#ifndef _ELF_H
+#define _ELF_H
+
 typedef unsigned int    Elf32_Addr ;
 typedef unsigned short  Elf32_Half ;
 typedef unsigned int    Elf32_Off  ;

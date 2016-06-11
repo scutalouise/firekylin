@@ -7,6 +7,10 @@
 #ifndef _SYS_PARAM_H
 #define _SYS_PARAM_H
 
-#define HZ	100
+#define HZ		100
+
+#define NR_OPEN		 32
+
+#define NR_TASK		 16
 
 #endif

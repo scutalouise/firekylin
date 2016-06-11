@@ -1,0 +1,53 @@
+设备驱动接口---设备驱动程序如何与系统中其他部分交互
+
+系统中将设备分为字符设备、块设备和网络设备
+1、设备号：设备号分为主设备号和次设备号，主设备号标识一个设备驱动，次设备号是传递给驱动程序的参数，用于驱动程序控制多个设备。
+
+2、字符设备接口：
+#define DEV_CHAR_MAX		3   // 系统最多存在多少字符设备
+#define DEV_CHAR_MEM		1   // 内存设备
+#define DEV_CHAR_TTY		2   //  终端设备
+
+struct char_dev {
+	char *name;
+	int  (*open)(dev_t dev);
+	int  (*close)(dev_t dev);
+	int  (*read)(dev_t dev, char *buf, off_t off,size_t size);
+	int  (*write)(dev_t dev, char *buf, off_t off,size_t size);
+	int  (*ioctl)(dev_t dev, int cmd, long arg);
+};
+字符设备驱动需要实现 struct char_dev结构体中的接口，然后将此结构此以设备号我索引注册到系统全局变量char_table[]中；
+name ：设备驱动名；
+open ： 打开设备；
+close ：关闭设备；
+read ：从设备中读取字符；
+write：往设备中写入字符；
+ioctl ：控制设备参数，等等；
+这些函数中可能又有不能立即完成的，可以使用sleep_on()来是自己睡眠，当数据准本好后可以使用wake_up()唤醒正在等待的进程。
+
+3、块设备接口：
+#define DEV_BLK_MAX		3  //  系统中支持的最多的块设备
+#define DEV_BLK_RAMDISK		1  //  内存虚拟盘设备
+#define DEV_BLK_FLOPPY		2  //  软盘设备
+#define DEV_BLK_IDE		3  //  IDE 硬盘设备
+
+struct blk_dev {
+	char *name;
+	int  (*open)(dev_t dev);
+	int  (*close)(dev_t dev);
+	void (*read)(struct buffer *buffer);
+	void (*write)(struct buffer *buffer);
+	int  (*ioctl)(dev_t dev, int cmd, long arg);
+};
+块设备驱动需要实现 struct blk_dev结构体中的接口，然后将此结构此以设备号我索引注册到系统全局变量blk_table[]中；
+name ：设备驱动名；
+open ： 打开设备；	
+close ：关闭设备；
+read ：从设备中对应的块读入到缓冲区；
+write：把缓冲中的数据同步到设备中；
+ioctl ：控制设备参数，等等；
+在读写设备时，如果操作无法立即完成，可以sleep_on()切换到其他进程中执行，等到，在数据完成后再wake_up()相关的进程。
+当读写完成后，buf->b_flag=B_AVAIL。
+
+4、网络设备接口：
+      没有实现。
