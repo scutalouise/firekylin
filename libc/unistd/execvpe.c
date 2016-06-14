@@ -1,7 +1,10 @@
-/*
- *	libc/unistd/execvp.c
+/* This file is part of The Firekylin Operating System.
  *
- *	Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #include <sys/unistd.h>
@@ -12,7 +15,7 @@
 #include <limits.h>
 #include <stdio.h>
 
-int execvpe(const char * file, char ** argv, char ** envp)
+int execvpe(char * file, char ** argv, char ** envp)
 {
 	char * path, * tmp;
 	int len;
@@ -44,7 +47,6 @@ int execvpe(const char * file, char ** argv, char ** envp)
 		else
 			if (!(st.st_mode & S_IFREG))
 				continue;
-		//if (!access(tmp_path,1))
 		return execve(tmp_path,argv,envp);
 	}
 	errno = ENOENT;

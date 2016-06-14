@@ -1,7 +1,10 @@
-/*
- *	libc/string/stricmp.c
+/* This file is part of The Firekylin Operating System.
  *
- *	Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #include <string.h>
@@ -13,6 +16,6 @@ int stricmp(char *s1, char *s2)
 		s1++;
 		s2++;
 	}
-		
+
 	return (int)(*s1-*s2);
 }

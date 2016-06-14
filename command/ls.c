@@ -1,7 +1,10 @@
-/*
- *    command/ls.c
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #include <sys/types.h>
@@ -13,7 +16,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include <errno.h>
 
 #define PARAM_NONE 0
 #define PARAM_A    1
@@ -25,7 +27,7 @@ int g_maxlen;
 
 void my_error(const char* errstring, int line)
 {
-	fprintf(stderr, "line:%d %s", line, errstring);
+	printf("line:%d %s", line, errstring);
 	exit(1);
 }
 
@@ -154,7 +156,7 @@ void display(int flag, char *pathname)
 
 }
 
-void display_dir(int flag_param, const char *path)
+void display_dir(int flag_param, char *path)
 {
 	DIR* dir;
 	struct dirent* dirent;

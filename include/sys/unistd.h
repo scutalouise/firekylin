@@ -1,7 +1,10 @@
-/*
- *    include/sys/unistd.h
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #ifndef _SYS_UNISTD_H
@@ -37,7 +40,7 @@ extern uid_t setuid(uid_t uid);
 extern gid_t setgid(gid_t gid);
 extern ssize_t read(int fd,char * buf,size_t size);
 extern ssize_t write(int fd,char * buf,size_t size);
-extern int execve(const char *fname, char **argv, char **envp);
+extern int execve(char *fname, char **argv, char **envp);
 extern void _exit(int status);
 extern int sbrk(int inc);
 extern int dup(int fd);
@@ -46,11 +49,12 @@ extern int chdir(char *dirname);
 extern int close(int fd);
 extern int lseek(int fd,long off,int where);
 extern int mkdir(char *name,mode_t mode);
+extern int rmdir(char *name);
 extern int link(char *name, char *newname);
 extern int sync(void);
 extern int unlink(char *name);
 extern int mknod(char *name, mode_t mode,dev_t dev);
-extern int execvpe(const char * file, char ** argv, char ** envp);
+extern int execvpe(char * file, char ** argv, char ** envp);
 extern int pipe(int fd[2]);
 
 #endif

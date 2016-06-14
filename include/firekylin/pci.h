@@ -1,7 +1,10 @@
-/*
- *    include/firekylin/pci.h
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #ifndef _PCI_H
@@ -32,12 +35,12 @@
 
 #define PCI_INTERRUPT_LINE	0x3C
 
-typedef int 	pci_dev_t; 	/* pci config addr base */
+typedef int pci_dev_t; /* pci config addr base */
 
-struct pci_device{
-	pci_dev_t	pci_dev;
-	short		pci_vendor_id;
-	short		pci_device_id;
+struct pci_device {
+	pci_dev_t pci_dev;
+	unsigned short pci_vendor_id;
+	unsigned short pci_device_id;
 };
 
 #include <firekylin/portio.h>
@@ -55,6 +58,13 @@ unsigned int pci_read_config(pci_dev_t pci_dev, char offset)
 }
 
 static inline
+void pci_write_config(pci_dev_t pci_dev, char offset, unsigned int data)
+{
+	outl(PCI_CONFIG_ADDR_PORT, 0x80000000 | pci_dev | (offset & 0xfc));
+	outl(PCI_CONFIG_DATA_PORT, data);
+}
+
+static inline
 unsigned short pci_read_config_word(pci_dev_t pci_dev, char offset)
 {
 	union {
@@ -64,12 +74,29 @@ unsigned short pci_read_config_word(pci_dev_t pci_dev, char offset)
 
 	ret.ret_i = pci_read_config(pci_dev, offset);
 
-	if ((offset % 3) == 0)
+	if ((offset & 3) == 0)
 		return ret.ret_s[0];
-	else if ((offset % 3) == 2)
+	else if ((offset & 3) == 2)
 		return ret.ret_s[1];
 	else
-		return 0xffff;
+		return 0x77ff;
+}
+
+static inline
+void pci_write_config_word(pci_dev_t pci_dev, char offset, unsigned short data)
+{
+	union {
+		unsigned int d_i;
+		unsigned short d_s[2];
+	} d;
+
+	d.d_i = pci_read_config(pci_dev, offset);
+
+	if ((offset & 3) == 0)
+		d.d_s[0] = data;
+	if ((offset & 3) == 2)
+		d.d_s[1] = data;
+	pci_write_config(pci_dev, offset, d.d_i);
 }
 
 static inline
@@ -82,16 +109,40 @@ unsigned char pci_read_config_byte(pci_dev_t pci_dev, char offset)
 
 	ret.ret_i = pci_read_config(pci_dev, offset);
 
-	if ((offset % 3) == 0)
+	if ((offset & 3) == 0)
 		return ret.ret_c[0];
-	else if ((offset % 3) == 1)
+	else if ((offset & 3) == 1)
 		return ret.ret_c[1];
-	else if ((offset % 3) == 2)
+	else if ((offset & 3) == 2)
 		return ret.ret_c[2];
-	else if ((offset % 3) == 3)
+	else if ((offset & 3) == 3)
 		return ret.ret_c[3];
 	else
 		return 0xff;
 }
+
+static inline
+void pci_write_config_byte(pci_dev_t pci_dev, char offset, unsigned char data)
+{
+	union {
+		unsigned int d_i;
+		unsigned char d_c[4];
+	} d;
+
+	d.d_i = pci_read_config(pci_dev, offset);
+
+	if ((offset & 3) == 0)
+		d.d_c[0] = data;
+	if ((offset & 3) == 1)
+		d.d_c[1] = data;
+	if ((offset & 3) == 2)
+		d.d_c[2] = data;
+	if ((offset & 3) == 3)
+		d.d_c[3] = data;
+
+	pci_write_config(pci_dev, offset, d.d_i);
+}
+
+extern pci_dev_t pci_find_device(unsigned short vendor, unsigned short device);
 
 #endif

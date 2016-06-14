@@ -1,10 +1,13 @@
-/*
- *    fs/minix/super.c
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
-#include "minix_fs.h"
+#include "minix.h"
 
 struct fs_operation minix_fs_operation={
 	minix1_read_super,

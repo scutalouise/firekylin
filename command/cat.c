@@ -1,7 +1,10 @@
-/*
- *    command/cat.c
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #include <sys/unistd.h>
@@ -9,23 +12,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 
 int main(int argc, char *argv[])
 {
 	char buf[1024];
-	FILE *fp;
-
+	int fd,size;
 	if(argc<2)
 		return 0;
 
-	fp=fopen(argv[1],"rw+");
-	if(!fp){
+	fd=open(argv[1],O_RDWR);
+	if(fd <0){
 		printf("fopen error");
 		exit(0);
 	}
-	while((fgets(fp,buf,1024)))
+	while((size=read(fd,buf,1024)))
 	{
-		fputs(stdout,buf);
+		write(STDOUT_FILENO,buf,size);
 	}
 }

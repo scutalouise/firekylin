@@ -1,7 +1,10 @@
-/*
- *    command/vi.c
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #include <sys/unistd.h>
@@ -9,7 +12,7 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <stdio.h>
-#include <errno.h>
+#include <stdlib.h>
 
 #define MODE_VIEW	1
 #define MODE_INSERT	2
@@ -45,21 +48,14 @@ void read_file()
 
 void draw_win()
 {
-	int i,j;
-	int m=lines < LINES-1 ? lines : LINES-1 ;
+	int i;
 
 	printf("\0330;0P");
 		for (int i = 0; i < 8 * 24; i++)
 			printf("          ");
 	printf("\0330;1P");
 	for(i=0;i<lines;i++)
-	{
-		//if(buf[i].data[0]=='\n'){
-		//	printf("\0330;%dP\n",i);
-		//}
-		//printf("\0330;%dP",i);
-		write(0,&(buf[i].data),buf[i].cnt);
-	}
+		write(0,buf[i].data,buf[i].cnt);
 	while(i++<24)
 		printf("\0330;%dP~\n",i);
 	printf("\0330;0P");
@@ -73,7 +69,7 @@ void insert(char ch)
 	line->data[cur_x++]=ch;
 	line->cnt++;
 	printf("\0330;%dP",cur_y);
-	write(0,&(line->data),line->cnt);
+	write(0,line->data,line->cnt);
 	printf("\033%d;%dP",cur_x,cur_y);
 }
 
@@ -81,7 +77,7 @@ void save()
 {
 	lseek(fd,0,0);
 	for(int i=0;i<lines;i++)
-		write(fd,&(buf[i].data),buf[i].cnt);
+		write(fd,buf[i].data,buf[i].cnt);
 	close(fd);
 }
 

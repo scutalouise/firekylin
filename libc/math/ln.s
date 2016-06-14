@@ -1,13 +1,15 @@
-;/*
-; *    libc/math/ln.s
+;/* This file is part of The Firekylin Operating System.
 ; *
-; *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+; * Copyright (c) 2016, Liuxiaofeng
+; * All rights reserved.
+; *
+; * This program is free software; you can distribute it and/or modify
+; * it under the terms of The BSD License, see LICENSE.
 ; */
 
+global ln
 
 ; log (base e) m=log (base e) 2 * log (base 2) m
-
-global ln
 
 ln:
 	fldln2			; st0=log (base e) 2

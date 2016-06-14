@@ -1,16 +1,16 @@
-/*
- *    command/rm.c
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
-#include <sys/syscall.h>
 #include <sys/unistd.h>
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
-
-__syscall1(int,unlink,char *,filename);
 
 int main(int argc, char **argv)
 {

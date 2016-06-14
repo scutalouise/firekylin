@@ -1,7 +1,10 @@
-/*
- *    command/init.c
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #include <sys/unistd.h>
@@ -16,7 +19,7 @@ int main(int argc, char **argv)
 		"PATH=/bin",
 		NULL
 	};
-	
+
 	if(!fork()){
 		if(open("/dev/tty1",O_RDWR,0)<0)
 			exit(0);
@@ -24,7 +27,7 @@ int main(int argc, char **argv)
 		dup(0);
 		execve("/bin/sh",NULL,envp);
 	}
-	while (1) {	
+	while (1) {
 		wait(0, NULL, 0);
 	}
 }

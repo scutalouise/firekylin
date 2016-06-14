@@ -1,14 +1,15 @@
-;/*
-; *    libc/math/exp.s
+;/* This file is part of The Firekylin Operating System.
 ; *
-; *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+; * Copyright (c) 2016, Liuxiaofeng
+; * All rights reserved.
+; *
+; * This program is free software; you can distribute it and/or modify
+; * it under the terms of The BSD License, see LICENSE.
 ; */
-
-; e^x=2^(x*log(base 2) e)
 
 global exp
 
-exp:
+exp:				;e^x=2^(x*log(base 2) e)
 	fld    qword [esp+4]
 	fldl2e			; st0=log(base 2) e
 	fmulp

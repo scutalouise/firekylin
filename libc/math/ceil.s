@@ -1,7 +1,10 @@
-;/*
-; *    libc/math/ceil.s
+;/* This file is part of The Firekylin Operating System.
 ; *
-; *    (C) 2016 ximo<ximoos@foxmail.com> port form newlibc
+; * Copyright (c) 2016, Liuxiaofeng
+; * All rights reserved.
+; *
+; * This program is free software; you can distribute it and/or modify
+; * it under the terms of The BSD License, see LICENSE.
 ; */
 
 global ceil

@@ -1,7 +1,10 @@
-/*
- *    include/string.h
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #ifndef _STRING_H
@@ -33,6 +36,11 @@ extern char*  strrchr(const char *s, int c);
 extern char*  strstr(const char *s1, const char *s2);
 
 extern char*  strerror(int errno);
+
+/*
+ * todo
+ */
+extern int   strtol(char *s, char **endptr, int base);
 
 extern int    strformat(char *buf, size_t size, char *fmt, ...);
 extern int    strvformat(char *buf, size_t size, char *fmt, va_list arg);

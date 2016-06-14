@@ -1,7 +1,10 @@
-/*
- *	libc/stdlib/exit.c
+/* This file is part of The Firekylin Operating System.
  *
- *	Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #include <sys/unistd.h>
@@ -14,12 +17,10 @@ int atexit_func_num ;
 void exit(int exit_code)
 {
 	//atexit_func_t fn;
-	//printf("exit:comehere");
 	//for (int i = 0; i < atexit_func_num; i++) {
 	//	printf("\nexit3:comehere");
 	//	fn = atexit_func_tab[i];
 	//	(fn)();
 	//}
-	//printf("\nexit2:comehere");
 	_exit(exit_code);
 }

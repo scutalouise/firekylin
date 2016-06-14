@@ -1,8 +1,11 @@
-#
-#    Makefile
-#
-#    Copyright (C) 2016 ximo<ximoos@foxmail.com>
-#
+#/* This file is part of The Firekylin Operating System.
+# *
+# * Copyright (c) 2016, Liuxiaofeng
+# * All rights reserved.
+# *
+# * This program is free software; you can distribute it and/or modify
+# * it under the terms of The BSD License, see LICENSE.
+# */
 
 AS=nasm
 CC=gcc -fno-builtin -std=c99
@@ -12,21 +15,17 @@ all:
 	make -C libc
 	make -C command
 	
-install:
-	make install -C kernel
-	make install -C libc
-	make install -C command
-	sync
-	sync
-	cp   ~/hd.vhd hd.vhd
-	sync
-	sync
+cdrom: 
+	@echo complie ...
+	@make all 2>&1 > /dev/null
+	@sh script/mkiso.sh
 	
 clean:
 	make clean -C kernel
 	make clean -C libc
 	make clean -C command
-	-rm  hd.vhd
+	-rm -rf iso
+	-rm cdrom.iso
 
 count:
 	@echo dirs:  $(shell ls -lR |grep ^d |wc -l)
@@ -34,7 +33,8 @@ count:
 	@echo lines: $(shell find . -name *.[chs] |xargs grep -v ^$$ |wc -l)
 
 qemu:
-	qemu -hda hd.vhd
+	qemu -net nic,model=rtl8139,vlan=1,macaddr=52:54:00:12:34:56 \
+	     -cdrom cdrom.iso
 
 bochs:
 	bochs -q -f script/bochsrc

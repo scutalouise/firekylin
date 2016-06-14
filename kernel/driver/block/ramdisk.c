@@ -1,7 +1,10 @@
-/*
- *    driver/block/ramdisk.c
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #include <firekylin/kernel.h>
@@ -12,7 +15,11 @@
 #include <firekylin/fs.h>
 #include <firekylin/string.h>
 
-static unsigned long rd_start = __va(0x300000);
+/*
+ * ramdisk start at phyiscal address:0x200000 len:0x100000
+ * it will load a ramdisk by GRUB.
+ */
+static unsigned long rd_start = __va(0x200000);
 static unsigned long rd_sectors = 0x100000 / 512;
 static sleeplock_t rd_lock;
 
@@ -51,6 +58,5 @@ static struct blk_dev rd = { "Ramdisk", NULL, NULL, rd_read, rd_write, NULL };
 
 void rd_init(void)
 {
-	memset((char*) rd_start, 0, rd_sectors * 512);
 	blk_table[DEV_BLK_RAMDISK] = &rd;
 }

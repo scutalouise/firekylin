@@ -1,7 +1,10 @@
-/*
- *	libc/stdio/printf.c
+/* This file is part of The Firekylin Operating System.
  *
- *	Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #include <stdio.h>
@@ -16,7 +19,6 @@ int printf(char *fmt,...)
 	int i;
 
 	i=strvformat(buf,256,fmt,va_start(ap,fmt));
-	fflush(stdout);
-	write(fileno(stdout),buf,i);
+	write(STDOUT_FILENO,buf,i);
 	return i;
 }

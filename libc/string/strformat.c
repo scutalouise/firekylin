@@ -1,7 +1,10 @@
-/*
- *	libc/string/strfomart.c
+/* This file is part of The Firekylin Operating System.
  *
- *	Copyright (C) 2016 ximo<ximoos@foxmail.com> port form linux0.11
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #include <stdarg.h>
@@ -67,11 +70,12 @@ static char *i_format(char *str, int num, int base, int width, int prec,
 		num = -num;
 	} else
 		sign=(flag&F_PLUS) ? '+' : ((flag&F_SPACE) ? ' ' : 0);
-	if (flag&F_SPECIAL)
+	if (flag&F_SPECIAL){
 		if (base==16)
 			width -= 2;
 		else if (base==8)
 			width--;
+	}
 
 	i=0;
 	do{
@@ -87,13 +91,14 @@ static char *i_format(char *str, int num, int base, int width, int prec,
 			*str++ = ' ';
 	if (sign)
 		*str++ = sign;
-	if (flag&F_SPECIAL)
+	if (flag&F_SPECIAL){
 		if (base==8)
 			*str++ = '0';
 		else if (base==16) {
 			*str++ = '0';
 			*str++ = digits[33];
 		}
+	}
 	if (!(flag&F_LEFT))
 		while(width-->0)
 			*str++ = c;
@@ -108,7 +113,7 @@ static char *i_format(char *str, int num, int base, int width, int prec,
 
 int strvformat(char *buf, size_t size, char *fmt, va_list arg)
 {
-	int flag, width, prec, mod ;
+	int flag, width, prec;
 	char *s,*str = buf;
 	int len;
 
@@ -176,9 +181,10 @@ int strvformat(char *buf, size_t size, char *fmt, va_list arg)
 		}
 
 		/* get mod */
-		mod=-1;
+		//mod=-1;
 		if (*fmt == 'h' || *fmt == 'l' || *fmt == 'L')
-			mod = *fmt++;
+			//mod = *fmt++;
+			fmt++;
 
 		/* get conv */
 		switch(*fmt++){
@@ -255,4 +261,3 @@ int strformat(char *buf, size_t size, char *fmt, ...)
 	va_list ap;
 	return strvformat(buf, size, fmt, va_start(ap, fmt));
 }
-

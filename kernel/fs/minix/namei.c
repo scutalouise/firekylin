@@ -1,10 +1,13 @@
-/*
- *    fs/minix/inode.c
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
-#include "minix_fs.h"
+#include "minix.h"
 
 static struct buffer * find_entry(struct inode *dir_inode, char *filename,
 		struct minix1_dirent **res_de)

@@ -1,11 +1,14 @@
-/*
- *    fs/minix/minix_fs.h
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
-#ifndef _MINIX_FS_H
-#define _MINIX_FS_H
+#ifndef _MINIX_H
+#define _MINIX_H
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -14,6 +17,7 @@
 #include <firekylin/kernel.h>
 #include <firekylin/fs.h>
 #include <firekylin/string.h>
+#include <firekylin/bitmap.h>
 
 struct minix1_inode {
 	unsigned short i_mode;
@@ -87,6 +91,5 @@ extern int minix1_rmdir(struct inode *dir_inode, char *name);
 extern int minix1_rename(struct inode *inode, char *old, char *new);
 extern int minix1_file_readdir(struct inode *inode, char * buf, size_t size, off_t off,
 		int rw_flag);
-
 
 #endif

@@ -1,7 +1,10 @@
-/*
- *    kernel/util.c
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #include <stdarg.h>
@@ -9,77 +12,20 @@
 #include <firekylin/kernel.h>
 #include <firekylin/lock.h>
 
+extern unsigned fg_console;
 extern int tty_write(dev_t dev,char * buf,off_t off,size_t size);
+
+extern int vsprintf(char* buf, char* fmt, va_list ap);
 
 static char printk_buf[512];
 
-static void itos(char **buf, unsigned int num, int base)
-{
-	char str[] = "0123456789ABCDEF";
-	char tmp[20];
-	int i = 0;
-	if (base == 16) {
-		**buf = '0';
-		(*buf)++;
-		**buf = 'x';
-		(*buf)++;
-	}
-	do {
-		tmp[i] = str[num % base];
-		i++;
-		num = num / base;
-	} while (num);
-	for (i--; i >= 0; i--) {
-		**buf = tmp[i];
-		(*buf)++;
-	}
-}
-
-static int sformat(char* buf, char* fmt, va_list ap)
-{
-	char *str = buf;
-	char *s;
-
-	while (*fmt) {
-		if (*fmt != '%') {
-			*str++ = *fmt++;
-			continue;
-		}
-		fmt++;
-		switch (*fmt++) {
-		case '%':
-			*str++ = '%';
-			break;
-		case 'c':
-			*str++ = va_arg(ap, char);
-			break;
-		case 's':
-			s = va_arg(ap, char*);
-			while (*s) {
-				*str++ = *s++;
-			}
-			break;
-		case 'd':
-			itos(&str, va_arg(ap, unsigned int), 10);
-			break;
-		case 'x':
-			itos(&str, va_arg(ap, unsigned int), 16);
-			break;
-		default:
-			break;
-		}
-	}
-	return (int) (str - buf);
-}
-
-extern unsigned fg_console;
 int printk(char* fmt, ...)
 {
 	va_list ap;
 	int i;
 
 	va_start(ap, fmt);
-	i = sformat(printk_buf, fmt, ap);
+	i = vsprintf(printk_buf, fmt, ap);
 	tty_write(fg_console+1, printk_buf, 0, i);
 	return i;
 }
@@ -89,9 +35,9 @@ void panic(char* fmt, ...)
 	va_list ap;
 	int i;
 
-	printk("\n\nKernel Panic: ");
+	printk("\nKernel Panic: ");
 	va_start(ap, fmt);
-	i = sformat(printk_buf, fmt, ap);
+	i = vsprintf(printk_buf, fmt, ap);
 	tty_write(fg_console+1,printk_buf, 0,i);
 	irq_disable();
 	__asm__("hlt");

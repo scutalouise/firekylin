@@ -1,8 +1,11 @@
-#
-#      script/bochsrc
-#
-#      Copyright (C) 2016 ximo<ximoos@foxmail.com>
-#
+#/* This file is part of The Firekylin Operating System.
+# *
+# * Copyright (c) 2016, Liuxiaofeng
+# * All rights reserved.
+# *
+# * This program is free software; you can distribute it and/or modify
+# * it under the terms of The BSD License, see LICENSE.
+# */
 
 megs:64
 
@@ -11,8 +14,8 @@ vgaromimage: file="D:/Program Files/bochs/VGABIOS-lgpl-latest"
 
 floppya: type=1_44, 1_44="fd.img", status=inserted
 
-ata0-master: type=disk, path="hd.vhd", mode=flat, cylinders=120, heads=16, spt=63
+ata0-master: type=cdrom, path=cdrom.iso, status=inserted
 
 #com1: enabled=1, mode=socket-server, dev=localhost:8888
 
-boot:c
+boot:cdrom

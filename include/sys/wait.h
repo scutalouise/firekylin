@@ -1,18 +1,21 @@
-/*
- *    include/sys/wait.h
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
-#ifndef _SYS_WAIT_H
-#define _SYS_WAIT_H
-
-/* 
+/*
  *    exit_code:	high byte	low byte
  *    	normal exit	  status	   0
  *    	signal exit	    0  		 signal
  *    	job control	  signal	  0177
  */
+
+#ifndef _SYS_WAIT_H
+#define _SYS_WAIT_H
 
 #include <sys/types.h>
 

@@ -1,7 +1,10 @@
-;/*
-; *    init/head.s
+;/* This file is part of The Firekylin Operating System.
 ; *
-; *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+; * Copyright (c) 2016, Liuxiaofeng
+; * All rights reserved.
+; *
+; * This program is free software; you can distribute it and/or modify
+; * it under the terms of The BSD License, see LICENSE.
 ; */
 
 MB2_HEAD_MAGIC		EQU 	0xe85250d6
@@ -9,6 +12,7 @@ MB2_HEAD_ARCH_I386	EQU	0
 MB2_HEAD_TAG_ADDR	EQU	2
 MB2_HEAD_TAG_OPT	EQU	1
 MB2_HEAD_TAG_ENT_ADDR	EQU	3
+MB2_HEAD_TAG_MOD_ALIGN  EQU	6
 MB2_HEAD_TAG_END	EQU	0
 MB2_HEAD_LEN		EQU	mbhead_end-mbhead_start
 MB2_LOAD_MAGIC		EQU	0x36d76289
@@ -21,6 +25,7 @@ global  _start
 extern  start
 
 _start:
+	cli
 	jmp real_start
 
 	align 8
@@ -45,6 +50,11 @@ enter_address_tag_start:
 	dd 0x10000				; entry ponit
 	dd 0  					; padding
 enter_address_tag_end:
+module_align_tag:
+	dw MB2_HEAD_TAG_MOD_ALIGN
+	dw 0
+	dd 8
+end_tag:
 	dw MB2_HEAD_TAG_END
 	dw 0
 	dd 8
@@ -55,7 +65,12 @@ real_start:
 	mov ds,ax
 	mov es,ax
 	mov ss,ax
-	mov esp,0x10000
+
+	; copy grub multiboot info to physical address:0x1000
+	mov esi,ebx
+	mov edi,0x1000
+	mov ecx,0x1000
+	rep movsb
 
 setup_page_table:	; set simple page table, map 0~4MB
 	xor eax,eax

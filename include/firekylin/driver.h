@@ -1,7 +1,10 @@
-/*
- *    include/firekylin/driver.h
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #ifndef _DRIVER_H
@@ -23,7 +26,7 @@
 #define DEV_BLK_FLOPPY		2
 #define DEV_BLK_ATAPI		3
 
-#define ROOT_DEV		DEV(DEV_BLK_ATAPI,1)
+#define ROOT_DEV		DEV(DEV_BLK_RAMDISK,0)
 
 struct char_dev {
 	char *name;

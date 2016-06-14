@@ -1,7 +1,10 @@
-/*
- *    driver/char/mem.c
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #include <sys/errno.h>
@@ -11,9 +14,9 @@
 #include <firekylin/string.h>
 #include <firekylin/portio.h>
 
-#define MEM_RAM		0
-#define MEM_PORT	1
-#define MEM_KMEM	2
+/* minor dev suport by mem */
+#define MEM_MEM		1
+#define MEM_PORT	2
 #define MEM_NULL	3
 #define MEM_FULL	4
 
@@ -42,16 +45,6 @@ static int mem_port(int rw, char *buf, off_t off, size_t size)
 	return size - left;
 }
 
-static int mem_kmem(int rw, char *buf, off_t off, size_t size)
-{
-	char *tmp = (char*) (off);
-	if (rw == MEM_READ)
-		memcpy(buf, tmp, size);
-	else
-		memcpy(tmp, buf, size);
-	return size;
-}
-
 static int mem_null(int rw, char *buf, off_t off, size_t size)
 {
 	if (rw == MEM_READ)
@@ -72,12 +65,10 @@ static int mem_full(int rw, char *buf, off_t off, size_t size)
 int mem_read(dev_t dev, char * buf, off_t off, size_t size)
 {
 	switch (MINOR(dev)) {
-	case MEM_RAM:
+	case MEM_MEM:
 		return mem_ram(MEM_READ, buf, off, size);
 	case MEM_PORT:
 		return mem_port(MEM_READ, buf, off, size);
-	case MEM_KMEM:
-		return mem_kmem(MEM_READ, buf, off, size);
 	case MEM_NULL:
 		return mem_null(MEM_READ, buf, off, size);
 	case MEM_FULL:
@@ -90,12 +81,10 @@ int mem_read(dev_t dev, char * buf, off_t off, size_t size)
 int mem_write(dev_t dev, char * buf, off_t off, size_t size)
 {
 	switch (MINOR(dev)) {
-	case MEM_RAM:
+	case MEM_MEM:
 		return mem_ram(MEM_WRITE, buf, off, size);
 	case MEM_PORT:
 		return mem_port(MEM_WRITE, buf, off, size);
-	case MEM_KMEM:
-		return mem_kmem(MEM_WRITE, buf, off, size);
 	case MEM_NULL:
 		return mem_null(MEM_WRITE, buf, off, size);
 	case MEM_FULL:

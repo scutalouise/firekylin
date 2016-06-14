@@ -1,32 +1,13 @@
-/*
- *    fs/minix/bitmap.c
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
-#include "minix_fs.h"
-
-static int find_bit(char *addr, int size)
-{
-	int i, j;
-	for (i = 0; i < size; i++) {
-		for (j = 0; j < 8; j++)
-			if (!((*addr) & (1 << j)))
-				return (i * 8 + j);
-		addr++;
-	}
-	return -1;
-}
-
-static void set_bit(char *addr, int bit)
-{
-	*(addr + bit / 8) = *(addr + bit / 8) | (1 << (bit % 8));
-}
-
-static void clr_bit(char *addr, int bit)
-{
-	*(addr + bit / 8) = *(addr + bit / 8) & (~(1 << (bit % 8)));
-}
+#include "minix.h"
 
 int minix1_free_block(dev_t dev, int block)
 {

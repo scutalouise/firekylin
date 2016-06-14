@@ -1,7 +1,10 @@
-/*
- *    fs/super.c
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #include <sys/stat.h>
@@ -140,9 +143,11 @@ void mount_root(void)
 	struct super *super = super_table;
 	struct task *task = CURRENT_TASK();
 
+	printk("Mounting root file system on dev:%x",ROOT_DEV);
 	super->s_dev = ROOT_DEV;
 	super->s_op = &minix_fs_operation;
 	super->s_op->super_read(super);
 	root_inode = iunlock(iget(ROOT_DEV, 1));
 	task->pwd = iunlock(idup(root_inode));
+	printk("    [done]\n");
 }

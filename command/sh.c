@@ -1,7 +1,10 @@
-/*
- *    command/sh.c
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #include <sys/unistd.h>
@@ -103,13 +106,13 @@ int execcmd(int argc, char **argv)
 	}
 
 	pid = fork();
-	if (pid) {
-		wait(pid, NULL, 0);
-	} else {
+	if (!pid) {
 		execvpe(argv[0], argv, NULL);
 		printf("sh:%s\n", strerror(errno));
 		_exit(0);
 	}
+	wait(pid, NULL, 0);
+	return 0;
 }
 
 int main(void)

@@ -1,15 +1,20 @@
-/*
- *    kernel/main.c
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 #include <firekylin/driver.h>
+#include <firekylin/mm.h>
 #include <firekylin/fs.h>
 #include <firekylin/portio.h>
 #include <firekylin/string.h>
+#include <firekylin/multiboot2.h>
 
 #define BCD_BIN(c)	(c=c/16*10+c%16)
 
@@ -20,6 +25,7 @@ extern void arch_init();
 extern void mm_init();
 extern void dev_init();
 extern void pci_init();
+extern void rtl8139_init();
 extern void buffer_init();
 extern void sched_init();
 extern void clock_init();
@@ -27,44 +33,10 @@ extern int  sys_fork();
 extern int  sys_exec(char *filename, char **argv, char **envp);
 extern void mount_root(void);
 
-static int month[] = {
-	0, 0, 31,
-	(31 + 28),
-	(31 + 28 + 31),
-	(31 + 28 + 31 + 30),
-	(31 + 28 + 31 + 30 + 31),
-	(31 + 28 + 31 + 30 + 31 + 30),
-	(31 + 28 + 31 + 30 + 31 + 30 + 31),
-	(31 + 28 + 31 + 30 + 31 + 30 + 31 + 31),
-	(31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30),
-	(31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31),
-	(31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30)
-};
-
-#define isleap(y)	(((y)%4==0&&(y)%100!=0)||(y)%400==0)
-
-static time_t mktimek(int year, int mon, int day, int hour, int min, int sec)
-{
-	long res = 0;
-
-	year = year % 100 + 2000;
-	for (int i = 1970; i < year; i++) {
-		res += 365;
-		if (isleap(i))
-			res++;
-	}
-	res += month[mon];
-	if (isleap(year) && mon > 2)
-		res++;
-	res = res + day - 1;
-	res = res * 24 + hour;
-	res = res * 60 + min;
-	res = res * 60 + sec;
-	return res;
-}
-
 static void time_init()
 {
+	extern time_t mktime(int year, int mon, int day, int hour, int min,
+			int sec);
 	int year, month, day, hour, min, sec;
 
 	CMOSREAD(sec, 0);
@@ -79,20 +51,37 @@ static void time_init()
 	BCD_BIN(day);
 	BCD_BIN(month);
 	BCD_BIN(year);
-	start_time = mktimek(year, month, day, hour, min, sec);
+	start_time = mktime(year, month, day, hour, min, sec);
 }
 
 void start(void)
 {
-	memset(_edata, 0, (_end-_edata));
+	memset(_edata, 0, (_end - _edata));
 
 	arch_init();
 	time_init();
 	mm_init();
 	dev_init();
 	pci_init();
+	rtl8139_init();
 	sched_init();
 	clock_init();
+
+	unsigned long addr = __va(0x1000);
+
+	unsigned int size = *(unsigned int *) addr;
+
+	printk("grub info size:%x\n", size);
+
+	addr += 8;
+	struct multiboot_tag *tag;
+	tag = (struct multiboot_tag *) (addr + 8);
+
+	do {
+		tag = (struct multiboot_tag *) addr;
+		printk("Tag %x, size %x \n", tag->type, tag->size);
+		addr = (addr + tag->size + 7) & ~7;
+	} while (tag->type != MULTIBOOT_HEADER_TAG_END);
 
 	if (sys_fork()) {
 		__asm__("__hlt:hlt ; jmp __hlt");

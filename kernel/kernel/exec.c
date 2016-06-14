@@ -1,7 +1,10 @@
-/*
- *    kernel/exec.c
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #include <sys/stat.h>
@@ -9,7 +12,7 @@
 #include <firekylin/kernel.h>
 #include <firekylin/mm.h>
 #include <firekylin/fs.h>
-#include "../fs/minix/minix_fs.h"
+#include "../fs/minix/minix.h"
 
 /* define in file fs/read.c */
 extern long exec_load_file(struct inode *inode, struct buffer*bh);
@@ -117,7 +120,6 @@ int sys_exec(char *filename, char **argv, char **envp)
 	iput(inode);
 
 	current->stack = 0x40FF0000;
-
 	__asm__ (" fninit ");
 	__asm__( " movl %%eax,%%cr3"::"a"(current->pdtr));
 	__asm__( " pushl $0x23;"

@@ -1,14 +1,16 @@
-/*
- *    command/cp.c
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #include <sys/unistd.h>
 #include <sys/fcntl.h>
 #include <stdio.h>
 #include <string.h>
-#include <errno.h>
 
 int main(int argc, char **argv)
 {
@@ -22,12 +24,14 @@ int main(int argc, char **argv)
 
 	fd1=open(argv[1],O_READ,0);
 	if(fd1<0){
-		printf("%s,%s\n",argv[1],strerror(errno));
+		printf("file open error:%s", argv[1]);
+		_exit(0);
 	}
 
 	fd2=open(argv[2],O_WRITE,0);
 	if(fd2<0){
-		printf("%s,%s\n",argv[2],strerror(errno));
+		printf("file open error:%s", argv[2]);
+		_exit(0);
 	}
 
 	while((size=read(fd1,buf,1024))){
