@@ -35,14 +35,6 @@ struct hd_size {
 };
 static struct hd_size hd_size[5];
 
-static int ctl_ready()
-{
-	int r = 0xffff;
-	while (--r && (inb(HD_STATUS) & 0x80))
-		;
-	return r;
-}
-
 static void hd_out_cmd(int sector, int nr, int cmd)
 {
 	union {
@@ -50,11 +42,6 @@ static void hd_out_cmd(int sector, int nr, int cmd)
 		int sec;
 	} sect;
 	sect.sec = sector;
-	if (!ctl_ready()) {
-		panic("hd outtime");
-	}
-	outb(0x3f6, 8);
-	outb(0x1f1, 0);
 	outb(0x1f2, nr);
 	outb(0x1f3, sect.arg[0]);
 	outb(0x1f4, sect.arg[1]);
@@ -111,7 +98,8 @@ static void do_hd(struct trapframe *tf)
 	hd_status = inb(HD_STATUS);
 
 	if ((hd_status & 0xf1) != 0x50) {
-		panic("HD error %x", inb(HD_ERROR));
+		printk("HD error %x", inb(HD_ERROR));
+		return ;
 	}
 
 	if (hd_req.cmd == WIN_READ) {
@@ -151,6 +139,12 @@ static void hd_identify(void)
 	struct partition *part;
 
 	hd_out_cmd(0, 0, WIN_IDENTIFY);
+
+	if( inb(HD_STATUS)==0 || inb(HD_STATUS)==0xffffffff){
+		printk("HD Control not exsit");
+		return ;
+	}
+
 	do {
 		tmp = inb(HD_STATUS);
 	} while ((tmp & (HD_STAT_BUSY | HD_STAT_DRQ)) != HD_STAT_DRQ);

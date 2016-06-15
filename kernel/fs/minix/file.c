@@ -9,11 +9,13 @@
 
 #include "minix.h"
 
-int minix1_file_read(struct inode *inode, char * buf, size_t size, off_t off,
-		int rw_flag)
+int minix1_file_read(struct file *file, char * buf, size_t size)
 {
 	struct buffer *bh;
 	int chars, left;
+
+	struct inode *inode=file->f_inode;
+	off_t off=file->f_pos;
 
 	if (off >= inode->i_size)
 		return 0;
@@ -36,12 +38,14 @@ int minix1_file_read(struct inode *inode, char * buf, size_t size, off_t off,
 	return size - left;
 }
 
-int minix1_file_readdir(struct inode *inode, char * buf, size_t size, off_t off,
-		int rw_flag)
+int minix1_file_readdir(struct file *file, char * buf, size_t size)
 {
 	struct buffer *bh;
 	struct minix1_dirent *minix1_dirent;
 	struct dirent *dirent=(struct dirent *)buf;
+
+	struct inode *inode=file->f_inode;
+	off_t off=file->f_pos;
 
 	if (off >= inode->i_size)
 		return 0;
@@ -60,13 +64,15 @@ int minix1_file_readdir(struct inode *inode, char * buf, size_t size, off_t off,
 	return sizeof(struct minix1_dirent);
 }
 
-int minix1_file_write(struct inode *inode, char * buf, size_t size, off_t off,
-		int rw_flag)
+int minix1_file_write(struct file *file, char * buf, size_t size)
 {
 	struct buffer *bh;
 	int left, chars;
 
+	struct inode *inode=file->f_inode;
+	off_t off=file->f_pos;
 	left = size;
+
 	while (left) {
 		bh = bread(inode->i_dev, minix1_wbmap(inode, off / 1024));
 		if (!bh) {

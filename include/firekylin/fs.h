@@ -59,6 +59,9 @@ struct inode {
 #define I_DIRTY		0x0004
 #define I_MOUNT		0x0008
 
+#define lock_inode(inode)	require_lock(&((inode)->i_lock))
+#define unlock_inode(inode)	release_lock(&((inode)->i_lock))
+
 static inline struct inode * ilock(struct inode *inode)
 {
 	require_lock(&inode->i_lock);
@@ -105,26 +108,31 @@ struct file {
 	sleeplock_t    f_lock;
 };
 
+#define lock_file(file)		require_lock(&((file)->f_lock))
+#define unlock_file(file)	release_lock(&((file)->f_lock))
+
 #include <sys/dirent.h>
 
 struct fs_operation{
+	/* super operation */
 	int (*super_read)(struct super *super);
 	int (*super_write)(struct super *super);
+
+	/* inode operation */
 	int (*inode_read)(struct inode *inode);
 	int (*inode_write)(struct inode *inode);
-	int (*look_up)(struct inode *inode, char *filename, struct inode **res);
-	int (*file_read)(struct inode *inode, char *buf, size_t size,
-			off_t offset, int rw_flag);
-	int (*file_readdir)(struct inode *inode, char *buf, size_t size,
-			off_t offset, int rw_flag);
-	int (*file_write)(struct inode *inode, char *buf, size_t size,
-			off_t offset, int rw_flag);
+	int (*lookup)(struct inode *inode, char *filename, struct inode **res);
 	int (*mknod)(struct inode *inode, char *name,mode_t mode,dev_t dev);
 	int (*mkdir)(struct inode *dir_inode,char *basename,mode_t mode);
 	int (*link)(struct inode *dir_inode,char *name,struct inode *inode);
 	int (*unlink)(struct inode *dir_inode,char *basename);
 	int (*rmdir)(struct inode *dir_inode,char *basename);
 	int (*rename)(struct inode *inode,char *old,char *new);
+
+	/* file operation */
+	int (*file_read)(struct file *file, char *buf, size_t size);
+	int (*file_readdir)(struct file *file, char *buf, size_t size);
+	int (*file_write)(struct file *file, char *buf, size_t size);
 };
 
 extern struct buffer * bread(dev_t dev, long block);

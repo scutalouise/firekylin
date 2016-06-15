@@ -116,7 +116,7 @@ int count_entry(struct inode *inode)
 	return count;
 }
 
-int minix1_look_up(struct inode *dir_inode, char *filename,
+int minix1_lookup(struct inode *dir_inode, char *filename,
 		struct inode **res_inode)
 {
 	struct buffer *buf;

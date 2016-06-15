@@ -43,7 +43,7 @@ void read_file()
 		if(ch=='\n')
 			i++;
 	}
-	lines=i++;
+	lines=++i;
 }
 
 void draw_win()

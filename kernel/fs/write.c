@@ -15,19 +15,23 @@
 #include <firekylin/fs.h>
 #include <firekylin/string.h>
 
-static int write_char(dev_t dev, char *buf, off_t off, size_t size)
+static int write_char(struct file *file, char *buf, size_t size)
 {
+	dev_t dev = file->f_inode->i_rdev;
 	int major = MAJOR(dev);
 	if (major > DEV_CHAR_MAX || !char_table[major])
 		panic("dev %x not exsit", dev);
 
-	return char_table[major]->write(dev, buf, off, size);
+	return char_table[major]->write(dev, buf, file->f_pos, size);
 }
 
-static int write_blk(dev_t dev, char *buf, off_t off, size_t size)
+static int write_blk(struct file *file, char *buf, size_t size)
 {
 	struct buffer *bh;
 	int chars, left;
+
+	dev_t dev = file->f_inode->i_rdev;
+	off_t off = file->f_pos;
 
 	left = size;
 	while (left) {
@@ -35,7 +39,7 @@ static int write_blk(dev_t dev, char *buf, off_t off, size_t size)
 		if (!bh)
 			return -EIO;
 		chars = min(left, 1024 - off % 1024);
-		memcpy(bh->b_data+off%1024, buf, chars);
+		memcpy(bh->b_data + off % 1024, buf, chars);
 		bh->b_flag |= B_DIRTY;
 		brelse(bh);
 		buf += chars;
@@ -45,17 +49,11 @@ static int write_blk(dev_t dev, char *buf, off_t off, size_t size)
 	return size - left;
 }
 
-static int write_file(struct inode *inode, char * buf, off_t off, int size)
-{
-	return inode->i_op->file_write(inode,buf,size,off,0);
-}
-
-extern int write_pipe(struct inode *inode,char *buf,size_t size);
+extern int write_pipe(struct inode *inode, char *buf, size_t size);
 
 int sys_write(int fd, char *buf, size_t size)
 {
 	struct file *file;
-	struct inode *inode;
 	int res;
 
 	if (fd > NR_OPEN || !(file = (CURRENT_TASK() )->file[fd]))
@@ -63,24 +61,27 @@ int sys_write(int fd, char *buf, size_t size)
 	if (!(file->f_mode & O_WRITE))
 		return -EBADF;
 
-	inode = idup(file->f_inode);
+	lock_file(file);
+	lock_inode(file->f_inode);
+
 	if (file->f_mode & O_APPEND)
-		file->f_pos = inode->i_size;
-	switch (inode->i_mode & S_IFMT) {
+		file->f_pos = file->f_inode->i_size;
+	switch (file->f_inode->i_mode & S_IFMT) {
 	case S_IFREG:
-		res = write_file(inode, buf, file->f_pos, size);
+		res = file->f_inode->i_op->file_write(file, buf, size);
 		break;
 	case S_IFDIR:
 		res = -EISDIR;
 		break;
 	case S_IFCHR:
-		res = write_char(inode->i_rdev, buf, file->f_pos, size);
+		res = write_char(file, buf, size);
 		break;
 	case S_IFBLK:
-		res = write_blk(inode->i_rdev, buf, file->f_pos, size);
+		res = write_blk(file, buf, size);
 		break;
 	case S_IFIFO:
-		res = write_pipe(inode, buf, size);
+		res = 0;
+		//res = write_pipe(inode, buf, size);
 		break;
 	default:
 		res = -EIO;
@@ -88,9 +89,17 @@ int sys_write(int fd, char *buf, size_t size)
 
 	if (res > 0)
 		file->f_pos += res;
-	if(file->f_pos>inode->i_size)
-		inode->i_size=file->f_pos;
 
-	iput(inode);
+	if ((S_ISREG(file->f_inode->i_mode) || S_ISDIR(file->f_inode->i_mode))
+			&& file->f_pos > file->f_inode->i_size) {
+		file->f_inode->i_size = file->f_pos;
+		file->f_inode->i_ctime = current_time()
+		;
+		file->f_inode->i_flag |= I_DIRTY;
+	}
+
+	unlock_inode(file->f_inode);
+	unlock_file(file);
+
 	return res;
 }

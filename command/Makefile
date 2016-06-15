@@ -23,47 +23,13 @@ OBJS=init sh ls cat sync mkdir cp rm rmdir ln vi
 .c.o:
 	@$(CC) $(CFLAGS) -o $@  $<
 
-command: $(OBJS)
+all:$(OBJS)
 
 install: $(OBJS)
-	cp init   $(PREFIX)/init
-	cp sh     $(PREFIX)/sh
-	cp ls     $(PREFIX)/ls
-	cp cat    $(PREFIX)/cat
-	cp sync   $(PREFIX)/sync
-	cp mkdir  $(PREFIX)/mkdir
-	cp rmdir  $(PREFIX)/rmdir
-	cp cp	  $(PREFIX)/cp
-	cp rm     $(PREFIX)/rm
-	cp ln     $(PREFIX)/ln
-	cp vi     $(PREFIX)/vi
-	
-init: init.o
-	$(LD) -o  $@  $<  $(LIB)
-sh: sh.o
-	$(LD) -o  $@  $<  $(LIB)
-tsh: tsh.o
-	$(LD) -o  $@  $<  $(LIB)	
-echo: echo.o
-	$(LD) -o  $@  $<  $(LIB)
-cat: cat.o
-	$(LD) -o  $@  $<  $(LIB)
-sync: sync.o
-	$(LD) -o  $@  $<  $(LIB)
-mkdir:mkdir.o
-	$(LD) -o  $@  $<  $(LIB)
-rmdir:rmdir.o
-	$(LD) -o  $@  $<  $(LIB)
-cp:cp.o
-	$(LD) -o  $@  $<  $(LIB)
-ls:ls.o
-	$(LD) -o  $@  $<  $(LIB)
-rm:rm.o
-	$(LD) -o  $@  $<  $(LIB)
-ln:ln.o
-	$(LD) -o  $@  $<  $(LIB)
-vi:vi.o
-	$(LD) -o  $@  $<  $(LIB)
+	for obj in $(OBJS) ; do cp $$obj $(PREFIX)/$$obj; done
 
 clean:
 	-rm *.o $(OBJS)
+
+$(OBJS):%:%.o $(LIB)
+	$(LD) -o  $@  $<  $(LIB)

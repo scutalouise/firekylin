@@ -108,7 +108,7 @@ struct inode *namei(char *filepath, char **basename)
 		if (*filepath == '/')
 			filepath++;
 
-		if (inode->i_op->look_up(inode, name,&inode)) {
+		if (inode->i_op->lookup(inode, name,&inode)) {
 			return NULL;
 		}
 	}

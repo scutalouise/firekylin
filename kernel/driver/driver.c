@@ -26,5 +26,5 @@ void dev_init(void)
 
 	/* init block dev */
 	rd_init();
-	//hd_init();
+	hd_init();
 }

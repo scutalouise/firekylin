@@ -98,18 +98,14 @@ int sys_exec(char *filename, char **argv, char **envp)
 		return -EACCESS;
 	}
 
-	//if (!(inode->i_zone[0]))
-	//	return -ENOEXEC;
-
 	if (!(buf = bread(inode->i_dev, minix1_rbmap(inode,0))))
 		return -EIO;
-//
-//	if (!strncmp(buf->b_data, "\0x7FELF", 4)){
-//		brelse(buf);
-//		iput(inode);
-//		return -ENOEXEC;
-//	}
 
+	if (!strncmp(buf->b_data, "\0x7FELF", 4)){
+		brelse(buf);
+		iput(inode);
+		return -ENOEXEC;
+	}
 	arg_page=copy_string(argv,envp);
 
 	free_mm();
@@ -120,6 +116,7 @@ int sys_exec(char *filename, char **argv, char **envp)
 	iput(inode);
 
 	current->stack = 0x40FF0000;
+
 	__asm__ (" fninit ");
 	__asm__( " movl %%eax,%%cr3"::"a"(current->pdtr));
 	__asm__( " pushl $0x23;"

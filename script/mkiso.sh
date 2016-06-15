@@ -73,9 +73,11 @@ sync
 
 # create sourec pack.
 
-echo "creating source tar ..."
-tar -zcf iso/src.tgz `ls -A | grep -v iso `
-	
+if [ ! -f iso/src.tgz ]; then
+	echo "creating source tar ..."
+	tar -zcf iso/src.tgz `ls -A | grep -v iso `
+fi
+
 # create VERSION
 echo "creating VERSION ... "
 date > iso/VERSION

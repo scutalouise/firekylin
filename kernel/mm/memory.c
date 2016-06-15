@@ -142,6 +142,7 @@ void free_mm(void)
 			put_page(tmp);
 	}
 	memset((char*) __va(current->pdtr), 0, 3072);
+	__asm__( " movl %%eax,%%cr3"::"a"(current->pdtr));
 }
 
 void mm_init(void)

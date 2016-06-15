@@ -21,6 +21,27 @@
 #define HD_STATUS	0x1f7	/* see status-bits */
 #define HD_COMMAND  HD_STATUS	/* same address, read=status, write=cmd */
 
+#define ATA_BUS1	0x1f0
+#define ATA_BUS2	0x170
+#define ATA_BUS3	0x1e8
+#define ATA_BUS4	0x168
+
+#define ATA_CTL1	0x3f6
+#define ATA_CTL2	0x376
+#define ATA_CTL3	0x3e6
+#define ATA_CTL4	0x366
+
+#define ATA_DATA(b)	((b)+0)
+#define ATA_ERROR(b)	((b)+1)	/* read  */
+#define ATA_PRECOMP(b)	((b)+1) /* write */
+#define ATA_NSCTIOR(b)	((b)+2)
+#define ATA_SECTOR(b)	((b)+3)
+#define ATA_LCYL(b)	((b)+4)
+#define ATA_HCYL(b)	((b)+5)
+#define ATA_HEAD(b)	((b)+6)
+#define ATA_STATUS(b)	((b)+7)	/* read  */
+#define ATA_COMMAND(b)	((b)+7) /* write */
+
 #define HD_CMD		0x3f6
 
 /* Bits of HD_ERROR */

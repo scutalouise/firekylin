@@ -51,7 +51,7 @@ struct stat {
 #define S_IFCHR		0020000
 #define S_IFBLK		0060000
 #define S_IFIFO		0010000
-#define S_IFLNK		0060000
+#define S_IFLNK		0030000
 #define S_IFSOCK	0070000
 #define S_IFMT		0170000
 

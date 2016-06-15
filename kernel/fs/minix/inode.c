@@ -7,7 +7,6 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-
 #include "minix.h"
 
 static void m1_read_inode(struct inode *inode, struct minix1_inode *m1)
