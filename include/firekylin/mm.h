@@ -10,6 +10,9 @@
 #ifndef _MM_H
 #define _MM_H
 
+typedef unsigned long phys_t;
+typedef unsigned long virt_t;
+
 #define __pa(addr)  ((long)(addr)-0xc0000000)
 #define __va(addr)  ((long)(addr)+0xc0000000)
 

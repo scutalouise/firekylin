@@ -60,28 +60,13 @@ void start(void)
 
 	arch_init();
 	time_init();
-	mm_init();
 	dev_init();
+	mm_init();
 	pci_init();
+	dump_pci();
 	rtl8139_init();
 	sched_init();
 	clock_init();
-
-	unsigned long addr = __va(0x1000);
-
-	unsigned int size = *(unsigned int *) addr;
-
-	printk("grub info size:%x\n", size);
-
-	addr += 8;
-	struct multiboot_tag *tag;
-	tag = (struct multiboot_tag *) (addr + 8);
-
-	do {
-		tag = (struct multiboot_tag *) addr;
-		printk("Tag %x, size %x \n", tag->type, tag->size);
-		addr = (addr + tag->size + 7) & ~7;
-	} while (tag->type != MULTIBOOT_HEADER_TAG_END);
 
 	if (sys_fork()) {
 		__asm__("__hlt:hlt ; jmp __hlt");

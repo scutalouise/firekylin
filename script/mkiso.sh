@@ -73,16 +73,14 @@ sync
 
 # create sourec pack.
 
-if [ ! -f iso/src.tgz ]; then
-	echo "creating source tar ..."
-	tar -zcf iso/src.tgz `ls -A | grep -v iso `
-fi
+echo "creating source tar ..."
+tar -zcf iso/src.tgz `ls | grep -v iso `
 
-# create VERSION
+# create VERSION.
 echo "creating VERSION ... "
 date > iso/VERSION
 
-# creat cdrom .
+# creat cdrom.
 
 echo "creating cdrom.iso ..."
 grub-mkrescue -o cdrom.iso iso 2> /dev/null

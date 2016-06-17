@@ -49,8 +49,3 @@ install:kernel.bin
 clean:
 	@echo kernel cleaning...
 	@-rm kernel.map kernel.bin kernel.elf $(OBJS)
-
-count:
-	@echo dirs:  $(shell ls -lR |grep ^d |wc -l)
-	@echo files: $(shell ls -lR |grep ^- |wc -l)
-	@echo lines: $(shell find . -name *.[chs] |xargs grep -v ^$$ |wc -l)

@@ -13,6 +13,7 @@
 #include <firekylin/mm.h>
 #include <firekylin/fs.h>
 #include <firekylin/string.h>
+#include <firekylin/multiboot2.h>
 
 #define MAX_NR_PAGES	((64-4)*1024*1024/4096)
 
@@ -149,7 +150,35 @@ void mm_init(void)
 {
 	unsigned long i, *p;
 
-	memsize = 64 << 20;
+	int addr=__va(0x1000);
+	struct multiboot_tag_mmap *mm_map=NULL;
+	struct multiboot_tag *tag;
+
+	addr += 8;
+
+	do {
+		tag = (struct multiboot_tag *) addr;
+		if(tag->type==MULTIBOOT_TAG_TYPE_MMAP){
+			mm_map=(struct multiboot_tag_mmap *)tag;
+			break ;
+		}
+		addr = (addr + tag->size + 7) & ~7;
+	} while (tag->type != MULTIBOOT_HEADER_TAG_END);
+
+	if(! mm_map)
+		printk("Not find memory map by GRUB\n");
+
+	else{
+		struct multiboot_mmap_entry *mm_map_entry=mm_map->entries;
+		while((long)mm_map_entry< addr +mm_map->size){
+			if(mm_map_entry->type==MULTIBOOT_MEMORY_AVAILABLE)
+				memsize=mm_map_entry->addr + mm_map_entry->len;
+			mm_map_entry++;
+		}
+	}
+
+	printk("memsize :%dMB",memsize>>20);
+
 	NR_PAGE = min((memsize >> 12), MAX_NR_PAGES);
 
 	p = (unsigned long*) 0xC0000000;
