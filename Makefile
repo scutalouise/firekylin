@@ -7,18 +7,18 @@
 # * it under the terms of The BSD License, see LICENSE.
 # */
 
-all:
+all: complie cdrom hdimg
+
+complie:
 	make -C kernel
 	make -C libc
 	make -C command
 	
 cdrom: 
-	@echo complie ...
-	@make all 2>&1 > /dev/null
 	@sh script/mkiso.sh
 	
 hdimg:
-	@sh script/mkhdimg.sh
+	@sudo sh script/mkhdimg.sh
 	
 clean:
 	make clean -C kernel
@@ -31,8 +31,7 @@ count:
 	@sh script/countline.sh
 
 qemu:
-	qemu -net nic,model=rtl8139,vlan=1,macaddr=52:54:00:12:34:56  \
-	     -net nic,model=ne2k_pci,vlan=2,macaddr=12:54:00:12:34:56 \
+	qemu -net nic,model=ne2k_pci,vlan=2,macaddr=12:54:00:12:34:56 \
 	     -boot d -cdrom cdrom.iso -hda hd.img
 
 bochs:

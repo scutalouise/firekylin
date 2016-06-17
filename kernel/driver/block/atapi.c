@@ -160,6 +160,9 @@ static void hd_identify(void)
 	} while ((tmp & (HD_STAT_BUSY | HD_STAT_DRQ)) != HD_STAT_DRQ);
 	ins(0x1f0, (char*) buf, 512);
 
+	/*
+	 * Note: here don't check the partion available.
+	 */
 	part = (struct partition *) ((char*) buf + 0x1be);
 	printk("IDE disk partion:\n");
 	for (int i = 0; i < 4; i++) {
@@ -171,7 +174,8 @@ static void hd_identify(void)
 	}
 }
 
-static struct blk_dev ide = { "ATAPI", NULL, NULL, ide_read, ide_write, NULL };
+static
+struct block_device ide = { "ATAPI", NULL, NULL, ide_read, ide_write, NULL };
 
 void hd_init(void)
 {

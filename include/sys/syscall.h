@@ -108,5 +108,18 @@ type name(typeb argb,typec argc,typed argd)			\
 	return (type)res;					\
 }
 
+#define __syscall4(type,name,typeb,argb,typec,argc,typed,argd,typee,arge) \
+type name(typeb argb,typec argc,typed argd,typee arge)			  \
+{								          \
+	long res;						          \
+	__asm__("int $0x30"					          \
+	    :"=a"(res)						          \
+	    :"a"(__NR_##name),"b"(argb),"c"(argc),"d"(argd),"D"(arge));	  \
+	if(res<0){						          \
+		errno=-res;					          \
+		return -1;					          \
+	}							          \
+	return (type)res;					          \
+}
 
 #endif

@@ -135,6 +135,11 @@ struct fs_operation{
 	int (*file_write)(struct file *file, char *buf, size_t size);
 };
 
+struct fs_type{
+	char                *fst_name;
+	struct fs_operation *fst_op;
+};
+
 extern struct buffer * bread(dev_t dev, long block);
 extern void            brelse(struct buffer * buf);
 extern struct super  * get_super(dev_t dev);

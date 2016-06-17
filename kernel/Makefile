@@ -22,7 +22,7 @@ OBJS=init/head.o init/main.o  \
      driver/char/console.o driver/char/keyboard.o driver/char/serial.o \
      driver/char/tty.o driver/char/mem.o\
      driver/block/ramdisk.o driver/block/floppy.o driver/block/atapi.o \
-     driver/driver.o driver/pci.o driver/rtl8139.o \
+     driver/driver.o driver/pci.o driver/ne2k.o \
      fs/buffer.o fs/super.o fs/inode.o fs/read.o fs/stat.o fs/open.o \
      fs/write.o fs/fcntl.o fs/create.o fs/pipe.o fs/ioctl.o fs/close.o \
      fs/minix/super.o fs/minix/inode.o fs/minix/bitmap.o \

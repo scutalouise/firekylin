@@ -22,7 +22,7 @@
 #define RTL8139_IMR	0x3C	/* 2 bytes */
 #define RTL8139_ISR	0x3E	/* 2 bytes */
 
-static pci_dev_t rtl8139;
+static struct pci_device *rtl8139;
 static unsigned long iobase;
 static unsigned char rx_buffer[8192+16];
 
@@ -33,17 +33,18 @@ void rtl8139_init(void)
 		return ;
 	}
 
-	printk("find rtl8139 at pci:%x\n", rtl8139);
+	printk("find rtl8139 at pci:%x\n", rtl8139->dev);
+
 
 	/* enable PCI bus Mastering*/
 	unsigned short command;
-	command=pci_read_config_word(rtl8139,PCI_COMMAND);
+	command=pci_read_config_word(rtl8139->dev,PCI_COMMAND);
 	command|=2;
 	printk("rtl8139 command %x\n",command);
-	pci_write_config_word(rtl8139,PCI_COMMAND,command);
+	pci_write_config_word(rtl8139->dev,PCI_COMMAND,command);
 
 	/* get iobase */
-	iobase=pci_read_config(rtl8139,PCI_BAR0);
+	iobase=pci_read_config(rtl8139->dev,PCI_BAR0);
 	printk("iobase %x\n",iobase);
 	iobase &=0xfc;
 
@@ -57,7 +58,7 @@ void rtl8139_init(void)
 		count--;
 	}while(count && (inb(iobase+0x37)&0x10));
 
-	printk("soft reset ready");
+	printk("soft reset ready\n");
 
 	/* init receive buffer */
 	outl(iobase+0x30,__pa(rx_buffer));
@@ -70,4 +71,6 @@ void rtl8139_init(void)
 
 	/* enable receive and transmitter */
 	outb(iobase +0x37,0x0C);
+
+	printk("rtl8139 irq=%d\n",rtl8139->interrput_line);
 }

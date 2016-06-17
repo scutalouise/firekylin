@@ -18,7 +18,7 @@ ata0-slave: type=cdrom, path=cdrom.iso, status=inserted
 
 ne2k: ioaddr=0x300, irq=3, mac=b0:c4:20:00:00:00, ethmod=win32, ethdev=\Device\NPF_{155AE47E-C244-4B7A-B6E5-0CA3F7DC870B}
 
-pci: enabled=1, chipset=i440fx, slot1=pcivga, slot2=ne2k
+pci: enabled=1, chipset=i440fx, slot1=ne2k
 
 #com1: enabled=1, mode=socket-server, dev=localhost:8888
 

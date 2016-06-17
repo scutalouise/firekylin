@@ -28,7 +28,7 @@
 
 #define ROOT_DEV		DEV(DEV_BLK_RAMDISK,0)
 
-struct char_dev {
+struct char_device {
 	char *name;
 	int  (*open)(dev_t dev);
 	int  (*close)(dev_t dev);
@@ -37,7 +37,7 @@ struct char_dev {
 	int  (*ioctl)(dev_t dev, int cmd, long arg);
 };
 
-struct blk_dev {
+struct block_device {
 	char *name;
 	int  (*open)(dev_t dev);
 	int  (*close)(dev_t dev);
@@ -46,7 +46,7 @@ struct blk_dev {
 	int  (*ioctl)(dev_t dev, int cmd, long arg);
 };
 
-extern struct char_dev *char_table[];
-extern struct blk_dev *blk_table[];
+extern struct char_device  *char_table[];
+extern struct block_device *blk_table[];
 
 #endif

@@ -7,10 +7,12 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/driver.h>
+#include <firekylin/string.h>
 #include <firekylin/fs.h>
 
 extern struct fs_operation minix_fs_operation;
@@ -21,6 +23,10 @@ static sleeplock_t super_lock;
 
 #define lock_super_table()	require_lock(&super_lock);
 #define unlock_super_table()	release_lock(&super_lock);
+
+struct fs_type fs_type_table[]={
+	{"minix", &minix_fs_operation }
+};
 
 struct super * get_super(dev_t dev)
 {
@@ -51,11 +57,38 @@ void put_super(struct super *super)
 	unlock_super(super);
 }
 
-int sys_mount(char *dev_name, char *dir_name, long ro_flag)
+dev_t mount_inode(struct inode *inode)
+{
+	struct super *super;
+
+	lock_super_table();
+	for(super=super_table; super<super_table+NR_SUPER;super++)
+		if(super->s_imount && (super->s_imount==inode)){
+			unlock_super_table();
+			return super->s_dev;
+		}
+	unlock_super_table();
+	return 0;
+}
+
+int sys_mount(char *dev_name, char *dir_name, char *type, long ro_flag)
 {
 	struct inode *dev_i, *dir_i;
 	struct super *super;
+	struct fs_operation *fs_op=NULL;
 	int dev;
+
+	for(int i=0;i<sizeof(fs_type_table)/sizeof(struct fs_type);i++){
+		if(!strcmp(type,fs_type_table[i].fst_name)){
+			fs_op=fs_type_table[i].fst_op;
+			break;
+		}
+	}
+
+	if(!fs_op){
+		printk("Un support file system type %s\n", type);
+		return -ERROR;
+	}
 
 	if(!(dev_i=namei(dev_name,NULL)))
 		return -ENOENT;
@@ -64,15 +97,18 @@ int sys_mount(char *dev_name, char *dir_name, long ro_flag)
 		iput(dev_i);
 		return -EPERM;
 	}
+
 	dev=dev_i->i_rdev;
 	iput(dev_i);
 
 	if(!(dir_i=namei(dir_name,NULL)))
 		return -ENOENT;
+
 	if(dir_i->i_count!=1 || dir_i->i_ino==1){
 		iput(dir_i);
 		return -EBUSY;
 	}
+
 	if(!S_ISDIR(dir_i->i_mode)){
 		iput(dir_i);
 		return -EPERM;
@@ -92,7 +128,8 @@ int sys_mount(char *dev_name, char *dir_name, long ro_flag)
 	unlock_super_table();
 
 	super->s_dev=dev;
-	super->s_op=&minix_fs_operation;
+	super->s_op=fs_op;
+
 	if(super->s_op->super_read(super)<0){
 		iput(dir_i);
 		super->s_dev=0;
@@ -102,6 +139,7 @@ int sys_mount(char *dev_name, char *dir_name, long ro_flag)
 
 	super->s_imount=dir_i;
 	dir_i->i_flag |=(I_MOUNT|I_DIRTY);
+	unlock_super(super);
 	iunlock(dir_i);
 	return 0;
 }
@@ -134,7 +172,7 @@ int sys_umount(char *dev_name)
 	iput(ilock(super->s_imount));
 	super->s_dev=0;
 	put_super(super);
-	return -ERROR;
+	return 0;
 }
 
 void mount_root(void)

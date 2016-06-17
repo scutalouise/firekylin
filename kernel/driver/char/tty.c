@@ -96,7 +96,8 @@ int tty_ioctl(dev_t dev, int cmd, long arg)
 	return 0;
 }
 
-struct char_dev tty = { "TTY", NULL, NULL, tty_read, tty_write, tty_ioctl };
+static
+struct char_device tty = { "TTY", NULL, NULL, tty_read, tty_write, tty_ioctl };
 
 extern int con_write(struct tty_struct *tty);
 

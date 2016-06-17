@@ -80,6 +80,8 @@ void iput(struct inode * inode)
 	iunlock(inode);
 }
 
+extern dev_t mount_inode(struct inode *inode);
+
 struct inode *namei(char *filepath, char **basename)
 {
 	struct inode *inode;
@@ -108,8 +110,22 @@ struct inode *namei(char *filepath, char **basename)
 		if (*filepath == '/')
 			filepath++;
 
+		if( (inode !=root_inode) && inode->i_ino==1 &&
+		    name[0]=='.' &&
+		    name[1]=='.' &&
+		    name[2]==0){
+			struct super *super=get_super(inode->i_dev);
+			iput(inode);
+			inode=idup(super->s_imount);
+			put_super(super);
+		}
 		if (inode->i_op->lookup(inode, name,&inode)) {
 			return NULL;
+		}
+		if (inode->i_flag & I_MOUNT){
+			dev_t tmp=mount_inode(inode);
+			iput(inode);
+			inode=iget(tmp,1);
 		}
 	}
 	return inode;

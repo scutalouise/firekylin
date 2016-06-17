@@ -197,10 +197,11 @@ int minix1_mkdir(struct inode *dir_inode,char *name,mode_t mode)
 		return -EAGAIN;
 	inode->i_mode=mode;
 	inode->i_flag|=I_DIRTY;
-	iput(inode);
+
 	add_entry(dir_inode,name,inode->i_ino);
 	minix1_link(inode,".",inode);
 	minix1_link(inode,"..",dir_inode);
+	iput(inode);
 	return 0;
 }
 

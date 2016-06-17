@@ -54,7 +54,8 @@ static void rd_write(struct buffer *buffer)
 	unlock_rd();
 }
 
-static struct blk_dev rd = { "Ramdisk", NULL, NULL, rd_read, rd_write, NULL };
+static
+struct block_device rd = { "Ramdisk", NULL, NULL, rd_read, rd_write, NULL };
 
 void rd_init(void)
 {

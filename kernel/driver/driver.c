@@ -15,8 +15,8 @@ extern void mem_init(void);
 extern void rd_init(void);
 extern void hd_init(void);
 
-struct char_dev *char_table[DEV_CHAR_MAX + 1];
-struct blk_dev  *blk_table[DEV_BLK_MAX + 1];
+struct char_device  *char_table[DEV_CHAR_MAX + 1];
+struct block_device *blk_table[DEV_BLK_MAX + 1];
 
 void dev_init(void)
 {

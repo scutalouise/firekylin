@@ -26,7 +26,6 @@ void pci_init(void)
 	char func;
 	pci_dev_t tmp_pci_dev;
 	unsigned short vendor_id;
-	unsigned short device_id;
 
 	for (slot = 0; slot < 32; slot++) {
 		for (func = 0; func < 8; func++) {
@@ -34,14 +33,14 @@ void pci_init(void)
 			vendor_id = pci_read_config_word(tmp_pci_dev, 0);
 			if (vendor_id == 0xffff)
 				continue;
-			device_id = pci_read_config_word(tmp_pci_dev, 2);
 
-			pci_device_table[pci_device_count].pci_dev =
-					tmp_pci_dev;
-			pci_device_table[pci_device_count].pci_vendor_id =
-					vendor_id;
-			pci_device_table[pci_device_count].pci_device_id =
-					device_id;
+			pci_device_table[pci_device_count].dev = tmp_pci_dev;
+			unsigned int *p =
+					(unsigned int *) &(pci_device_table[pci_device_count].vendor_id);
+
+			for (int i = 0; i < 64; i += 4) {
+				*p++ = pci_read_config(tmp_pci_dev, i);
+			}
 
 			pci_device_count++;
 			if (pci_device_count >= MAX_PCI_DEVICE) {
@@ -55,19 +54,19 @@ void pci_init(void)
 void dump_pci(void)
 {
 	for (int i = 0; i < pci_device_count; i++) {
-		printk("%x  %x  %x \n",
-			pci_device_table[i].pci_dev,
-			pci_device_table[i].pci_vendor_id,
-			pci_device_table[i].pci_device_id);
+		printk("%x  %x  %x \n", pci_device_table[i].dev,
+				pci_device_table[i].vendor_id,
+				pci_device_table[i].device_id);
 	}
 }
 
-pci_dev_t pci_find_device(unsigned short vendor, unsigned short device)
+struct pci_device *pci_find_device(unsigned short vendor, unsigned short device)
 {
+	struct pci_device *pci=pci_device_table;
 	for (int i = 0; i < pci_device_count; i++) {
-		if ((vendor == pci_device_table[i].pci_vendor_id)
-			&& (device == pci_device_table[i].pci_device_id))
-			return pci_device_table[i].pci_dev;
+		if ((vendor == pci->vendor_id)&& (device ==pci->device_id))
+			return pci;
+		pci++;
 	}
-	return 0;
+	return NULL;
 }

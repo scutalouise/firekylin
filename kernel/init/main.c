@@ -26,6 +26,7 @@ extern void mm_init();
 extern void dev_init();
 extern void pci_init();
 extern void rtl8139_init();
+extern void ne2k_init();
 extern void buffer_init();
 extern void sched_init();
 extern void clock_init();
@@ -54,6 +55,8 @@ static void time_init()
 	start_time = mktime(year, month, day, hour, min, sec);
 }
 
+extern int sys_mount(char *dev_name, char *dir_name, long ro_flag);
+
 void start(void)
 {
 	memset(_edata, 0, (_end - _edata));
@@ -63,8 +66,7 @@ void start(void)
 	dev_init();
 	mm_init();
 	pci_init();
-	dump_pci();
-	rtl8139_init();
+	ne2k_init();
 	sched_init();
 	clock_init();
 

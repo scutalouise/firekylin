@@ -56,5 +56,7 @@ extern int unlink(char *name);
 extern int mknod(char *name, mode_t mode,dev_t dev);
 extern int execvpe(char * file, char ** argv, char ** envp);
 extern int pipe(int fd[2]);
+extern int mount(char* special, char *target, char* type, int rw_flag);
+extern int umount(char* special);
 
 #endif

@@ -38,9 +38,36 @@
 typedef int pci_dev_t; /* pci config addr base */
 
 struct pci_device {
-	pci_dev_t pci_dev;
-	unsigned short pci_vendor_id;
-	unsigned short pci_device_id;
+	pci_dev_t      dev;
+	unsigned short vendor_id;
+	unsigned short device_id;
+	unsigned short command;
+	unsigned short status;
+	unsigned char  revison_id;
+	unsigned char  prog_if;
+	unsigned char  subclass;
+	unsigned char  class_code;
+	unsigned char  cache_line_size;
+	unsigned char  latency_timer;
+	unsigned char  header_type;
+	unsigned char  bist;
+	unsigned int   bar0;
+	unsigned int   bar1;
+	unsigned int   bar2;
+	unsigned int   bar3;
+	unsigned int   bar4;
+	unsigned int   bar5;
+	unsigned int   crdbus_cis_pointer;
+	unsigned short subsystem_vendor_id;
+	unsigned short subsustem_id;
+	unsigned int   eROM_base;
+	unsigned char  capabilities_pointer;
+	unsigned char  reserved1[3];
+	unsigned int   reserved2;
+	unsigned char  interrput_line;
+	unsigned char  interrput_pin;
+	unsigned char  min_grant;
+	unsigned char  max_latency;
 };
 
 #include <firekylin/portio.h>
@@ -143,6 +170,7 @@ void pci_write_config_byte(pci_dev_t pci_dev, char offset, unsigned char data)
 	pci_write_config(pci_dev, offset, d.d_i);
 }
 
-extern pci_dev_t pci_find_device(unsigned short vendor, unsigned short device);
+extern struct pci_device *pci_find_device(unsigned short vendor,
+		unsigned short device);
 
 #endif

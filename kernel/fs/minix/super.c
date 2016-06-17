@@ -29,7 +29,7 @@ int minix1_read_super(struct super *super)
 	s_ext->s_magic = m1_super->s_magic;
 
 	brelse(buf);
-	return 0;
+	return 1;
 }
 
 int minix1_write_super(struct super *super)

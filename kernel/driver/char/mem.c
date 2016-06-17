@@ -62,7 +62,7 @@ static int mem_full(int rw, char *buf, off_t off, size_t size)
 		return -ENOSPACE;
 }
 
-int mem_read(dev_t dev, char * buf, off_t off, size_t size)
+static int mem_read(dev_t dev, char * buf, off_t off, size_t size)
 {
 	switch (MINOR(dev)) {
 	case MEM_MEM:
@@ -78,7 +78,7 @@ int mem_read(dev_t dev, char * buf, off_t off, size_t size)
 	}
 }
 
-int mem_write(dev_t dev, char * buf, off_t off, size_t size)
+static int mem_write(dev_t dev, char * buf, off_t off, size_t size)
 {
 	switch (MINOR(dev)) {
 	case MEM_MEM:
@@ -94,7 +94,8 @@ int mem_write(dev_t dev, char * buf, off_t off, size_t size)
 	}
 }
 
-static struct char_dev mem = { "mem", NULL, NULL, mem_read, mem_write, NULL };
+static
+struct char_device mem = { "mem", NULL, NULL, mem_read, mem_write, NULL };
 
 void mem_init(void)
 {
