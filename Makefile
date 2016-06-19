@@ -15,6 +15,7 @@ complie:
 	make -C command
 	
 cdrom: 
+	@make complie 2>&1 > /dev/null
 	@sh script/mkiso.sh
 	
 hdimg:
@@ -31,7 +32,8 @@ count:
 	@sh script/countline.sh
 
 qemu:
-	qemu -net nic,model=ne2k_pci,vlan=2,macaddr=12:54:00:12:34:56 \
+	qemu -net nic,model=ne2k_pci,vlan=1,macaddr=12:54:00:12:34:56 \
+	     -net socket,vlan=1,listen=127.0.0.1:8087 \
 	     -boot d -cdrom cdrom.iso -hda hd.img
 
 bochs:

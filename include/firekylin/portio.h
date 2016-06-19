@@ -19,7 +19,7 @@ __asm__("mov $0x70,%%dx\t\n"  			\
         :"a"(index)				\
         :"dx")
 
-static inline char inb(short port)
+static inline unsigned char inb(short port)
 {
 	char __res;
 	__asm__("inb %%dx,%%al":"=a"(__res):"d"(port));

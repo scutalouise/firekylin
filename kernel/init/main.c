@@ -55,8 +55,6 @@ static void time_init()
 	start_time = mktime(year, month, day, hour, min, sec);
 }
 
-extern int sys_mount(char *dev_name, char *dir_name, long ro_flag);
-
 void start(void)
 {
 	memset(_edata, 0, (_end - _edata));
@@ -66,9 +64,18 @@ void start(void)
 	dev_init();
 	mm_init();
 	pci_init();
-	ne2k_init();
 	sched_init();
 	clock_init();
+	
+	ne2k_init();
+	
+	//memset(buf,0xff,80);
+
+//	ne2k_send(buf,80);
+//	memset(buf,0xAA,80);
+	//ne2k_send(data,42);
+	
+
 
 	if (sys_fork()) {
 		__asm__("__hlt:hlt ; jmp __hlt");
@@ -76,7 +83,7 @@ void start(void)
 
 	buffer_init();
 	mount_root();
-
+	
 	sys_exec("/bin/init", NULL, NULL);
 	panic("Can't find init");
 }
