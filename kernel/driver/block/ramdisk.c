@@ -13,7 +13,7 @@
 #include <firekylin/driver.h>
 #include <firekylin/mm.h>
 #include <firekylin/fs.h>
-#include <firekylin/string.h>
+#include <arch/string.h>
 
 /*
  * ramdisk start at phyiscal address:0x200000 len:0x100000

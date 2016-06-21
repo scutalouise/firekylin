@@ -12,9 +12,18 @@
 #include <firekylin/driver.h>
 #include <firekylin/mm.h>
 #include <firekylin/fs.h>
-#include <firekylin/portio.h>
-#include <firekylin/string.h>
+#include <arch/portio.h>
+#include <arch/string.h>
 #include <firekylin/multiboot2.h>
+
+#define CMOSREAD(value,index)			\
+__asm__("mov $0x70,%%dx\t\n"  			\
+        "out %%al,%%dx\t\n"			\
+        "inc %%dx\t\n"				\
+        "in  %%dx,%%al\t\n"			\
+        :"=a"(value)				\
+        :"a"(index)				\
+        :"dx")
 
 #define BCD_BIN(c)	(c=c/16*10+c%16)
 
@@ -66,15 +75,15 @@ void start(void)
 	pci_init();
 	sched_init();
 	clock_init();
-	
+
 	ne2k_init();
-	
+
 	//memset(buf,0xff,80);
 
 //	ne2k_send(buf,80);
 //	memset(buf,0xAA,80);
 	//ne2k_send(data,42);
-	
+
 
 
 	if (sys_fork()) {
@@ -83,7 +92,7 @@ void start(void)
 
 	buffer_init();
 	mount_root();
-	
+
 	sys_exec("/bin/init", NULL, NULL);
 	panic("Can't find init");
 }

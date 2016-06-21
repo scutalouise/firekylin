@@ -11,7 +11,7 @@
 #include <firekylin/sched.h>
 #include <firekylin/lock.h>
 #include <firekylin/trap.h>
-#include <firekylin/portio.h>
+#include <arch/portio.h>
 
 extern void div_zero(void);
 extern void debug(void);

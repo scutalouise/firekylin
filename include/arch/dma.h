@@ -7,8 +7,8 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#ifndef _DMA_H
-#define _DMA_H
+#ifndef _ARCH_DMA_H
+#define _ARCH_DMA_H
 
 #define DMA_CHANNELS	       8
 
@@ -74,7 +74,7 @@
 /* pass thru DREQ->HRQ, DACK<-HLDA only */
 #define DMA_MODE_CASCADE    0xC0
 
-#include <firekylin/portio.h>
+#include <arch/portio.h>
 
 static inline void dma_enable(unsigned int dmanr)
 {
@@ -111,27 +111,27 @@ static inline void dma_setmode(unsigned int dmanr, char mode)
 static inline void dma_setpage(unsigned int dmanr, char pagenr)
 {
 	switch (dmanr) {
-		case 0:
-			outb(DMA_PAGE_0, pagenr);
-			break;
-		case 1:
-			outb( DMA_PAGE_1, pagenr);
-			break;
-		case 2:
-			outb( DMA_PAGE_2, pagenr);
-			break;
-		case 3:
-			outb( DMA_PAGE_3, pagenr);
-			break;
-		case 5:
-			outb( DMA_PAGE_5, pagenr & 0xfe);
-			break;
-		case 6:
-			outb( DMA_PAGE_6, pagenr & 0xfe);
-			break;
-		case 7:
-			outb( DMA_PAGE_7, pagenr & 0xfe);
-			break;
+	case 0:
+		outb(DMA_PAGE_0, pagenr);
+		break;
+	case 1:
+		outb( DMA_PAGE_1, pagenr);
+		break;
+	case 2:
+		outb( DMA_PAGE_2, pagenr);
+		break;
+	case 3:
+		outb( DMA_PAGE_3, pagenr);
+		break;
+	case 5:
+		outb( DMA_PAGE_5, pagenr & 0xfe);
+		break;
+	case 6:
+		outb( DMA_PAGE_6, pagenr & 0xfe);
+		break;
+	case 7:
+		outb( DMA_PAGE_7, pagenr & 0xfe);
+		break;
 	}
 }
 

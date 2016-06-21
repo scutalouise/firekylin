@@ -21,15 +21,12 @@ void do_exit(long exitcode)
 	current->state = TASK_STATE_EXIT;
 	current->status=exitcode;
 	free_mm();
-	if(current->parent->state == TASK_STATE_PAUSE){
-		current->parent->state = TASK_STATE_READY;
-	}
-
 	if(current->pwd)
 		iput(iunlock(current->pwd));
 	for(int i=0;i<NR_OPEN;i++)
 		if(current->file[i])
 			sys_close(i);
+	sigsend(current->parent,SIGCHLD);
 	sched();
 }
 

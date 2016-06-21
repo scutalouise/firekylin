@@ -12,7 +12,8 @@
 #include <firekylin/lock.h>
 #include <firekylin/pci.h>
 #include <firekylin/mm.h>
-#include <firekylin/string.h>
+#include <arch/string.h>
+#include <arch/bits.h>
 #include <net/ether.h>
 #include <net/arp.h>
 
@@ -22,7 +23,7 @@
 #define NE2K_VENDOR	0x10EC
 #define NE2K_DEVICE	0x8029
 
-/* ne2k register offset */
+/* register offset */
 #define CR		0x00
 
 /* page 0, read */
@@ -81,13 +82,6 @@ static unsigned char irq;
 static unsigned char mac[6];
 static unsigned short rx_next = 0x47;
 
-/*
- * ne2k reg : CR, ISR, IMR, DCR, TCR, TSR, RCR, RSR.
- *            CLDA0,1 PSTART PSTOP BNRY TPSR TBCR0,1
- *            NCR FIFO CRDA0,1 RSAR0,1 RBCR0,1 CNTR0
- *            CNTR1 CNTR2 PAR0-5 CURR MAR0-7
- */
-
 int ne2k_send(char *data, short len)
 {
 	while (inb(base + CR) == 0x26)
@@ -97,31 +91,18 @@ int ne2k_send(char *data, short len)
 
 	outb(base + RSAR0, 0);
 	outb(base + RSAR1, 0x40);
-
 	outb(base + RBCR0, len & 0xff);
 	outb(base + RBCR1, (len >> 8) & 0xff);
-
 	outb(base + CR, 0x12); // write and start.
-
-	/*
-	 * use DMA, also need this?, really don't know.
-	 */
-	outs(base + DATA, data, len);
-
+	outsw(base + DATA, data, len);
 	while ((inb(base + ISR) & 0x40) == 0)
 		;
 	outb(base + ISR, 0x40);
 
-	/*
-	 * does need to set this evey packet, does it will change?
-	 */
 	outb(base + TPSR, 0x40);
-
 	outb(base + TBCR0, len & 0xff);
 	outb(base + TBCR1, (len >> 8) & 0xff);
-
-	outb(base + CR, 0x06);
-
+	outb(base + CR, 0x26);
 	return 0;
 }
 
@@ -132,35 +113,23 @@ void ne2k_receive(void)
 	struct {
 		unsigned char rsr;
 		unsigned char next;
-		union {
-			unsigned short len;
-			unsigned char len_s[2];
-		};
+		unsigned short len;
 	} info;
+
 	outb(base + RSAR0, 0);
 	outb(base + RSAR1, rx_next);
-
 	outb(base + RBCR0, 4);
 	outb(base + RBCR1, 0);
-
 	outb(base + CR, 0x12); // write and start.
-
-	ins(base + DATA, &info, 4);
-
-	printk("rsr:%x\n", info.rsr);
-	printk("next:%x\n", info.next);
-	printk("len:%x\n", info.len);
+	insw(base + DATA, &info, 4);
 
 	outb(base + RSAR0, 4);
 	outb(base + RSAR1, rx_next);
+	outb(base + RBCR0, info.len & 0xff);
+	outb(base + RBCR1, (info.len >> 8) & 0xff);
+	insw(base + DATA, buf, info.len);
 
-	outb(base + RBCR0, info.len_s[0]);
-	outb(base + RBCR1, info.len_s[1]);
-
-	ins(base + DATA, buf, info.len);
-
-	while ((inb(base + ISR) & 0x40) == 0)
-		;
+	while ((inb(base + ISR) & 0x40) == 0);
 	outb(base + ISR, 0x40);
 
 	rx_next = info.next;
@@ -170,22 +139,21 @@ void ne2k_receive(void)
 		outb(base + BNRY, rx_next - 1);
 
 	struct ethhdr *eh = (struct ethhdr *) buf;
-	printk("dst: %x:%x:%x:%x:%x:%x\n", eh->eh_dst[0],
-			eh->eh_dst[1], eh->eh_dst[2],
-			eh->eh_dst[3], eh->eh_dst[4],
+	printk("dst: %x:%x:%x:%x:%x:%x\n", eh->eh_dst[0], eh->eh_dst[1],
+			eh->eh_dst[2], eh->eh_dst[3], eh->eh_dst[4],
 			eh->eh_dst[5]);
 	printk("src: %x:%x:%x:%x:%x:%x\n", eh->eh_src[0], eh->eh_src[1],
 			eh->eh_src[2], eh->eh_src[3], eh->eh_src[4],
 			eh->eh_src[5]);
-	switch (swap_short(eh->eh_type)) {
+	switch (bswapw(eh->eh_type)) {
 	case 0x0800:
 		printk("ip");
 		break;
 	case 0x0806:
 		printk("arp");
 		struct arphdr *ah = (struct arphdr *) eh->eh_data;
-		printk("htype:%x\n", swap_short(ah->ah_htype));
-		printk("ptype:%x\n", swap_short(ah->ah_ptype));
+		printk("htype:%x\n", bswapw(ah->ah_htype));
+		printk("ptype:%x\n", bswapw(ah->ah_ptype));
 		printk("haddr_len:%x\n", ah->ah_haddr_len);
 		printk("paddr_len:%x\n", ah->ah_paddr_len);
 		printk("src_haddr:%x:%x:%x:%x:%x:%x", ah->ah_src_haddr[0],

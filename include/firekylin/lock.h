@@ -32,29 +32,7 @@ typedef struct sleeplock {
 	struct task *wait; 	/* task list wait for this lock       */
 } sleeplock_t;
 
-static inline void require_lock(sleeplock_t *lock)
-{
-	pid_t pid=(CURRENT_TASK())->pid;
-
-	irq_lock();
-	if(pid==lock->pid){
-		printk("Lock has locked by %d",pid);
-		irq_unlock();
-		return ;
-	}
-	while(lock->pid){
-		sleep_on(&(lock->wait));
-	}
-	lock->pid=pid;
-	irq_unlock();
-}
-
-static inline void release_lock(sleeplock_t *lock)
-{
-	irq_lock();
-	lock->pid=0;
-	wake_up(&(lock->wait));
-	irq_unlock();
-}
+extern void require_lock(sleeplock_t *lock);
+extern void release_lock(sleeplock_t *lock);
 
 #endif

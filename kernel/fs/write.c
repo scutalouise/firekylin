@@ -13,7 +13,7 @@
 #include <firekylin/kernel.h>
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
-#include <firekylin/string.h>
+#include <arch/string.h>
 
 static int write_char(struct file *file, char *buf, size_t size)
 {

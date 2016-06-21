@@ -11,7 +11,7 @@
 #include <firekylin/kernel.h>
 #include <firekylin/trap.h>
 #include <firekylin/tty.h>
-#include <firekylin/portio.h>
+#include <arch/portio.h>
 
 static unsigned char key_map[0x80]={
 	0,   0x1b, '1',  '2',  '3',  '4',  '5',  '6',

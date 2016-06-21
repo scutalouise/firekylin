@@ -70,7 +70,7 @@ struct pci_device {
 	unsigned char  max_latency;
 };
 
-#include <firekylin/portio.h>
+#include <arch/portio.h>
 
 static inline pci_dev_t pci_dev(char bus, char slot, char func)
 {

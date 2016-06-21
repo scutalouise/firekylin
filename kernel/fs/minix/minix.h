@@ -14,10 +14,11 @@
 #include <sys/stat.h>
 #include <sys/fcntl.h>
 #include <sys/errno.h>
+#include <arch/string.h>
+#include <arch/bits.h>
 #include <firekylin/kernel.h>
 #include <firekylin/fs.h>
-#include <firekylin/string.h>
-#include <firekylin/bitmap.h>
+
 
 struct minix1_inode {
 	unsigned short i_mode;

@@ -12,7 +12,7 @@
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 #include <firekylin/trap.h>
-#include <firekylin/portio.h>
+#include <arch/portio.h>
 #include <firekylin/timer.h>
 #include <firekylin/lock.h>
 

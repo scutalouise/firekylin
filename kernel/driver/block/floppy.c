@@ -7,14 +7,14 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#include <firekylin/portio.h>
-#include <firekylin/dma.h>
+#include <arch/portio.h>
+#include <arch/dma.h>
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 #include <firekylin/trap.h>
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
-#include <firekylin/string.h>
+#include <arch/string.h>
 #include "floppy.h"
 
 char fd_buffer[1024]; 			/* 软盘高速缓冲区地址指针 */

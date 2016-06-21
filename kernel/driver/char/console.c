@@ -8,10 +8,10 @@
  */
 
 #include <firekylin/kernel.h>
-#include <firekylin/portio.h>
+#include <arch/portio.h>
 #include <firekylin/tty.h>
 #include <firekylin/lock.h>
-#include <firekylin/string.h>
+#include <arch/string.h>
 
 struct console {
 	unsigned long base;

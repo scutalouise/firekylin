@@ -7,17 +7,27 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#ifndef _STRING_H
-#define _STRING_H
+#ifndef _ARCH_STRING_H
+#define _ARCH_STRING_H
 
-static inline void memcpy(void *dst, void*src, int size)
+#include <sys/types.h>
+
+static inline void memset(void *s, int c, size_t size)
 {
-	__asm__("rep movsb":: "D"(dst),"S"(src),"c"(size));
+	__asm__("rep stosb" ::"D"(s), "a"(c), "c"(size));
 }
 
-static inline void memset(void *s, int c, int size)
+static inline void memcpy(void *dst, void *src, size_t size)
 {
-	__asm__("rep stosb" ::"D"(s),"a"(c),"c"(size));
+	__asm__("rep movsb":: "D"(dst), "S"(src), "c"(size));
+}
+
+static inline size_t strlen(char *s)
+{
+	char *p = (char*) s;
+	while (*p)
+		p++;
+	return (size_t) (p - s);
 }
 
 static inline int strcmp(char *s1, char *s2)

@@ -12,59 +12,120 @@
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 #include <firekylin/trap.h>
-#include <firekylin/string.h>
+#include <arch/string.h>
+
+void sigsend(struct task *p, int signo)
+{
+	if (!p)
+		return;
+
+	p->sigarrive |= 1 << (signo - 1);
+	if (p->state == TASK_STATE_PAUSE) {
+		p->state = TASK_STATE_READY;
+		sched();
+	}
+}
 
 void do_signal(struct trapframe *tf)
 {
-	struct task *current;
 	sigset_t signal;
 	int signr;
 
-	current = CURRENT_TASK();
+	struct task * current = CURRENT_TASK();
 
-	signal = (current->sigarrive) & (~(current->sigarrive));
+	signal = current->sigarrive & (~current->sigmask)
+			& (~current->sigsuspend);
 
 	if (!signal)
 		return;
 
-	for (signr = 0; signr < 31; signr++) {
+	for (signr = 0; signr < NR_SIG; signr++) {
 		if (!(signal & (1 << signr)))
 			continue;
-		if (signr == SIGCHLD - 1)
+		if (current->sighandle[signr] == SIG_IGN)
 			continue;
-		else
-			do_exit(signr + 1);
+		if (!current->sighandle[signr]) {
+			if (signr == SIGCHLD - 1)
+				continue;
+			else
+				do_exit(1 << signr);
+		}
 
+		unsigned long *esp = (unsigned long *)tf->esp;
+		*(--esp) = tf->eax;
+		*(--esp) = signr + 1;
+		*(--esp) = tf->eip;
+		tf->eip = (unsigned long)current->sighandle[signr];
+		tf->esp =(unsigned long) esp;
+		current->sigarrive &= ~(1 << signr);
+		return;
 	}
 
 	current->sigarrive &= ~signal;
 }
 
-int sys_sigsend(pid_t pid, int signr)
+int sys_sigctl(int cmd, int param1, int param2, int param3)
 {
 	struct task **p;
+	struct task *current = CURRENT_TASK();
+	int ret;
+	pid_t pid;
+	int signo;
 
-	for (p = task_table; p < task_table + NR_TASK; p++) {
-		if ((*p)->pid == pid) {
-			(*p)->sigarrive |= 1 << (signr - 1);
-			if ((*p)->state == TASK_STATE_READY) {
-				(*p)->state = TASK_STATE_READY;
-				sched();
+	switch (cmd) {
+	case SIGCTL_SETMASK:
+		ret = current->sigmask;
+		current->sigmask = param1
+				& ((1 << (SIGKILL - 1) | 1 << (SIGSTOP - 1)));
+		return ret;
+	case SIGCTL_GETMASK:
+		return current->sigmask;
+
+	case SIGCTL_SETSUSPEND:
+		ret = current->sigsuspend;
+		current->sigsuspend = param1
+				& ((1 << (SIGKILL - 1) | 1 << (SIGSTOP - 1)));
+		return ret;
+
+	case SIGCTL_GETSUSPEND:
+		return current->sigsuspend;
+
+	case SIGCTL_SETHANDLE:
+		ret = (int) current->sighandle[param1 - 1];
+		current->sighandle[param1 - 1] = (sigfunc_t ) param2;
+		break;
+
+	case SIGCTL_SEND:
+		pid = (pid_t) param1;
+		signo = param2;
+
+		if (signo < 0 || signo > NR_SIG)
+			return -EINVAL;
+
+		if (pid > 0) {
+			for (p = task_table; p < task_table + NR_TASK; p++) {
+				if (*p && (*p)->pid == pid)
+					sigsend(*p, signo);
 			}
-			return 0;
 		}
+
+		if (pid < 0) {
+			pid = -pid;
+			for (p = task_table; p < task_table + NR_TASK; p++) {
+				if (*p && (*p)->grp == pid)
+					sigsend(*p, signo);
+			}
+		}
+		return 0;
+
+	case SIGCTL_PAUSE:
+		current->state = TASK_STATE_PAUSE;
+		sched();
+		return -EINTR;
+
+	default:
+		return -ERROR;
+
 	}
-	return -ERSCH;
-}
-
-int sys_sigwait()
-{
-	(CURRENT_TASK() )->state = TASK_STATE_READY;
-	sched();
-	return -EINTR;
-}
-
-int sys_sigctl(int cmd ,long arg)
-{
-	return 0;
+	return -ERROR;
 }

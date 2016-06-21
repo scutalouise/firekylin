@@ -12,7 +12,7 @@
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 #include <firekylin/mm.h>
-#include <firekylin/string.h>
+#include <arch/string.h>
 
 struct tss_struct tss;
 

@@ -13,7 +13,7 @@
 #include <firekylin/sched.h>
 #include <firekylin/mm.h>
 #include <firekylin/fs.h>
-#include <firekylin/string.h>
+#include <arch/string.h>
 
 int sys_wait(pid_t pid, long *status,int options)
 {

@@ -13,7 +13,7 @@
 #include <firekylin/trap.h>
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
-#include <firekylin/portio.h>
+#include <arch/portio.h>
 #include "atapi.h"
 
 struct request {
@@ -84,7 +84,7 @@ static void ide_write(struct buffer *buffer)
 		tmp = inb(HD_STATUS);
 	} while ((tmp & (HD_STAT_BUSY | HD_STAT_DRQ)) != HD_STAT_DRQ);
 
-	outs(HD_DATA, buffer->b_data, 512);
+	outsw(HD_DATA, buffer->b_data, 512);
 	irq_unlock();
 }
 
@@ -103,7 +103,7 @@ static void do_hd(struct trapframe *tf)
 	}
 
 	if (hd_req.cmd == WIN_READ) {
-		ins(HD_DATA, hd_req.buf, 512);
+		insw(HD_DATA, hd_req.buf, 512);
 		hd_req.buf += 512;
 		if (--hd_req.nr_sect)
 			return;
@@ -119,7 +119,7 @@ static void do_hd(struct trapframe *tf)
 	if (hd_req.cmd == WIN_WRITE) {
 		hd_req.buf += 512;
 		if (--hd_req.nr_sect) {
-			outs(HD_DATA, hd_req.buf, 512);
+			outsw(HD_DATA, hd_req.buf, 512);
 			return;
 		}
 		hd_req.bh->b_flag &= ~B_DIRTY;
@@ -148,7 +148,7 @@ static void hd_identify(void)
 	do {
 		tmp = inb(HD_STATUS);
 	} while ((tmp & (HD_STAT_BUSY | HD_STAT_DRQ)) != HD_STAT_DRQ);
-	ins(0x1f0, (char*) buf, 512);
+	insw(0x1f0, (char*) buf, 512);
 
 	hd_req.LBA = buf[60] | buf[61] << 16;
 	hd_size[0].start_sector = 0;
@@ -158,7 +158,7 @@ static void hd_identify(void)
 	do {
 		tmp = inb(HD_STATUS);
 	} while ((tmp & (HD_STAT_BUSY | HD_STAT_DRQ)) != HD_STAT_DRQ);
-	ins(0x1f0, (char*) buf, 512);
+	insw(0x1f0, (char*) buf, 512);
 
 	/*
 	 * Note: here don't check the partion available.

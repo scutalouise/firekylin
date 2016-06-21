@@ -7,8 +7,8 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#ifndef _BITMAP_H
-#define _BITMAP_H
+#ifndef _ARCH_BITS_H
+#define _ARCH_BITS_H
 
 static inline int find_bit(char *addr, int size)
 {
@@ -30,6 +30,20 @@ static inline void set_bit(char *addr, int bit)
 static inline void clr_bit(char *addr, int bit)
 {
 	*(addr + bit / 8) = *(addr + bit / 8) & (~(1 << (bit % 8)));
+}
+
+static inline short bswapw(short data)
+{
+	short res;
+	__asm__("bswap %%eax" :"=a"(res): "a"(data<<16));
+	return res;
+}
+
+static inline int bswapl(int data)
+{
+	int res;
+	__asm__("bswap %%eax" :"=a"(res): "a"(data));
+	return res;
 }
 
 #endif

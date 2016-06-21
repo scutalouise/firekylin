@@ -15,7 +15,7 @@
 #include <firekylin/fs.h>
 #include <firekylin/mm.h>
 #include <firekylin/elf.h>
-#include <firekylin/string.h>
+#include <arch/string.h>
 
 static int read_char(struct file *file, char *buf, size_t size)
 {

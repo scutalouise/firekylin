@@ -11,8 +11,8 @@
 #include <firekylin/kernel.h>
 #include <firekylin/driver.h>
 #include <firekylin/mm.h>
-#include <firekylin/string.h>
-#include <firekylin/portio.h>
+#include <arch/string.h>
+#include <arch/portio.h>
 
 /* minor dev suport by mem */
 #define MEM_MEM		1

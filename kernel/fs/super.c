@@ -12,7 +12,7 @@
 #include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/driver.h>
-#include <firekylin/string.h>
+#include <arch/string.h>
 #include <firekylin/fs.h>
 
 extern struct fs_operation minix_fs_operation;

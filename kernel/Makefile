@@ -16,7 +16,7 @@ CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
 
 OBJS=init/head.o init/main.o  \
      kernel/entry.o kernel/trap.o   kernel/util.o  \
-     kernel/sched.o kernel/signal.o kernel/clock.o \
+     kernel/sched.o kernel/signal.o kernel/clock.o kernel/sleeplock.o \
      kernel/fork.o  kernel/exec.o   kernel/wait.o kernel/exit.o kernel/trace.o \
      mm/memory.o \
      driver/char/console.o driver/char/keyboard.o driver/char/serial.o \
@@ -27,7 +27,7 @@ OBJS=init/head.o init/main.o  \
      fs/write.o fs/fcntl.o fs/create.o fs/pipe.o fs/ioctl.o fs/close.o \
      fs/minix/super.o fs/minix/inode.o fs/minix/bitmap.o \
      fs/minix/namei.o fs/minix/file.o fs/minix/operation.o \
-     lib/mktime.o lib/vsprintf.o
+     lib/mktime.o lib/vsprintf.o 
        
 .s.o:
 	@echo         AS	$<

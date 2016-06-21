@@ -11,7 +11,7 @@
 #include <firekylin/trap.h>
 #include <firekylin/driver.h>
 #include <firekylin/tty.h>
-#include <firekylin/portio.h>
+#include <arch/portio.h>
 
 void init_rs_contrl(unsigned short port)
 {

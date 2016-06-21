@@ -13,7 +13,7 @@
 #include <firekylin/sched.h>
 #include <firekylin/mm.h>
 #include <firekylin/fs.h>
-#include <firekylin/string.h>
+#include <arch/string.h>
 
 static pid_t last_pid = 0;
 
