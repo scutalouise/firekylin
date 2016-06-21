@@ -13,11 +13,15 @@
 #define ETH_ADDR_LEN	6
 
 struct ethhdr{
-	unsigned char  dst[ETH_ADDR_LEN];
-	unsigned char  src[ETH_ADDR_LEN];
-	unsigned short type;
-	unsigned char  data[0];	/* size 46-1500 */
+	unsigned char  eh_dst[ETH_ADDR_LEN];
+	unsigned char  eh_src[ETH_ADDR_LEN];
+	unsigned short eh_type;
+	unsigned char  eh_data[0];	/* size 46-1500 */
 };
+
+/* Values of ethhdr->eh_type */
+#define ETH_TYPE_ARP	0x0806
+#define ETH_TYPE_IP	0x0800
 
 #define ETH_HDR_LEN	14
 

@@ -55,12 +55,12 @@ static inline void outl(short port, int data)
 	__asm__("outl %%eax,%%dx" : :"a"(data),"d"(port));
 }
 
-static inline void ins(short port, char *buf, int size)
+static inline void ins(short port, void *buf, int size)
 {
 	__asm__("rep insw" :: "D"(buf),"d"(port),"c"(size>>1));
 }
 
-static inline void outs(short port, char *buf, int size)
+static inline void outs(short port, void *buf, int size)
 {
 	__asm__("rep outsw" :: "S"(buf),"d"(port),"c"(size>>1));
 }

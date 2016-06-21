@@ -13,6 +13,9 @@
 #include <firekylin/pci.h>
 #include <firekylin/mm.h>
 #include <firekylin/string.h>
+#include <net/ether.h>
+#include <net/arp.h>
+
 /*
  * ne2k_pci rquipped by bochs or qemu. other unknow.
  */
@@ -76,7 +79,7 @@ static struct pci_device *ne2k;
 static unsigned short base;
 static unsigned char irq;
 static unsigned char mac[6];
-static unsigned short rx_next=0x47;
+static unsigned short rx_next = 0x47;
 
 /*
  * ne2k reg : CR, ISR, IMR, DCR, TCR, TSR, RCR, RSR.
@@ -122,21 +125,118 @@ int ne2k_send(char *data, short len)
 	return 0;
 }
 
+char buf[1024];
+
+void ne2k_receive(void)
+{
+	struct {
+		unsigned char rsr;
+		unsigned char next;
+		union {
+			unsigned short len;
+			unsigned char len_s[2];
+		};
+	} info;
+	outb(base + RSAR0, 0);
+	outb(base + RSAR1, rx_next);
+
+	outb(base + RBCR0, 4);
+	outb(base + RBCR1, 0);
+
+	outb(base + CR, 0x12); // write and start.
+
+	ins(base + DATA, &info, 4);
+
+	printk("rsr:%x\n", info.rsr);
+	printk("next:%x\n", info.next);
+	printk("len:%x\n", info.len);
+
+	outb(base + RSAR0, 4);
+	outb(base + RSAR1, rx_next);
+
+	outb(base + RBCR0, info.len_s[0]);
+	outb(base + RBCR1, info.len_s[1]);
+
+	ins(base + DATA, buf, info.len);
+
+	while ((inb(base + ISR) & 0x40) == 0)
+		;
+	outb(base + ISR, 0x40);
+
+	rx_next = info.next;
+	if (rx_next == 0x40)
+		outb(base + BNRY, 0x80);
+	else
+		outb(base + BNRY, rx_next - 1);
+
+	struct ethhdr *eh = (struct ethhdr *) buf;
+	printk("dst: %x:%x:%x:%x:%x:%x\n", eh->eh_dst[0],
+			eh->eh_dst[1], eh->eh_dst[2],
+			eh->eh_dst[3], eh->eh_dst[4],
+			eh->eh_dst[5]);
+	printk("src: %x:%x:%x:%x:%x:%x\n", eh->eh_src[0], eh->eh_src[1],
+			eh->eh_src[2], eh->eh_src[3], eh->eh_src[4],
+			eh->eh_src[5]);
+	switch (swap_short(eh->eh_type)) {
+	case 0x0800:
+		printk("ip");
+		break;
+	case 0x0806:
+		printk("arp");
+		struct arphdr *ah = (struct arphdr *) eh->eh_data;
+		printk("htype:%x\n", swap_short(ah->ah_htype));
+		printk("ptype:%x\n", swap_short(ah->ah_ptype));
+		printk("haddr_len:%x\n", ah->ah_haddr_len);
+		printk("paddr_len:%x\n", ah->ah_paddr_len);
+		printk("src_haddr:%x:%x:%x:%x:%x:%x", ah->ah_src_haddr[0],
+				ah->ah_src_haddr[1], ah->ah_src_haddr[2],
+				ah->ah_src_haddr[3], ah->ah_src_haddr[4],
+				ah->ah_src_haddr[5]);
+		printk("src_paddr:%d.%d.%d.%d", ah->ah_src_paddr[0],
+				ah->ah_src_paddr[1], ah->ah_src_paddr[2],
+				ah->ah_src_paddr[3]);
+		printk("target_haddr:%x:%x:%x:%x:%x:%x", ah->ah_target_haddr[0],
+				ah->ah_target_haddr[1], ah->ah_target_haddr[2],
+				ah->ah_target_haddr[3], ah->ah_target_haddr[4],
+				ah->ah_target_haddr[5]);
+		printk("target_paddr:%d.%d.%d.%d", ah->ah_target_paddr[0],
+				ah->ah_target_paddr[1], ah->ah_target_paddr[2],
+				ah->ah_target_paddr[3]);
+		break;
+	default:
+		printk("unknow");
+	}
+}
+
 void do_ne2k(struct trapframe *tf)
 {
-	printk("ne2k intrrupt happen");
-	outb(base+ISR,0xff);
+	unsigned char isr;
+	isr = inb(base + ISR);
+	if (isr & 1) {
+		printk("resvice packet ok \n");
+		outb(base + ISR, 0x01);
+
+		ne2k_receive();
+
+		if (irq >= 8)
+			outb(0xa0, 0x20);
+		outb(0x20, 0x20);
+		return;
+	}
+	if (isr & 2) {
+		printk("send packet ok \n");
+		outb(base + ISR, 0x02);
+		if (irq >= 8)
+			outb(0xa0, 0x20);
+		outb(0x20, 0x20);
+		return;
+	}
+	printk("ne2k intrrupt happen:%x", inb(base + ISR));
+	outb(base + ISR, 0xff);
 	if (irq >= 8)
 		outb(0xa0, 0x20);
 	outb(0x20, 0x20);
 }
-
-
-char arpdata[80] =
-	"\xff\xff\xff\xff\xff\xff\xb0\xc4\x20\x00\x00\x00\x08\x06\x00\x01"
-	"\x08\x00\x06\x04\x00\x01\xb0\xc4\x20\x00\x00\x00\x0a\x00\x01\x15"
-	"\x00\x00\x00\x00\x00\x00\x0a\x00\x01\x08\x00\x00\x00\x00\x00\x00";
-
 
 void ne2k_init(void)
 {
@@ -149,28 +249,28 @@ void ne2k_init(void)
 	printk("ne2k--iobase:%x\n", base);
 	printk("ne2k--irq:%d\n", irq);
 
-	set_trap_handle(irq+0x20, do_ne2k);
+	set_trap_handle(irq + 0x20, do_ne2k);
 	if (irq >= 8)
-		outb(0xa1, inb(0xa1)&~(1<<(irq-8)));
+		outb(0xa1, inb(0xa1) & ~(1 << (irq - 8)));
 	else
-		outb(0x21, inb(0xa1)&~(1<<irq));
+		outb(0x21, inb(0xa1) & ~(1 << irq));
 
 	outb(base + RESET, inb(base + RESET));
 	while ((inb(base + ISR) & 0x80) == 0)
 		;
-	printk("ne2k reset done");
+	printk("ne2k reset done\n");
 
-	outb(base + CR,  0x21);
+	outb(base + CR, 0x21);
 	outb(base + DCR, 0x49);
 	outb(base + TCR, 0x00);
-	outb(base + RCR, 0x20);
+	outb(base + RCR, 0xFF);
 	outb(base + IMR, 0x00);
 	outb(base + ISR, 0xFF);
 
 	outb(base + TPSR, 0x40);
-	outb(base + PSTART, rx_next-1);
+	outb(base + PSTART, rx_next - 1);
 	outb(base + PSTOP, 0x80);
-	outb(base + BNRY, rx_next-1);
+	outb(base + BNRY, rx_next - 1);
 	outb(base + CR, 0x61);
 	outb(base + CURR, rx_next);
 	outb(base + CR, 0x21);
@@ -179,36 +279,22 @@ void ne2k_init(void)
 	outb(base + RSAR1, 0);
 	outb(base + RBCR0, 24);
 	outb(base + RBCR1, 0);
-	outb(base + CR,    0x0A);
+	outb(base + CR, 0x0A);
 	printk("ne2k MAC: ");
-	for(int i=0;i<6;i++){
-		mac[i]=inb(base+DATA);
-		printk("%x:",mac[i]);
+	for (int i = 0; i < 6; i++) {
+		mac[i] = inb(base + DATA);
+		printk("%x:", mac[i]);
 	}
 	printk("\b\n");
 
 	outb(base + CR, 0x61);
-	outb(base + PAR0,mac[0]);
-	outb(base + PAR1,mac[1]);
-	outb(base + PAR2,mac[2]);
-	outb(base + PAR3,mac[3]);
-	outb(base + PAR4,mac[4]);
-	outb(base + PAR5,mac[5]);
+	outb(base + PAR0, mac[0]);
+	outb(base + PAR1, mac[1]);
+	outb(base + PAR2, mac[2]);
+	outb(base + PAR3, mac[3]);
+	outb(base + PAR4, mac[4]);
+	outb(base + PAR5, mac[5]);
 
 	outb(base + CR, 0x22);
-	outb(base + IMR,0x1b);
-
-	int j='A';
-	//while(1){
-		memset(arpdata,j,80);
-		j++;
-	ne2k_send(arpdata,80);
-
-	for(int i=0;i<0xffffff;i++)
-		;
-
-	memset(arpdata,j,80);
-			j++;
-		ne2k_send(arpdata,80);
-	//}
+	outb(base + IMR, 0x1b);
 }

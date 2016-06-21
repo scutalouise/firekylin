@@ -26,4 +26,36 @@ extern clock_t clock;
 
 extern void do_exit(long status);
 
+static inline short swap_short(short data)
+{
+	union {
+		char c[2];
+		short d;
+	} u;
+	char t;
+	u.d = data;
+	t = u.c[0];
+	u.c[0] = u.c[1];
+	u.c[1] = t;
+
+	return u.d;
+}
+
+static inline int swap_int(int data)
+{
+	union {
+		char c[4];
+		int d;
+	} u;
+	char t;
+	u.d = data;
+	t = u.c[0];
+	u.c[0] = u.c[3];
+	u.c[3] = t;
+	t = u.c[1];
+	u.c[1] = u.c[2];
+	u.c[2] = t;
+	return u.d;
+}
+
 #endif

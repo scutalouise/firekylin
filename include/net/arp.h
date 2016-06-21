@@ -12,45 +12,37 @@
 
 #include <net/ether.h>
 
-#define	ARP_MAC_LEN	6		/* Size of Ethernet MAC address	*/
-#define	ARP_IPADDR_LEN	4		/* Size of IP address		*/
+#define	ARP_HADDR_LEN	ETH_ADDR_LEN	/* Size of Ethernet MAC address	*/
+#define	ARP_PADDR_LEN	4		/* Size of IP address		*/
 
-#define	ARP_HTYPE	1		/* Ethernet hardware type	*/
-#define ARP_PTYPE	0x0800		/* IP protocol type		*/
 
-#define ARP_OP_REQ	1		/* Request op code		*/
-#define ARP_OP_RPLY	2		/* Reply op code		*/
-
-#define	ARP_ENTER_SIZE	16		/* Number of entries in a cache	*/
-
-#define	ARP_REQUSET	4		/* Num. retries for ARP request	*/
-
-#define	ARP_TIMEOUT	300		/* Retry timer in milliseconds	*/
-
-#define	AR_FREE		0		/* Slot is unused		*/
-#define	AR_PENDING	1		/* Resolution in progress	*/
-#define	AR_RESOLVED	2		/* Entry is valid		*/
-
-#pragma pack(2)
-struct arpkpt{
-	struct ethhdr  arp_ethhdr;
-	unsigned short arp_htype;
-	unsigned short arp_ptype;
-	unsigned char  arp_mac_len;
-	unsigned char  arp_ipaddr_len;
-	unsigned char  arp_op;
-	unsigned char  arp_src_mac[ARP_MAC_LEN];
-	unsigned char  arp_src_ipaddr[ARP_IPADDR_LEN];
-	unsigned char  arp_target_mac[ARP_MAC_LEN];
-	unsigned char  arp_target_ipaddr[ARP_IPADDR_LEN];
+struct arphdr{
+	unsigned short ah_htype;
+	unsigned short ah_ptype;
+	unsigned char  ah_haddr_len;
+	unsigned char  ah_paddr_len;
+	unsigned short ah_op;
+	unsigned char  ah_src_haddr[ARP_HADDR_LEN];
+	unsigned char  ah_src_paddr[ARP_PADDR_LEN];
+	unsigned char  ah_target_haddr[ARP_HADDR_LEN];
+	unsigned char  ah_target_paddr[ARP_PADDR_LEN];
 };
-#pragma pack()
+
+/* Values of arphdr->ah_htype */
+#define ARP_HTYPE_ETHER		1	/* Ethernet hardware type	*/
+
+/* Values of arphdr->ah_ptype */
+#define ARP_PTYPE_IP		0x0800	/* IP protocol type		*/
+
+/* Values of arphdr->ah_op    */
+#define ARP_OP_REQUEST		1	/* Request op code		*/
+#define ARP_OP_REPLY		2	/* Reply op code		*/
 
 struct arpentry{
 	struct aprentry *prev;
 	struct aprentry *next;
-	unsigned char mac[ARP_MAC_LEN];
-	unsigned char ip[ARP_IPADDR_LEN];
+	unsigned char mac[ARP_HADDR_LEN];
+	unsigned char ip[ARP_PADDR_LEN];
 };
 
 #endif
