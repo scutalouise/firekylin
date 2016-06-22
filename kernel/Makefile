@@ -12,12 +12,14 @@ CC=gcc
 
 SFLAGS=-f elf32
 CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
-       -fno-stack-protector -I ../include
+       -fno-stack-protector -I ./include -I ../include
 
 OBJS=init/head.o init/main.o  \
      kernel/entry.o kernel/trap.o   kernel/util.o  \
-     kernel/sched.o kernel/signal.o kernel/clock.o kernel/sleeplock.o \
-     kernel/fork.o  kernel/exec.o   kernel/wait.o kernel/exit.o kernel/trace.o \
+     kernel/sched.o kernel/signal.o kernel/clock.o \
+     kernel/sleeplock.o \
+     kernel/fork.o  kernel/exec.o   kernel/wait.o \
+     kernel/exit.o kernel/trace.o \
      mm/memory.o \
      driver/char/console.o driver/char/keyboard.o driver/char/serial.o \
      driver/char/tty.o driver/char/mem.o\
@@ -27,7 +29,7 @@ OBJS=init/head.o init/main.o  \
      fs/write.o fs/fcntl.o fs/create.o fs/pipe.o fs/ioctl.o fs/close.o \
      fs/minix/super.o fs/minix/inode.o fs/minix/bitmap.o \
      fs/minix/namei.o fs/minix/file.o fs/minix/operation.o \
-     lib/mktime.o lib/vsprintf.o 
+     lib/mktime.o lib/vsprintf.o lib/ctype.o lib/malloc.o
        
 .s.o:
 	@echo         AS	$<
@@ -35,13 +37,13 @@ OBJS=init/head.o init/main.o  \
 .c.o:
 	@echo         CC	$<
 	@$(CC) $(CFLAGS) -o $@ $<
-	
-kernel.bin: $(OBJS)
+
+kernel1.bin: $(OBJS)
 	@echo         LD      OBJS
 	@ld -m elf_i386 -e _start -Ttext 0xC0010000 --oformat binary \
 	    -Map kernel.map -o kernel.bin $(OBJS)
 	@ld -m elf_i386 -e _start -Ttext 0xC0010000  \
-	    -Map kernel.map -o kernel.elf $(OBJS)	
+	    -Map kernel.map -o kernel.elf $(OBJS)
 	
 install:kernel.bin
 	cp kernel.bin $(PREFIX)/kernel.bin

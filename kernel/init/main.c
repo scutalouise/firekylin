@@ -16,15 +16,6 @@
 #include <arch/string.h>
 #include <firekylin/multiboot2.h>
 
-#define CMOSREAD(value,index)			\
-__asm__("mov $0x70,%%dx\t\n"  			\
-        "out %%al,%%dx\t\n"			\
-        "inc %%dx\t\n"				\
-        "in  %%dx,%%al\t\n"			\
-        :"=a"(value)				\
-        :"a"(index)				\
-        :"dx")
-
 #define BCD_BIN(c)	(c=c/16*10+c%16)
 
 extern char _edata[];
@@ -49,12 +40,12 @@ static void time_init()
 			int sec);
 	int year, month, day, hour, min, sec;
 
-	CMOSREAD(sec, 0);
-	CMOSREAD(min, 2);
-	CMOSREAD(hour, 4);
-	CMOSREAD(day, 7);
-	CMOSREAD(month, 8);
-	CMOSREAD(year, 9);
+	sec=readcoms(0);
+	min=readcoms(2);
+	hour=readcoms(4);
+	day=readcoms(7);
+	month=readcoms(8);
+	year=readcoms(9);
 	BCD_BIN(sec);
 	BCD_BIN(min);
 	BCD_BIN(hour);
@@ -75,16 +66,7 @@ void start(void)
 	pci_init();
 	sched_init();
 	clock_init();
-
 	ne2k_init();
-
-	//memset(buf,0xff,80);
-
-//	ne2k_send(buf,80);
-//	memset(buf,0xAA,80);
-	//ne2k_send(data,42);
-
-
 
 	if (sys_fork()) {
 		__asm__("__hlt:hlt ; jmp __hlt");
