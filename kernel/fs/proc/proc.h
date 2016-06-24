@@ -16,8 +16,8 @@
 #include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/fs.h>
-#include <firekylin/string.h>
-#include <firekylin/bitmap.h>
+#include <arch/string.h>
+#include <arch/bits.h>
 
 extern int proc_read_super(struct super *super);
 extern int proc_write_super(struct super *super);

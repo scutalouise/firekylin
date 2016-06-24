@@ -62,9 +62,9 @@ void dump_pci(void)
 
 struct pci_device *pci_find_device(unsigned short vendor, unsigned short device)
 {
-	struct pci_device *pci=pci_device_table;
+	struct pci_device *pci = pci_device_table;
 	for (int i = 0; i < pci_device_count; i++) {
-		if ((vendor == pci->vendor_id)&& (device ==pci->device_id))
+		if ((vendor == pci->vendor_id) && (device == pci->device_id))
 			return pci;
 		pci++;
 	}

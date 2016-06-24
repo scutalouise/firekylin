@@ -43,10 +43,11 @@ static inline void pipe_putch(struct inode *inode, char ch)
 	i_ext->tail  = ( i_ext->head  + 1) / 4096;
 }
 
-int read_pipe(struct inode *inode, char *buf, size_t size)
+int read_pipe(struct file *file, char *buf, size_t size)
 {
 	int chars;
 	int left = size;
+	struct inode *inode=file->f_inode;
 	struct pipe_i_ext *i_ext=(struct pipe_i_ext *)inode->i_ext;
 
 	while (left) {
@@ -66,10 +67,11 @@ int read_pipe(struct inode *inode, char *buf, size_t size)
 	return size - left;
 }
 
-int write_pipe(struct inode *inode, char *buf, size_t size)
+int write_pipe(struct file *file, char *buf, size_t size)
 {
 	int chars;
 	int left = size;
+	struct inode *inode=file->f_inode;
 	struct pipe_i_ext *i_ext=(struct pipe_i_ext *)inode->i_ext;
 
 	while (left) {

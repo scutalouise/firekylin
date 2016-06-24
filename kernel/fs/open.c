@@ -98,18 +98,19 @@ int sys_open(char *path, int flag, mode_t mode)
 
 	if (!(inode = namei(path, NULL))) {
 		if (!(flag & O_CREAT)) {
-			if (sys_mknod(path, S_IFREG | (mode & 07777), 0) < 0)
-				return -EAGAIN;
+			return -ENOENT;
 		}
+		if (sys_mknod(path, S_IFREG | (mode & 07777), 0) < 0)
+			return -EAGAIN;
 		inode = namei(path, NULL);
 	}
-
 	iunlock(inode);
 	file->f_count = 1;
 	file->f_inode = inode;
 	file->f_pos = 0;
 	file->f_mode = flag;
 	current->file[fd] = file;
+
 	return fd;
 }
 

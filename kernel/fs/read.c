@@ -48,7 +48,7 @@ static int read_blk(struct file *file, char *buf, size_t size)
 	return size - left;
 }
 
-extern int read_pipe(struct inode *inode, char *buf, size_t size);
+extern int read_pipe(struct file *file, char *buf, size_t size);
 
 int sys_read(int fd, char *buf, size_t size)
 {
@@ -78,8 +78,7 @@ int sys_read(int fd, char *buf, size_t size)
 		res = read_blk(file, buf, size);
 		break;
 	case S_IFIFO:
-		res = 0;
-		//res = read_pipe(inode, buf, size);
+		res = read_pipe(file, buf, size);
 		break;
 	default:
 		res = -EIO;

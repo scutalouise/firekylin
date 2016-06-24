@@ -12,10 +12,11 @@
 #include <stdio.h>
 #include <string.h>
 
+char buf[1024];
+
 int main(int argc, char **argv)
 {
 	int fd1,fd2,size;
-	char buf[1024];
 
 	if(argc<3){
 		printf("%s\n","usage:cp src dst");

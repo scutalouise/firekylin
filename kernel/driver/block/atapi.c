@@ -17,7 +17,6 @@
 #include "atapi.h"
 
 struct request {
-	unsigned long LBA;
 	unsigned char busy;
 	unsigned char cmd;
 	unsigned char nr_sect;
@@ -150,7 +149,6 @@ static void hd_identify(void)
 	} while ((tmp & (HD_STAT_BUSY | HD_STAT_DRQ)) != HD_STAT_DRQ);
 	insw(0x1f0, (char*) buf, 512);
 
-	hd_req.LBA = buf[60] | buf[61] << 16;
 	hd_size[0].start_sector = 0;
 	hd_size[0].nr_sector = buf[60] | buf[61] << 16;
 

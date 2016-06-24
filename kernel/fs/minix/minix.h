@@ -19,7 +19,6 @@
 #include <firekylin/kernel.h>
 #include <firekylin/fs.h>
 
-
 struct minix1_inode {
 	unsigned short i_mode;
 	unsigned short i_uid;

@@ -165,7 +165,7 @@ void arch_init(void)
 void set_trap_handle(int index, void (*fn)(struct trapframe *tf))
 {
 	if (index < 0 || index > 0x30) {
-		panic("set_trap_handle:intdx=%d", index);
+		panic("set_trap_handle:index=%d", index);
 	}
 
 	trap_handle[index] = fn;
@@ -181,12 +181,12 @@ void execption(unsigned long unuesd)
 	}
 
 	if (tf->nr >= 0x20) {
-		printk("\nUncatched Interrupt %x\n", tf->nr);
+		printk("Uncatched Interrupt %x\n", tf->nr);
 		return;
 	}
 
-	printk("\nException:%d\tError code:%x\n", tf->nr, tf->err);
-	printk("CS:EIP=%x:%x\t EFLAGS=%x\t SS:ESP=%x:%x\n", tf->cs, tf->eip,
+	printk("Exception:%d\tError code:%d\n", tf->nr, tf->err);
+	printk("CS:EIP=%8:%8x\t EFLAGS=%8x\t SS:ESP=%8x:%8x\n", tf->cs, tf->eip,
 			tf->eflags, tf->ss, tf->esp);
 	panic("Current pid:%d\n", (CURRENT_TASK())->pid);
 }

@@ -24,7 +24,7 @@ char * asctime(struct tm * time)
 	if (time == NULL)
 		strcpy(buf, "??? ??? ?? ??:??:?? ????\n");
 	else{
-		i=sprintf(buf, "%.3s %.3s %2d %02d:%02d:%02d %04d\n",
+		i=sprintf(buf, "%.3s %.3s %2d %02d:%02d:%02d %04d",
 				day[time->tm_wday], month[time->tm_mon],
 				time->tm_mday, time->tm_hour, time->tm_min,
 				time->tm_sec, 1900 + time->tm_year);

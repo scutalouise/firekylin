@@ -7,7 +7,7 @@
 # * it under the terms of The BSD License, see LICENSE.
 # */
 
-megs:64
+megs:128
 
 romimage: file="D:/Program Files/bochs/BIOS-bochs-latest"
 vgaromimage: file="D:/Program Files/bochs/VGABIOS-lgpl-latest"

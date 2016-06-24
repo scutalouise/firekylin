@@ -15,23 +15,22 @@
 #define	ARP_HADDR_LEN	ETH_ADDR_LEN	/* Size of Ethernet MAC address	*/
 #define	ARP_PADDR_LEN	4		/* Size of IP address		*/
 
-
 struct arphdr{
-	unsigned short ah_htype;
-	unsigned short ah_ptype;
-	unsigned char  ah_haddr_len;
-	unsigned char  ah_paddr_len;
-	unsigned short ah_op;
-	unsigned char  ah_src_haddr[ARP_HADDR_LEN];
-	unsigned char  ah_src_paddr[ARP_PADDR_LEN];
-	unsigned char  ah_target_haddr[ARP_HADDR_LEN];
-	unsigned char  ah_target_paddr[ARP_PADDR_LEN];
+	unsigned short ah_hrd;		/* format of hardware address	*/
+	unsigned short ah_pro;		/* format of protocol address	*/
+	unsigned char  ah_hln;		/* length of hardware address 	*/
+	unsigned char  ah_pln;		/* length of protocal address	*/
+	unsigned short ah_op;		/* arp/rarp operation		*/
+	unsigned char  ah_sha[ARP_HADDR_LEN];
+	unsigned char  ah_spa[ARP_PADDR_LEN];
+	unsigned char  ah_tha[ARP_HADDR_LEN];
+	unsigned char  ah_tpa[ARP_PADDR_LEN];
 };
 
-/* Values of arphdr->ah_htype */
+/* Values of arphdr->ah_hrd */
 #define ARP_HTYPE_ETHER		1	/* Ethernet hardware type	*/
 
-/* Values of arphdr->ah_ptype */
+/* Values of arphdr->ah_pro */
 #define ARP_PTYPE_IP		0x0800	/* IP protocol type		*/
 
 /* Values of arphdr->ah_op    */

@@ -7,11 +7,11 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
+#include <sys/param.h>
 #include <firekylin/kernel.h>
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
 
-#define NR_INODE	32
 struct inode            inode_table[NR_INODE];
 struct inode          * root_inode;
 sleeplock_t             inode_table_lock;

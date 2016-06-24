@@ -94,7 +94,7 @@ void do_page_fault(struct trapframe *tf)
 		return;
 
 	if (cr2 > 0x41000000 || cr2 < 0x40000000) {
-		printk("CS:EIP=%x:%x\t EFLAGS=%x\t SS:ESP=%x:%x\t", tf->cs,
+		printk("CS:EIP=%8x:%8x\t EFLAGS=%8x\t SS:ESP=%8x:%8x\t", tf->cs,
 				tf->eip, tf->eflags, tf->ss, tf->esp);
 		panic("cr2=%x\n", cr2);
 	}

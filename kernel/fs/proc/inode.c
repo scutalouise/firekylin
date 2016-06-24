@@ -11,7 +11,7 @@
 
 int proc_read_inode(struct inode * inode)
 {
-
+	return 0;
 }
 
 int proc_write_inode(struct inode * inode)

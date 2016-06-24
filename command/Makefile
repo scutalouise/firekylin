@@ -32,4 +32,5 @@ clean:
 	-rm *.o $(OBJS)
 
 $(OBJS):%:%.o $(LIB)
-	$(LD) -o  $@  $<  $(LIB)
+	@echo CC $@
+	@$(LD) -o  $@  $<  $(LIB)

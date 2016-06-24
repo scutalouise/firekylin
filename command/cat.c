@@ -11,11 +11,11 @@
 #include <sys/fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+
+char buf[1024];
 
 int main(int argc, char *argv[])
 {
-	char buf[1024];
 	int fd,size;
 	if(argc<2)
 		return 0;

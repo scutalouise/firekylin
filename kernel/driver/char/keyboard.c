@@ -56,6 +56,7 @@ static int shiftr;
 static int ctrlr;
 static int ctrll;
 static int cap;
+
 extern void select_con(int con);
 
 static void do_kbd(struct trapframe *tf)

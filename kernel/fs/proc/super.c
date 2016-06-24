@@ -12,7 +12,7 @@
 int proc_read_super(struct super *super)
 {
 
-
+	return 0;
 
 }
 

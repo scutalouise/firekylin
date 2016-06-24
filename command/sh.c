@@ -17,12 +17,27 @@
 
 #define MAX_ARG 64
 
-char *ps1 = "[firkylin~]#";
+char *ps1 = "sh>";
 
 struct cmd_struct {
 	char *name;
 	int (*fun)(int, char **);
 };
+
+int do_help(int argc, char **argv)
+{
+	printf("help information:\n");
+	printf("\tcls       clear screen\n");
+	printf("\tcd        change current working directory\n");
+	printf("\techo      write arguments to standard output\n");
+	printf("\thelp      print this information\n");
+	printf("\tls        list directory\n");
+	printf("\tcat       concatenate and print files\n");
+	printf("\tcp        copy files\n");
+	printf("\tmkdir     create dir\n");
+	printf("\trmdir     rm empty dir\n");
+	return 0;
+}
 
 int do_echo(int argc, char **argv)
 {
@@ -33,7 +48,7 @@ int do_echo(int argc, char **argv)
 	return 0;
 }
 
-int do_clear(int argc, char **argv)
+int do_cls(int argc, char **argv)
 {
 	printf("\0330;0P");
 	for (int i = 0; i < 8 * 24; i++) {
@@ -94,13 +109,17 @@ int parcmd(char *buf, char **argv)
 	return i;
 }
 
-struct cmd_struct builtins[3] = { { "cd", do_cd }, { "echo", do_echo }, {
-		"clear", do_clear }, };
+struct cmd_struct builtins[] = {
+	{ "cd",    do_cd },
+	{ "echo",  do_echo },
+	{ "clear", do_cls },
+	{ "help",  do_help }
+};
 
 int execcmd(int argc, char **argv)
 {
 	int pid;
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < sizeof(builtins) / sizeof(struct cmd_struct); i++) {
 		if (strcmp(argv[0], builtins[i].name) == 0)
 			return (*builtins[i].fun)(argc, argv);
 	}

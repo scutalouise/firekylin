@@ -48,22 +48,17 @@
 #define F_SPECIAL	32
 #define F_SMALL		64
 
-static char *uppers="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-static char *lowers="0123456789abcdefghijklmnopqrstuvwxyz";
+static char *digits="0123456789ABCDEF";
 
 static char *i_format(char *str, int num, int base, int width, int prec,
 		int flag)
 {
 	char c, sign, tmp[36];
 	int i;
-	char *digits;
 
-	if (base < 2 || base > 36)
-		return str;
 	if (flag & F_LEFT)
 		flag &= ~F_ZEROPAD;
 	c = (flag & F_ZEROPAD) ? '0' : ' ';
-	digits = (flag & F_SMALL) ? lowers : uppers;
 
 	if ((flag&F_SIGN) && num<0) {
 		sign='-';
@@ -226,24 +221,13 @@ int vsprintf(char *buf, char *fmt, va_list arg)
 					width, prec, flag);
 			break;
 
-		case 'p':
-			if (width == -1) {
-				width = 8;
-				flag |= F_ZEROPAD;
-			}
-			str = i_format(str, (long) (va_arg(arg, void*)), 16,
-					width, prec, flag);
-			break;
-
 		case 'x':
-			flag |= F_SMALL;
 		case 'X':
 			str = i_format(str, va_arg(arg, unsigned long), 16,
 					width, prec, flag);
 			break;
 
 		case 'd':
-		case 'i':
 			flag |=F_SIGN;
 		case 'u':
 			str = i_format(str, va_arg(arg, unsigned long), 10,
