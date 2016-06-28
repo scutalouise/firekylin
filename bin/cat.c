@@ -17,16 +17,19 @@ char buf[1024];
 int main(int argc, char *argv[])
 {
 	int fd,size;
-	if(argc<2)
-		return 0;
+	//if(argc<2)
+	//	return 0;
 
-	fd=open(argv[1],O_RDWR);
-	if(fd <0){
-		printf("fopen error");
-		exit(0);
-	}
+	//fd=open(argv[1],O_RDWR);
+//	if(fd <0){
+//		printf("fopen error");
+//		exit(0);
+//	}
+//	printf("\n in cat");
+	fd=0;
 	while((size=read(fd,buf,1024)))
 	{
+		printf("cat  %d",size);
 		write(STDOUT_FILENO,buf,size);
 	}
 }

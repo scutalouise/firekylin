@@ -9,6 +9,7 @@
 
 #include <sys/fcntl.h>
 #include <sys/unistd.h>
+#include <sys/stat.h>
 #include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
@@ -49,7 +50,7 @@ int read_pipe(struct file *file, char *buf, size_t size)
 	int left = size;
 	struct inode *inode=file->f_inode;
 	struct pipe_i_ext *i_ext=(struct pipe_i_ext *)inode->i_ext;
-
+	printk("-----pipe read come here-------");
 	while (left) {
 		chars = min(left, i_ext->size);
 		for (int i = chars; i > 0; i--) {
@@ -61,7 +62,8 @@ int read_pipe(struct file *file, char *buf, size_t size)
 		if (inode->i_count < 2) {
 			return size - left;
 		}
-		sleep_on(&i_ext->wait);
+		if(left)
+			sleep_on(&i_ext->wait);
 	}
 	wake_up(&i_ext->wait);
 	return size - left;
@@ -73,7 +75,7 @@ int write_pipe(struct file *file, char *buf, size_t size)
 	int left = size;
 	struct inode *inode=file->f_inode;
 	struct pipe_i_ext *i_ext=(struct pipe_i_ext *)inode->i_ext;
-
+	printk("pipe write----");
 	while (left) {
 		chars = min(left,4096- i_ext->size);
 		for (int i = chars; i > 0; i--) {
@@ -85,7 +87,8 @@ int write_pipe(struct file *file, char *buf, size_t size)
 		if (inode->i_count < 2) {
 			return size - left;
 		}
-		sleep_on(&i_ext->wait);
+		if(left)
+			sleep_on(&i_ext->wait);
 	}
 	wake_up(&i_ext->wait);
 	return size - left;
@@ -119,41 +122,47 @@ int pipe_ioctl(struct inode *inode, int cmd, long arg)
 	}
 }
 
-int sys_pipe(int res_fd[2])
+int sys_pipe(int *res_fd)
 {
 	int fd[2];
 	struct file *filp[2];
 	struct task *current=CURRENT_TASK();
 	struct inode *inode;
 	int j=0;
+	//printk("pipe1  ");
 	for(int i=0; j<2&& i<NR_FILE;i++)
 		if(!file_table[i].f_count)
 			filp[j++]=file_table+i;
 	if(j<2)
 		return -EAGAIN;
+	//printk("pipe2  ");
 	j=0;
 	for(int i=0; j<2 && i<NR_OPEN ;i++)
 		if(!current->file[i])
 			fd[j++]=i;
 	if(j<2)
 		return -EAGAIN;
+	//printk("pipe3  ");
 	if(!(inode=iget(0,0)))
 		return -EAGAIN;
-
+	//printk("pipe4  ");
 	pipe_open(inode);
+	inode->i_mode=S_IFIFO;
 	inode->i_count++;
 	iunlock(inode);
-
+	//printk("pipe5  ");
 	filp[0]->f_count=filp[1]->f_count=1;
 	filp[0]->f_inode=filp[1]->f_inode=inode;
 	filp[0]->f_pos=filp[1]->f_pos=0;
 	filp[0]->f_mode=O_READ ;
 	filp[1]->f_mode=O_WRITE;
-
+	//printk("pipe6  ");
 	current->file[fd[0]]=filp[0];
 	current->file[fd[1]]=filp[1];
-
-	res_fd[0]=fd[0];
-	res_fd[1]=fd[1];
+	//printk("pipe7  ");
+	*res_fd=fd[0];
+	//printk("pipe8.1  ");
+	*++res_fd=fd[1];
+	//printk("pipe8  ");
 	return 0;
 }

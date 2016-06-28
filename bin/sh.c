@@ -112,7 +112,7 @@ int parcmd(char *buf, char **argv)
 struct cmd_struct builtins[] = {
 	{ "cd",    do_cd },
 	{ "echo",  do_echo },
-	{ "clear", do_cls },
+	{ "cls", do_cls },
 	{ "help",  do_help }
 };
 
@@ -139,6 +139,8 @@ int main(void)
 	char *argv[MAX_ARG];
 	int argc;
 	char buf[100];
+
+	do_cls(0,NULL);
 
 	printf("\n\rWelcome To FireKylin 0.1 !\n\r");
 	printf("More info:http://bbs.firekylin.cc\n\r");

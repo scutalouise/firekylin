@@ -159,7 +159,6 @@ void arch_init(void)
 	gdt_init();
 	idt_init();
 	i8259_init();
-	irq_enable();
 }
 
 void set_trap_handle(int index, void (*fn)(struct trapframe *tf))

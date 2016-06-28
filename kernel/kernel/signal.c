@@ -26,16 +26,20 @@ void sigsend(struct task *p, int signo)
 	}
 }
 
-void do_signal(struct trapframe *tf)
+void do_signal(unsigned long unused)
 {
+	struct trapframe *tf=(struct trapframe *)&unused;
+	struct task * current;
 	sigset_t signal;
 	int signr;
 
-	struct task * current = CURRENT_TASK();
+	if(!(tf->cs & 3))
+		return ;
+
+	current = CURRENT_TASK();
 
 	signal = current->sigarrive & (~current->sigmask)
 			& (~current->sigsuspend);
-
 	if (!signal)
 		return;
 

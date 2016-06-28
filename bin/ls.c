@@ -71,21 +71,14 @@ void out(char *name, struct stat *buf)
 
 int do_ls(char *name)
 {
-	int fd;
 	struct stat buf;
 	DIR *dp;
 	struct dirent *de;
 	char path[256];
 	int i;
 
-	fd = open(name, O_READ);
-	if (fd < 0) {
-		printf("file open error");
-		return 0;
-	}
-
-	if (fstat(fd, &buf) < 0) {
-		printf("file stat error");
+	if (stat(name, &buf) < 0) {
+		printf("stat error:%s\n", name);
 		return 0;
 	}
 
@@ -94,17 +87,16 @@ int do_ls(char *name)
 		return 0;
 	}
 
-	close(fd);
 	dp = opendir(name);
 	if (!dp) {
-		printf("diropen error");
+		printf("diropen error:%s", name);
 		return 0;
 	}
 
 	while ((de = readdir(dp))) {
 		if (de->d_name[0] == '.' && (!opt_a))
 			continue;
-		if(name[strlen(name)-1]=='/')
+		if (name[strlen(name) - 1] == '/')
 			i = sprintf(path, "%s%s", name, de->d_name);
 		else
 			i = sprintf(path, "%s/%s", name, de->d_name);
@@ -115,18 +107,14 @@ int do_ls(char *name)
 		}
 		out(de->d_name, &buf);
 	}
+	closedir(dp);
 	return 0;
 }
 
 int main(int argc, char **argv)
 {
-	int count=0;
+	int count = 0;
 	opt_a = opt_l = 0;
-	if (argc == 1) {
-		do_ls(".");
-		printf("\n");
-		return 0;
-	}
 
 	for (int i = 1; i < argc; i++) {
 		if (argv[i][0] == '-') {
@@ -143,8 +131,9 @@ int main(int argc, char **argv)
 		do_ls(argv[i]);
 		count++;
 	}
-	if(!count)
+	if (!count)
 		do_ls(".");
-	printf("\n");
+	if (!opt_l)
+		printf("\n");
 	return 0;
 }

@@ -16,7 +16,7 @@
 int main(int argc, char **argv)
 {
 	char *envp[]={
-		"PATH=/bin",
+		"PATH=/bin:/test",
 		NULL
 	};
 

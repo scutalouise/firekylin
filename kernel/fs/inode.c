@@ -74,7 +74,7 @@ void iput(struct inode * inode)
 	if (inode->i_count == 0)
 		panic("put_inode:put free inode");
 
-	if (--inode->i_count == 0) {
+	if (--inode->i_count == 0 && inode->i_dev) {
 		inode->i_op->inode_write(inode);
 	}
 	iunlock(inode);

@@ -7,9 +7,10 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#include <sys/types.h>
-#include <sys/syscall.h>
-#include <sys/unistd.h>
-#include <errno.h>
+#include "stdio_loc.h"
 
-__syscall1(int, pipe, int, fd[2]);
+FILE *stdin =  { 0, _IOLBF, 0, 0, 0, 0 };
+FILE *stdout = { 1, _IOLBF, 0, 0, 0, 0 };
+FILE *stderr = { 0, _IONBF, 0, 0, 0, 0 };
+
+FILE * __iotab[MAX_OPEN] = { stdin, stdout, stderr, };

@@ -55,10 +55,8 @@ if [ ! $? ]; then
 	exit
 fi
 
-echo "installing lib ..."
-sudo make PREFIX=$HOME/tmpdir/lib  install -C libc    2>&1 > /dev/null
 echo "installing command ..."
-sudo make PREFIX=$HOME/tmpdir/bin  install -C command 2>&1 > /dev/null
+sudo make PREFIX=$HOME/tmpdir/bin  install -C bin 2>&1 > /dev/null
 
 sync
 sync

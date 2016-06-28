@@ -26,7 +26,11 @@ typedef struct __iobuf{
 	char * _ptr;
 }FILE;
 
-#define MAX_OPEN	NR_FILE
+#define _IONBF		0x0001
+#define _IOLBF		0x0002
+#define _IOFBF		0x0003
+#define _IOERR		0x0010
+#define _IOEOF		0x0020
 
 extern FILE * stdin;
 extern FILE * stdout;

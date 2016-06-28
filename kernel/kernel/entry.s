@@ -15,7 +15,7 @@ global  hwint0,hwint1,hwint2,hwint3,hwint4,hwint5,hwint6,hwint7
 global  hwint8,hwint9,hwintA,hwintB,hwintC,hwintD,hwintE,hwintF
 global  syscall
 
-extern  execption
+extern  execption, do_signal
 extern	sys_fork,   sys_exec,   sys_sbrk,    sys_wait,    sys_exit
 extern 	sys_trace,  sys_alarm,  sys_sigctl,  sys_getpid,  sys_setgrp
 extern  sys_setsid, sys_getuid, sys_setuid,  sys_getgid,  sys_setgid
@@ -206,6 +206,7 @@ syscall:
 	call [syscall_table+4*eax]
 	push eax
 _syscall_return:
+	call do_signal
 	cli
 	pop eax
 	pop ebx

@@ -11,10 +11,10 @@ all: complie cdrom hdimg
 
 complie:
 	make -C kernel
-	make -C libc
-	make -C command
+	make -C lib
+	make -C bin
 	
-cdrom: 
+cdrom:
 	@make complie 2>&1 > /dev/null
 	@sh script/mkiso.sh
 	
@@ -23,8 +23,8 @@ hdimg:
 	
 clean:
 	make clean -C kernel
-	make clean -C libc
-	make clean -C command
+	make clean -C lib
+	make clean -C bin
 	-rm -rf iso
 	-rm cdrom.iso hd.img
 

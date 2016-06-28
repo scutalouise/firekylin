@@ -9,14 +9,14 @@
 
 AS=nasm
 CC=gcc
-LD=ld -m elf_i386 -T ../script/ldscript
+LD=ld -m elf_i386 -T ../script/ldscript  ../lib/csu/csu.o
 
 SFLAGS=-f elf32
 CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../include
-LIB=../libc/libc.a
+LIB=../lib/crt/crt.a
 
-OBJS=init sh ls cat sync mkdir cp rm rmdir ln vi mount umount
+OBJS=init sh ls cat sync mkdir cp rm rmdir ln vi mount umount tpipe tsig
 
 .s.o:
 	@$(AS) $(SFLAGS) -o $@  $<
@@ -32,5 +32,5 @@ clean:
 	-rm *.o $(OBJS)
 
 $(OBJS):%:%.o $(LIB)
-	@echo CC $@
+	@echo CC       $<
 	@$(LD) -o  $@  $<  $(LIB)

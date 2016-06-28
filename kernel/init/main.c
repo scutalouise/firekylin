@@ -12,6 +12,7 @@
 #include <firekylin/driver.h>
 #include <firekylin/mm.h>
 #include <firekylin/fs.h>
+#include <firekylin/lock.h>
 #include <arch/portio.h>
 #include <arch/string.h>
 #include <firekylin/multiboot2.h>
@@ -67,7 +68,7 @@ void start(void)
 	sched_init();
 	clock_init();
 	ne2k_init();
-
+	irq_enable();
 	if (sys_fork()) {
 		__asm__("__hlt:hlt ; jmp __hlt");
 	}
