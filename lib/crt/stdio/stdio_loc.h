@@ -17,9 +17,8 @@
 
 extern FILE * __iotab[];
 
-#define HAVEBUF		0x0100
-#define READING		0x0200
-#define WRITING		0x0400
+#define READING		0x0100
+#define WRITING		0x0200
 
 extern int  __fillbuf(FILE *stream);
 extern void __flushbuf(FILE *stream);

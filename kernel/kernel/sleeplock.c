@@ -22,7 +22,7 @@ void require_lock(sleeplock_t *lock)
 		return ;
 	}
 	while(lock->pid){
-		sleep_on(&(lock->wait));
+		sleep_on(&(lock->wait),TASK_STATE_BLOCK);
 	}
 	lock->pid=pid;
 	irq_unlock();

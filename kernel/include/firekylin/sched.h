@@ -93,7 +93,7 @@ struct task {
 	__res; 				\
     })
 
-#define __switch_to(n)			\
+#define __switch_to(p)			\
     ({	__asm__ __volatile__ (		\
 	"pushl $__ret_switch;"		\
 	"pushf;"			\
@@ -122,13 +122,17 @@ struct task {
 	"popf;"				\
 	"ret;"				\
 	"__ret_switch:  ;"		\
-	::"c"(task_table[n]->kesp));	\
+	::"c"(p->kesp));		\
     })
 
+#define NR_PRIO		8
+
+extern struct tss_struct tss;
 extern struct task * task_table[];
 
-void sched(void);
-void sleep_on(struct task **p);
-void wake_up(struct task **p);
+extern void sleep_on(struct task **wait, int state);
+extern void wake_up_proc(struct task *p);
+extern void wake_up(struct task **wait);
+extern void setpriority(int pr);
 
 #endif

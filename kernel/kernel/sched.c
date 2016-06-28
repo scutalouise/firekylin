@@ -11,171 +11,173 @@
 #include <sys/errno.h>
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
+#include <firekylin/trap.h>
 #include <firekylin/mm.h>
+#include <firekylin/lock.h>
 #include <arch/string.h>
+#include <arch/portio.h>
 
-struct tss_struct tss;
+#define LATCH		(1193180/HZ)
+
+time_t start_time;
+clock_t clock;
 
 struct task * task_table[NR_TASK];
+struct task * priority[NR_PRIO];
 
-static void init_tss(void)
+static void sched(void)
 {
-	extern struct gdt_desc {
-		unsigned long low;
-		unsigned long high;
-	} gdt_table[6];
+	struct task *p, *q, *current;
+	int i;
 
-	long addr=(long)&tss;
+	for (i = 0; i < NR_PRIO; i++)
+		if (priority[i])
+			break;
+	if (i >= NR_PRIO)
+		panic("Don't have ready process");
+	irq_lock();
+	p = priority[i];
+	if (p->count <= 0) {
+		p->count = 25;
+		if (p->next) {
+			priority[i] = p->next;
+			q = p->next;
+			while (q->next)
+				q = q->next;
+			q->next = p;
+			p->next = NULL;
+		}
+	}
+	irq_unlock();
+	current = CURRENT_TASK();
 
-	tss.ss0=0x10;
-	gdt_table[5].low=((addr<<16)&0xffff0000) |104;
-	gdt_table[5].high=(addr&0xff000000) | 0xe900 | ((addr>>16)&0xff);
+	if (priority[i] != current) {
+		tss.esp0 = (long) p + 4096;
+		__asm__("movl %%eax,%%cr3"
+				::"a"(priority[i]->pdtr));
+		__switch_to(priority[i]);
+	}
+}
 
-	__asm__("ltr %%ax"::"a"(0x28));
+void sleep_on(struct task **wait, int state)
+{
+	struct task *p;
+	struct task *current = CURRENT_TASK();
+
+	current->state = state;
+
+	p = priority[current->priority];
+	irq_lock();
+	if (p == current)
+		priority[current->priority] = current->next;
+	else {
+		while (p->next && p->next != current)
+			p = p->next;
+		p->next = p->next->next;
+	}
+
+	if (wait) {
+		current->next = *wait;
+		*wait = current;
+	}else
+		current->next=NULL;
+	irq_unlock();
+	sched();
+}
+
+void wake_up_proc(struct task *p)
+{
+	if(p->state == TASK_STATE_READY)
+		return ;
+	irq_lock();
+	p->state = TASK_STATE_READY;
+	p->next = priority[p->priority];
+	priority[p->priority] = p;
+	irq_unlock();
+}
+
+void wake_up(struct task **wait)
+{
+	struct task *tmp;
+
+	if (!wait)
+		return;
+	irq_lock();
+	while (*wait) {
+		tmp = *wait;
+		*wait = tmp->next;
+		wake_up_proc(tmp);
+	}
+	irq_unlock();
+}
+
+void setpriority(int pr)
+{
+	struct task *current;
+	struct task *p;
+
+	if(pr >=NR_PRIO){
+		printk("priority too big :%d",pr);
+		return ;
+	}
+
+	current=CURRENT_TASK();
+
+	/* remove from old list */
+	p=priority[current->priority];
+	if(p==current)
+		priority[current->priority]=current->next;
+	else{
+		while(p->next && p->next !=current)
+			p=p->next;
+		if(p->next)
+			p->next=p->next->next;
+	}
+
+	/* add to new list */
+	current->priority=pr;
+	current->next=priority[current->priority];
+	priority[current->priority]=current;
+}
+
+static void do_clock(struct trapframe *tf)
+{
+	struct task *current=CURRENT_TASK();
+
+	outb(0x20, 0x20);
+	clock++;
+
+	if(tf->cs&3){
+		current->utime++;
+	}else
+		current->stime++;
+
+	/* do timer */
+//	if(timer_list && timer_list->time <=clock){
+//		(timer_list->func)(timer_list->data);
+//		timer_list=timer_list->next;
+//	}
+
+	if (--current->count < 0)
+		sched();
 }
 
 void sched_init(void)
 {
 	struct task *current = CURRENT_TASK();
-	init_tss();
+
 	memset(current, 0, sizeof(struct task));
-	current->count = current->priority = 20;
+	current->count = 20;
 	current->state = TASK_STATE_READY;
 	task_table[0] = current;
-}
+	current->priority = NR_PRIO - 1;
+	current->next = NULL;
+	priority[NR_PRIO - 1] = current;
 
-void sched(void)
-{
-	int i, c = -1, n = 0;
-
-	while (1) {
-		for (i = NR_TASK - 1; i > 0; i--) {
-			if (!task_table[i] ||
-			     task_table[i]->state != TASK_STATE_READY)
-				continue;
-			if (task_table[i]->count > c)
-				c = task_table[i]->count,n = i;
-		}
-
-		if (c) {
-			if ((CURRENT_TASK() ) != task_table[n]) {
-				tss.esp0=(long)task_table[n]+4096;
-				__asm__("movl %%eax,%%cr3"
-						::"a"(task_table[n]->pdtr));
-				__switch_to(n);
-			}
-			return;
-		}
-
-		for (i = 1; i < NR_TASK; i++) {
-			if (task_table[i]) {
-				task_table[i]->count = task_table[i]->priority;
-			}
-		}
-	}
-}
-
-void sleep_on(struct task **p)
-{
-	struct task *task = CURRENT_TASK();
-
-	task->state = TASK_STATE_BLOCK;
-	if (p) {
-		task->next = *p;
-		*p = task;
-	}
-	sched();
-}
-
-void wake_up(struct task **p)
-{
-	struct task *tmp;
-	if(!p)
-		return ;
-	while (*p) {
-		tmp = *p;
-		tmp->state = TASK_STATE_READY;
-		*p = tmp->next;
-		tmp->next = NULL;
-	}
-}
-
-pid_t sys_getpid(void)
-{
-	return (CURRENT_TASK() )->pid;
-}
-
-pid_t sys_setgrp(void)
-{
-	struct task *current=CURRENT_TASK();
-	return current->grp = current->pid;
-}
-
-pid_t sys_setsid(void)
-{
-	struct task *task = CURRENT_TASK();
-
-	if ((task->sid == task->pid) || (task->uid != 0))
-		return -EPERM;
-	task->tty = -1;
-	return task->sid = task->grp = task->pid;
-}
-
-uid_t sys_getuid(void)
-{
-	return (CURRENT_TASK() )->uid;
-}
-
-uid_t sys_setuid(uid_t uid)
-{
-	if ((CURRENT_TASK() )->uid != 0)
-		return -EPERM;
-	return (CURRENT_TASK() )->uid = uid;
-}
-
-gid_t sys_getgid(void)
-{
-	return (CURRENT_TASK() )->gid;
-}
-
-gid_t sys_setgid(gid_t gid)
-{
-	if ((CURRENT_TASK() )->uid != 0)
-		return -EPERM;
-	return (CURRENT_TASK() )->gid = gid;
-}
-
-/*
- * Note: Align to 16 Bytes
- */
-int sys_sbrk(unsigned int inc)
-{
-	unsigned int res;
-	unsigned long addr;
-	struct task *current;
-
-	current=CURRENT_TASK();
-	res =current->sbrk;
-	inc=(inc+0xf)&0xfffffff0;
-	current->sbrk += inc;
-
-	addr=(res+0xfff)&0xfffff000;
-	for(;addr<=current->sbrk; addr+=4096){
-		map_page(addr,get_page(),current->pdtr);
-	}
-	return res;
-}
-
-int sys_alarm(unsigned long seconds)
-{
-	long old;
-	struct task *current;
-
-	current=CURRENT_TASK();
-	old=current->alarm;
-
-	current->alarm=seconds ? (clock+seconds*HZ) : 0;
-	if(old)
-		return (old-clock)/HZ;
-	return 0;
+	/* setup clock */
+	outb(0x43, 0x36);
+	outb(0x40, LATCH && 0xff);
+	outb(0x40, LATCH >> 8);
+	set_trap_handle(0x20, &do_clock);
+	outb(0x21, inb(0x21) & ~1);
 }

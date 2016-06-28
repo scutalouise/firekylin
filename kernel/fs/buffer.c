@@ -110,7 +110,7 @@ struct buffer * bread(dev_t dev, long block)
 		 */
 		irq_lock();
 		while(buf->b_lock.pid){
-			sleep_on(&(buf->b_lock.wait));
+			sleep_on(&(buf->b_lock.wait), TASK_STATE_BLOCK);
 		}
 		buf->b_lock.pid=(CURRENT_TASK())->pid;
 		irq_unlock();
@@ -133,7 +133,7 @@ int sys_sync()
 			rw_block(WRITE_BUF, bh);
 			irq_lock();
 			while(bh->b_lock.pid)
-				sleep_on(&(bh->b_lock.wait));
+				sleep_on(&(bh->b_lock.wait),TASK_STATE_BLOCK);
 			irq_unlock();
 		}
 		unlock_buffer(bh);

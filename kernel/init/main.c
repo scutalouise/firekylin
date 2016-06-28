@@ -26,11 +26,10 @@ extern void arch_init();
 extern void mm_init();
 extern void dev_init();
 extern void pci_init();
-extern void rtl8139_init();
 extern void ne2k_init();
 extern void buffer_init();
 extern void sched_init();
-extern void clock_init();
+extern void softirq_init(void);
 extern int  sys_fork();
 extern int  sys_exec(char *filename, char **argv, char **envp);
 extern void mount_root(void);
@@ -66,14 +65,15 @@ void start(void)
 	mm_init();
 	pci_init();
 	sched_init();
-	clock_init();
 	ne2k_init();
-	irq_enable();
+
 	if (sys_fork()) {
 		__asm__("__hlt:hlt ; jmp __hlt");
 	}
 
+	setpriority(5);
 	buffer_init();
+	softirq_init();
 	mount_root();
 
 	sys_exec("/bin/init", NULL, NULL);

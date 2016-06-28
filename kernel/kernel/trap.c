@@ -51,6 +51,8 @@ extern void hwintE(void);
 extern void hwintF(void);
 extern void syscall(void);
 
+struct tss_struct tss;
+
 #define set_gate(fun,index,dpl) 				\
     __asm__("movl %%eax, (%%edx);"  				\
 	    "movl %%ebx, 4(%%edx);"				\
@@ -60,7 +62,7 @@ extern void syscall(void);
 
 static void (*trap_handle[0x30])(struct trapframe *tf);
 
-struct gdt_desc {
+static struct gdt_desc {
 	unsigned long low;
 	unsigned long high;
 } gdt_table[6] = {
@@ -72,13 +74,14 @@ struct gdt_desc {
 	{ 0, 0 } 			/* 0x28 Tss		*/
 };
 
-struct idt_desc {
+static struct idt_desc {
 	unsigned long low;
 	unsigned long high;
 } idt_table[0x31];
 
 static void gdt_init(void)
 {
+	long addr = (long) &tss;
 	short tmp[3] = { sizeof(gdt_table) - 1, 0, 0 };
 	tmp[1] = ((long) &gdt_table) & 0xffff;
 	tmp[2] = (((long) &gdt_table) >> 16) & 0xffff;
@@ -90,6 +93,11 @@ static void gdt_init(void)
 		"movw %%ax,%%es;"
 		"movw %%ax,%%fs;"
 		"movw %%ax,%%gs"::"m"(tmp));
+	tss.ss0 = 0x10;
+	gdt_table[5].low = ((addr << 16) & 0xffff0000) | 104;
+	gdt_table[5].high = (addr & 0xff000000) | 0xe900
+			| ((addr >> 16) & 0xff);
+	__asm__("ltr %%ax"::"a"(0x28));
 }
 
 static void idt_init(void)
@@ -159,6 +167,7 @@ void arch_init(void)
 	gdt_init();
 	idt_init();
 	i8259_init();
+	irq_enable();
 }
 
 void set_trap_handle(int index, void (*fn)(struct trapframe *tf))
@@ -187,5 +196,5 @@ void execption(unsigned long unuesd)
 	printk("Exception:%d\tError code:%d\n", tf->nr, tf->err);
 	printk("CS:EIP=%8:%8x\t EFLAGS=%8x\t SS:ESP=%8x:%8x\n", tf->cs, tf->eip,
 			tf->eflags, tf->ss, tf->esp);
-	panic("Current pid:%d\n", (CURRENT_TASK())->pid);
+	panic("Current pid:%d\n", (CURRENT_TASK() )->pid);
 }

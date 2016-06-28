@@ -17,14 +17,16 @@
 #define	SEEK_CUR	1
 #define	SEEK_END	2
 
-typedef struct __iobuf{
+#define EOF		(-1)
+
+typedef struct __iobuf {
 	int    _fd;
 	int    _flag;
 	int    _cnt;
 	int    _bufsize;
 	char * _buf;
 	char * _ptr;
-}FILE;
+} FILE;
 
 #define _IONBF		0x0001
 #define _IOLBF		0x0002
@@ -36,7 +38,27 @@ extern FILE * stdin;
 extern FILE * stdout;
 extern FILE * stderr;
 
-extern int    printf(char *fmt, ...);
-extern int    sprintf(char *buf, char*fmt, ...);
+extern int printf(char *fmt, ...);
+extern int sprintf(char *buf, char*fmt, ...);
+
+static inline int fileno(FILE *stream)
+{
+	return stream->_fd;
+}
+
+static inline int feof(FILE *stream)
+{
+	return stream->_flag & _IOEOF;
+}
+
+static inline int ferror(FILE *stream)
+{
+	return stream->_flag & (_IOERR | _IOEOF);
+}
+
+static inline int fclrerr(FILE *stream)
+{
+	return stream->_flag &= ~(_IOERR | _IOEOF);
+}
 
 #endif

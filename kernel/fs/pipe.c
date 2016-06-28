@@ -63,7 +63,7 @@ int read_pipe(struct file *file, char *buf, size_t size)
 			return size - left;
 		}
 		if(left)
-			sleep_on(&i_ext->wait);
+			sleep_on(&i_ext->wait,TASK_STATE_BLOCK);
 	}
 	wake_up(&i_ext->wait);
 	return size - left;
@@ -88,7 +88,7 @@ int write_pipe(struct file *file, char *buf, size_t size)
 			return size - left;
 		}
 		if(left)
-			sleep_on(&i_ext->wait);
+			sleep_on(&i_ext->wait,TASK_STATE_BLOCK);
 	}
 	wake_up(&i_ext->wait);
 	return size - left;

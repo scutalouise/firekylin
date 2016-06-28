@@ -59,7 +59,7 @@ int tty_read(dev_t dev, char * buf, off_t off, size_t size)
 				return size - left;
 						}
 		} else {
-			sleep_on(&(tty->cook.wait));
+			sleep_on(&(tty->cook.wait),TASK_STATE_BLOCK);
 			continue;
 		}
 		left--;

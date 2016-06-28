@@ -26,6 +26,7 @@ int sys_fork(long unuesd)
 	task = (struct task*) __va(get_page());
 	current=CURRENT_TASK();
 	memcpy(task, current , 4096);
+	task->state=TASK_STATE_STOP;
 	task->pdtr = copy_mm();
 	task->pid = ++last_pid;
 	task->parent = current;
@@ -51,7 +52,6 @@ int sys_fork(long unuesd)
 	__asm__ ("fnsave (%%eax)" ::"a"(stack));
 
 	task->kesp = (unsigned long) stack;
-	task->state = TASK_STATE_READY;
 
 	if(current->pwd)
 		current->pwd->i_count++;
@@ -65,6 +65,7 @@ int sys_fork(long unuesd)
 		if (task_table[i])
 			continue;
 		task_table[i] = task;
+		wake_up_proc(task);
 		return task->pid;
 	}
 	return -1;

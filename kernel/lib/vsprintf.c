@@ -11,50 +11,20 @@
 #include <firekylin/ctype.h>
 #include <arch/string.h>
 
-/************************************************************************
- *
- *     %[flag][width][.prec][mod][conv]
- *	flag:	-	left justify, pad right w/ blanks
- *		0	pad left w/ 0 for numerics
- *		+	always print sign, + or -
- *		' '	(blank)
- *		#	(???)
- *
- *	width:		(field width) / *
- *
- *	prec:		(precision)
- *
- *	mod:	h	short (16-bit) int
- *		l	long (32-bit) int
- *		L	long long (64-bit) int
- *
- *	conv:	d,i	decimal int
- *		u	decimal unsigned
- *		o	octal
- *		x,X	hex
- *		f,e,g,E,G float
- *		c	char
- *		s	string
- *		p	ptr
- *		%       %
- *
- ***************************************************************************/
-
 #define F_ZEROPAD	1
 #define F_SIGN		2
 #define F_PLUS		4
 #define F_SPACE		8
 #define F_LEFT		16
 #define F_SPECIAL	32
-#define F_SMALL		64
-
-static char *digits="0123456789ABCDEF";
 
 static char *i_format(char *str, int num, int base, int width, int prec,
 		int flag)
 {
 	char c, sign, tmp[36];
 	int i;
+	char *digits="0123456789ABCDEF";
+	unsigned int u_num;
 
 	if (flag & F_LEFT)
 		flag &= ~F_ZEROPAD;
@@ -73,10 +43,11 @@ static char *i_format(char *str, int num, int base, int width, int prec,
 	}
 
 	i=0;
+	u_num=num;
 	do{
-		tmp[i++]=digits[num%base];
-		num=num/base;
-	}while(num);
+		tmp[i++]=digits[u_num%base];
+		u_num=u_num/base;
+	}while(u_num);
 
 	if (i>prec)
 		prec=i;
@@ -91,7 +62,7 @@ static char *i_format(char *str, int num, int base, int width, int prec,
 			*str++ = '0';
 		else if (base==16) {
 			*str++ = '0';
-			*str++ = digits[33];
+			*str++ = 'x';
 		}
 	}
 	if (!(flag&F_LEFT))
@@ -157,29 +128,7 @@ int vsprintf(char *buf, char *fmt, va_list arg)
 			}
 		}
 
-		/*get prec */
 		prec=-1;
-		if (*fmt == '.') {
-			fmt++;
-			if (isdigit(*fmt)){
-				prec=0;
-				do{
-					prec=prec*10+*fmt-'0';
-					fmt++;
-				}while(isdigit(*fmt));
-			}
-			else if (*fmt == '*') { /* it's the next argument */
-				prec = va_arg(arg, int);
-				if (prec < 0)
-					prec = 0;
-			}
-		}
-
-		/* get mod */
-		//mod=-1;
-		if (*fmt == 'h' || *fmt == 'l' || *fmt == 'L')
-			//mod = *fmt++;
-			fmt++;
 
 		/* get conv */
 		switch(*fmt++){
@@ -216,20 +165,13 @@ int vsprintf(char *buf, char *fmt, va_list arg)
 					*str++ = ' ';
 			break;
 
-		case 'o':
-			str = i_format(str, va_arg(arg, unsigned long), 8,
-					width, prec, flag);
-			break;
-
 		case 'x':
-		case 'X':
 			str = i_format(str, va_arg(arg, unsigned long), 16,
 					width, prec, flag);
 			break;
 
 		case 'd':
 			flag |=F_SIGN;
-		case 'u':
 			str = i_format(str, va_arg(arg, unsigned long), 10,
 					width, prec, flag);
 			break;

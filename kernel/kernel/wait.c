@@ -35,8 +35,7 @@ int sys_wait(pid_t pid, long *status,int options)
 			task_table[i]=NULL;
 			return ret;
 		}
-		current->state=TASK_STATE_PAUSE;
-		sched();
+		sleep_on(NULL,TASK_STATE_PAUSE);
 	}
 	return pid;
 }

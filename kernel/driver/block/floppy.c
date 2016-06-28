@@ -159,7 +159,7 @@ static inline void lock_fd()
 {
 	irq_lock();
 	while(fd_req.busy)
-		sleep_on(&fd_req.wait);
+		sleep_on(&fd_req.wait,TASK_STATE_BLOCK);
 	fd_req.busy=1;
 	irq_unlock();
 }

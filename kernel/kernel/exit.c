@@ -18,7 +18,6 @@ void do_exit(long exitcode)
 {
 	extern int sys_close(int fd);
 	struct task * current=CURRENT_TASK();
-	current->state = TASK_STATE_EXIT;
 	current->status=exitcode;
 	free_mm();
 	if(current->pwd)
@@ -27,7 +26,7 @@ void do_exit(long exitcode)
 		if(current->file[i])
 			sys_close(i);
 	sigsend(current->parent,SIGCHLD);
-	sched();
+	sleep_on(NULL,TASK_STATE_EXIT);
 }
 
 void sys_exit(long status)

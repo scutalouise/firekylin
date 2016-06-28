@@ -14,7 +14,7 @@ FILE *fopen(char *filename, char *mode)
 	int fd;
 	FILE *f;
 
-	f = malloc(sizeof(FILE));
+	f = (FILE *)malloc(sizeof(FILE));
 	if (!f)
 		return NULL;
 	fd = open(filename, O_RDWR);
@@ -26,8 +26,13 @@ FILE *fopen(char *filename, char *mode)
 		if (__iotab[i])
 			continue;
 		__iotab[i] = f;
-
+		f->_fd=fd;
+		f->_flag=_IOFBF;
+		f->_cnt=0;
+		f->_bufsize=0;
+		f->_buf=0;
+		f->_ptr=0;
+		return f;
 	}
-
 	return NULL;
 }

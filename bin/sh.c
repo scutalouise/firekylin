@@ -140,7 +140,7 @@ int main(void)
 	int argc;
 	char buf[100];
 
-	do_cls(0,NULL);
+	//do_cls(0,NULL);
 
 	printf("\n\rWelcome To FireKylin 0.1 !\n\r");
 	printf("More info:http://bbs.firekylin.cc\n\r");

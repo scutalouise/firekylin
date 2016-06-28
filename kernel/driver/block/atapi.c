@@ -54,7 +54,7 @@ static void ide_read(struct buffer *buffer)
 	int minor = MINOR(buffer->b_dev);
 	irq_lock();
 	while (hd_req.busy)
-		sleep_on(&hd_req.wait);
+		sleep_on(&hd_req.wait,TASK_STATE_BLOCK);
 	hd_req.busy = 1;
 	hd_req.cmd = WIN_READ;
 	hd_req.start_sect = buffer->b_block * 2 + hd_size[minor].start_sector;
@@ -71,7 +71,7 @@ static void ide_write(struct buffer *buffer)
 	int minor = MINOR(buffer->b_dev);
 	irq_lock();
 	while (hd_req.busy)
-		sleep_on(&hd_req.wait);
+		sleep_on(&hd_req.wait,TASK_STATE_BLOCK);
 	hd_req.busy = 1;
 	hd_req.cmd = WIN_WRITE;
 	hd_req.start_sect = buffer->b_block * 2 + hd_size[minor].start_sector;

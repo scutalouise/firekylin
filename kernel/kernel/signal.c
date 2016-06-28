@@ -20,10 +20,8 @@ void sigsend(struct task *p, int signo)
 		return;
 
 	p->sigarrive |= 1 << (signo - 1);
-	if (p->state == TASK_STATE_PAUSE) {
-		p->state = TASK_STATE_READY;
-		sched();
-	}
+	if (p->state == TASK_STATE_PAUSE)
+		wake_up_proc(p);
 }
 
 void do_signal(unsigned long unused)
@@ -123,8 +121,7 @@ int sys_sigctl(int cmd, int param1, int param2, int param3)
 		return 0;
 
 	case SIGCTL_PAUSE:
-		current->state = TASK_STATE_PAUSE;
-		sched();
+		sleep_on(NULL,TASK_STATE_PAUSE);
 		return -EINTR;
 
 	default:
