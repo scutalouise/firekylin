@@ -7,11 +7,11 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#include <firekylin/kernel.h>
 #include <arch/portio.h>
+#include <arch/string.h>
+#include <firekylin/kernel.h>
 #include <firekylin/tty.h>
 #include <firekylin/lock.h>
-#include <arch/string.h>
 
 struct console {
 	unsigned long base;
@@ -104,12 +104,12 @@ int con_write(struct tty_struct *tty)
 	int res = 0;
 	cur_console = tty-tty_table-1;
 	irq_lock();
-	while (!isempty(tty->out)) {
-		GETCH(tty->out, ch);
+	while (!isempty(&(tty->out))) {
+		ch=GETCH(&(tty->out));
 		if (ch == '\033') {
 			char tmp_x = 0, tmp_y = 0;
 			while (1) {
-				GETCH(tty->out, ch);
+				ch=GETCH(&(tty->out));
 				if (ch >= '0' && ch <= '9')
 					tmp_x = tmp_x * 10 + ch - '0';
 				else
@@ -117,7 +117,7 @@ int con_write(struct tty_struct *tty)
 			}
 			if (ch == ';') {
 				while (1) {
-					GETCH(tty->out, ch);
+					ch=GETCH(&(tty->out));
 					if (ch >= '0' && ch <= '9')
 						tmp_y = tmp_y * 10 + ch - '0';
 					else

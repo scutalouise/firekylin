@@ -85,14 +85,14 @@ static void gdt_init(void)
 	short tmp[3] = { sizeof(gdt_table) - 1, 0, 0 };
 	tmp[1] = ((long) &gdt_table) & 0xffff;
 	tmp[2] = (((long) &gdt_table) >> 16) & 0xffff;
-	__asm__("lgdt %0;"
+	__asm__("lgdt (%%eax);"
 		"jmp  $0x8,$next;"
 		"next:movl $0x10,%%eax;"
 		"movw %%ax,%%ds;"
 		"movw %%ax,%%ss;"
 		"movw %%ax,%%es;"
 		"movw %%ax,%%fs;"
-		"movw %%ax,%%gs"::"m"(tmp));
+		"movw %%ax,%%gs"::"a"(tmp));
 	tss.ss0 = 0x10;
 	gdt_table[5].low = ((addr << 16) & 0xffff0000) | 104;
 	gdt_table[5].high = (addr & 0xff000000) | 0xe900
@@ -145,7 +145,7 @@ static void idt_init(void)
 	set_gate(syscall, 0x30, 3);
 	idt[1] = ((long) &idt_table) & 0xffff;
 	idt[2] = (((long) &idt_table) >> 16) & 0xffff;
-	__asm__("lidt %0 "::"m"(idt));
+	__asm__("lidt (%%eax) "::"a"(idt));
 }
 
 static void i8259_init(void)

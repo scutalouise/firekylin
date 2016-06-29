@@ -39,14 +39,31 @@ struct tty_struct {
 	unsigned long  parm2;
 };
 
-#define __INC(a)	((a)=((a)+1)%TTY_BUF_SIZE)
+static inline int isfull(struct tty_buf *buf)
+{
+	return buf->count==TTY_BUF_SIZE;
+}
 
-#define isfull(tty_buf)		((tty_buf).count == TTY_BUF_SIZE)
-#define isempty(tty_buf)	(!((tty_buf).count))
-#define PUTCH(tty_buf,ch)	\
-	((tty_buf).buf[(tty_buf).head]=ch,(tty_buf).count++,__INC((tty_buf).head))
-#define GETCH(tty_buf,ch)	\
-	(ch=(tty_buf).buf[(tty_buf).tail],__INC((tty_buf).tail),(tty_buf).count--)
+static inline int isempty(struct tty_buf *buf)
+{
+	return buf->count == 0;
+}
+
+static inline int GETCH(struct tty_buf *buf)
+{
+	char retval;
+	retval=buf->buf[buf->tail];
+	buf->tail=(buf->tail +1)% TTY_BUF_SIZE;
+	buf->count--;
+	return retval;
+}
+
+static inline void PUTCH(struct tty_buf *buf,char ch)
+{
+	buf->buf[buf->head]=ch;
+	buf->count++;
+	buf->head=(buf->head +1)% TTY_BUF_SIZE;
+}
 
 extern struct tty_struct tty_table[MAX_TTY+1];
 extern unsigned int fg_console;

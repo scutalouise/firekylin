@@ -63,7 +63,6 @@ void softirq_init(void)
 	if(sys_fork())
 		return ;
 
-	printk("softirq kthread start\n");
 	setpriority(1);
 
 	while (1) {

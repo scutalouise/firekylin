@@ -59,6 +59,8 @@ static int cap;
 
 extern void select_con(int con);
 
+void dump_task();
+
 static void do_kbd(struct trapframe *tf)
 {
 	unsigned char tmp, s;
@@ -96,6 +98,9 @@ static void do_kbd(struct trapframe *tf)
 		case F7:
 			select_con(s-F1);
 			break;
+		case F11:
+			dump_task();
+			break;
 		default:
 			if (cap) {
 				if (s >= 'a' && s <= 'z')
@@ -103,7 +108,7 @@ static void do_kbd(struct trapframe *tf)
 				else if (s >= 'A' && s <= 'Z')
 					s = s + 32;
 			}
-			PUTCH(tty_table[fg_console+1].raw,s);
+			PUTCH(&(tty_table[fg_console+1].raw),s);
 			copy_to_cook(&tty_table[fg_console+1]);
 			break;
 		}

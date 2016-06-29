@@ -25,6 +25,35 @@ clock_t clock;
 struct task * task_table[NR_TASK];
 struct task * priority[NR_PRIO];
 
+void dump_task()
+{
+	struct task *p;
+	irq_lock();
+	printk("dump task:\n");
+	printk("  index   pid  state   count   priority\n");
+
+	for(int i=0;i<NR_TASK;i++){
+		if(!task_table[i])
+			continue ;
+		p=task_table[i];
+		printk(" %5d %5d  %5d  %5d  %5d\n",
+			i, p->pid , p->state,p->count, p->priority);
+	}
+	printk("dump priortiy\n");
+	printk("priority  list \n");
+	for(int i=0;i <NR_PRIO;i++){
+		if(!priority[i])
+			continue ;
+		printk("%5d ",i);
+		p=priority[i];
+		while(p){
+			printk("%#x ",p);
+			p=p->next;
+		}
+	}
+	irq_unlock();
+}
+
 static void sched(void)
 {
 	struct task *p, *q, *current;

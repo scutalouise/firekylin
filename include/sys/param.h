@@ -24,4 +24,8 @@
 
 #define NR_SUPER	4
 
+#define NR_BUFFER	64
+
+#define BUF_SIZE	1024
+
 #endif

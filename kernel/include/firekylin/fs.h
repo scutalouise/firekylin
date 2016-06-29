@@ -11,16 +11,16 @@
 #define _FS_H
 
 #include <sys/types.h>
+#include <sys/param.h>
 #include <firekylin/lock.h>
 
-#define BUF_SIZE	1024
 struct buffer {
 	dev_t 		b_dev;
 	unsigned int    b_block;
 	unsigned short  b_flag;
 	unsigned short  b_count;
 	sleeplock_t	b_lock;
-	char            b_data[BUF_SIZE];
+	char          * b_data;
 	struct buffer * b_hash_prev;
 	struct buffer * b_hash_next;
 	struct buffer * b_free_prev;

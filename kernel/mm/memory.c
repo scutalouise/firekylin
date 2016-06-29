@@ -15,18 +15,18 @@
 #include <arch/string.h>
 #include <firekylin/multiboot2.h>
 
-#define MAX_NR_PAGES	((64-4)*1024*1024/4096)
+static unsigned long memsize;
+static unsigned long NR_PAGE;
 
-static unsigned int memsize = 0;
-static unsigned int NR_PAGE = 0;
+static struct page_struct *page_table;
 
-struct page_struct page_table[MAX_NR_PAGES];
-
-long get_page(void)
+phys_t get_page(void)
 {
-	for (unsigned int i = 0; i < NR_PAGE; i++) {
-		if (!page_table[i].count) {
-			page_table[i].count++;
+	struct page_struct *page = page_table;
+
+	for (int i = 0; i < NR_PAGE; i++, page++) {
+		if (!page->count) {
+			page->count++;
 			return (i << 12) + 0x400000;
 		}
 	}
@@ -34,7 +34,7 @@ long get_page(void)
 	return 0L;
 }
 
-void put_page(long addr)
+void put_page(phys_t addr)
 {
 	long tmp;
 
@@ -46,13 +46,13 @@ void put_page(long addr)
 	}
 
 	tmp = (addr - 0x400000) >> 12;
-	if (page_table[tmp].count != 1) {
+	if ((page_table + tmp)->count != 1) {
 		printk("Try to err page:%x", addr);
 	}
-	page_table[tmp].count--;
+	(page_table + tmp)->count--;
 }
 
-void map_page(long va, long pa, long pdtr)
+void map_page(virt_t va, phys_t pa, long pdtr)
 {
 	unsigned long *p;
 	unsigned long i;
@@ -71,7 +71,7 @@ void map_page(long va, long pa, long pdtr)
 	p[va >> 12 & 0x3ff] = pa + 7;
 }
 
-long unmap_page(long line, long pdtr)
+phys_t unmap_page(virt_t line, long pdtr)
 {
 	unsigned long *p;
 	unsigned long i;
@@ -148,49 +148,53 @@ void free_mm(void)
 
 void mm_init(void)
 {
+	int page_table_page_use;
 	unsigned long i, *p;
 
-	int addr=__va(0x1000);
-	struct multiboot_tag_mmap *mm_map=NULL;
+	int addr = __va(0x1000 + 8);
+	struct multiboot_tag_mmap *mm_map = NULL;
 	struct multiboot_tag *tag;
-
-	addr += 8;
 
 	do {
 		tag = (struct multiboot_tag *) addr;
-		if(tag->type==MULTIBOOT_TAG_TYPE_MMAP){
-			mm_map=(struct multiboot_tag_mmap *)tag;
-			break ;
+		if (tag->type == MULTIBOOT_TAG_TYPE_MMAP) {
+			mm_map = (struct multiboot_tag_mmap *) tag;
+			break;
 		}
 		addr = (addr + tag->size + 7) & ~7;
 	} while (tag->type != MULTIBOOT_HEADER_TAG_END);
 
-	if(! mm_map)
+	if (!mm_map)
 		printk("Not find memory map by GRUB\n");
-
-	else{
-		struct multiboot_mmap_entry *mm_map_entry=mm_map->entries;
-		while((long)mm_map_entry< addr +mm_map->size){
-			if(mm_map_entry->type==MULTIBOOT_MEMORY_AVAILABLE)
-				memsize=mm_map_entry->addr + mm_map_entry->len;
+	else {
+		struct multiboot_mmap_entry *mm_map_entry = mm_map->entries;
+		while ((long) mm_map_entry < addr + mm_map->size) {
+			if (mm_map_entry->type == MULTIBOOT_MEMORY_AVAILABLE)
+				memsize = mm_map_entry->addr
+						+ mm_map_entry->len;
 			mm_map_entry++;
 		}
 	}
 
-	printk("memsize :%dMB",memsize>>20);
-
-	NR_PAGE = min((memsize >> 12), MAX_NR_PAGES);
-
-	p = (unsigned long*) 0xC0000000;
+	p = (unsigned long*) __va(0);
 	*p = 0;
-	for (i = 0; i < memsize >> 22; i++) {
+	for (i = 0; i < memsize >> 22; i++)
 		*(p + i + 0x300) = 0x100007 + 0x1000 * i;
-	}
 
-	p = (unsigned long*) 0xC0100000;
-	for (i = 0; i < memsize >> 12; i++) {
+	p = (unsigned long*) __va(0x100000);
+	for (i = 0; i < memsize >> 12; i++)
 		*(p + i) = 7 + 0x1000 * i;
-	}
+
+	NR_PAGE = memsize / PAGE_SIZE;
+	page_table = (struct page_struct *) __va(0x400000);
+
+	page_table_page_use = (NR_PAGE * sizeof(struct page_struct) + PAGE_SIZE
+			- 1) / PAGE_SIZE;
+	for (int i = 0; i < page_table_page_use; i++)
+		(page_table + i)->count = 100;
+
+	for (int i=page_table_page_use; i<NR_PAGE;i++)
+		(page_table + i)->count = 0;
 
 	set_trap_handle(14, do_page_fault);
 }

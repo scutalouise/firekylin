@@ -27,7 +27,7 @@ void init_rs_contrl(unsigned short port)
 int rs_write(struct tty_struct *tty)
 {
 	irq_lock();
-	if(!isempty(tty->out)){
+	if(!isempty(&(tty->out))){
 		outb(0x3f8+1,inb(0x3f8+1)|0x2);
 	}
 	irq_unlock();

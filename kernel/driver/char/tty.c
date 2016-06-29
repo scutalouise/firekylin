@@ -18,14 +18,15 @@ extern void kbd_init(void);
 
 struct tty_struct tty_table[MAX_TTY+1];
 extern int __echo__;
+
 void copy_to_cook(struct tty_struct *tty)
 {
 	char ch;
-	while(!isempty(tty->raw)){
-		GETCH(tty->raw,ch);
-		PUTCH(tty->cook,ch);
+	while(!isempty(&(tty->raw))){
+		ch=GETCH(&(tty->raw));
+		PUTCH(&(tty->cook),ch);
 		if(__echo__){
-			PUTCH(tty->out,ch);
+			PUTCH(&(tty->out),ch);
 			tty->write(tty);
 		}
 		wake_up(&(tty->cook.wait));
@@ -47,8 +48,8 @@ int tty_read(dev_t dev, char * buf, off_t off, size_t size)
 
 	irq_lock();
 	while (left) {
-		if (!isempty(tty->cook)) {
-			GETCH(tty->cook, ch);
+		if (!isempty(&(tty->cook))) {
+			ch=GETCH(&(tty->cook));
 			*buf++ = ch;
 			if (ch == '\n') {
 				irq_unlock();
@@ -79,9 +80,9 @@ int tty_write(dev_t dev, char * buf, off_t off, size_t size)
 	tty=tty_table+MINOR(dev);
 
 	while (left) {
-		if (!isfull(tty->out)) {
+		if (!isfull(&(tty->out))) {
 			ch = *buf++;
-			PUTCH(tty->out, ch);
+			PUTCH(&(tty->out), ch);
 			left--;
 			continue;
 		}

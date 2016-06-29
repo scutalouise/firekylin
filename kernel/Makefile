@@ -15,11 +15,11 @@ CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ./include -I ../include
 
 OBJS=init/head.o init/main.o  \
-     kernel/entry.o kernel/trap.o   kernel/util.o  \
-     kernel/sched.o kernel/signal.o kernel/clock.o \
-     kernel/sleeplock.o kernel/softirq.o kernel/sys.o \
-     kernel/fork.o  kernel/exec.o   kernel/wait.o \
-     kernel/exit.o kernel/trace.o \
+     kernel/entry.o kernel/trap.o    kernel/util.o  \
+     kernel/sched.o kernel/signal.o  kernel/timer.o \
+     kernel/lock.o  kernel/softirq.o kernel/sys.o   \
+     kernel/fork.o  kernel/exec.o    kernel/wait.o  \
+     kernel/exit.o  kernel/trace.o \
      mm/memory.o \
      driver/char/console.o driver/char/keyboard.o driver/char/serial.o \
      driver/char/tty.o driver/char/mem.o\

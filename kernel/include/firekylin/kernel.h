@@ -30,4 +30,8 @@ extern void do_exit(long status);
 
 extern void sigsend(struct task *p, int signo);
 
+extern void softirq_raise(unsigned int index);
+extern int  softirq_setaction(unsigned int index,
+		void (*action)(unsigned long data), unsigned long data);
+
 #endif
