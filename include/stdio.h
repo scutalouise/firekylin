@@ -28,6 +28,9 @@ typedef struct __iobuf {
 	char * _ptr;
 } FILE;
 
+#define BUFSIZ		1024
+#define L_tmpnam	512
+
 #define _IONBF		0x0001
 #define _IOLBF		0x0002
 #define _IOFBF		0x0003
@@ -60,5 +63,8 @@ static inline int fclrerr(FILE *stream)
 {
 	return stream->_flag &= ~(_IOERR | _IOEOF);
 }
+
+#define getc(stream)	fgetc(stream)
+#define putc(stream,c)	fputc(stream,c)
 
 #endif

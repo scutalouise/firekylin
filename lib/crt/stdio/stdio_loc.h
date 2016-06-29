@@ -11,8 +11,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define BUFSIZE		1024
-
 #define MAX_OPEN	NR_OPEN
 
 extern FILE * __iotab[];
@@ -20,8 +18,8 @@ extern FILE * __iotab[];
 #define READING		0x0100
 #define WRITING		0x0200
 
-extern int  __fillbuf(FILE *stream);
-extern void __flushbuf(FILE *stream);
+extern int __fillbuf(FILE *stream);
+extern int __flushbuf(FILE *stream, int ch);
 
 static inline int __getc(FILE *stream)
 {
@@ -32,7 +30,7 @@ static inline int __getc(FILE *stream)
 		return __fillbuf(stream);
 }
 
-static inline int __putc(FILE *stream, char c)
+static inline int __putc(FILE *stream, int c)
 {
 	if (stream->_cnt) {
 		stream->_cnt--;

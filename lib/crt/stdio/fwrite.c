@@ -19,10 +19,9 @@ int fwrite(FILE *stream, char *buf, size_t size, size_t nmemb)
 		return 0;
 
 	while(tmp_len--){
-		c=__putc(stream);
+		c=__putc(stream,*buf);
 		if(c==EOF)
 			break;
-		*buf++=c;
 		done++;
 	}
 

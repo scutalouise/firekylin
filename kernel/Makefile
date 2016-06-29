@@ -38,7 +38,7 @@ OBJS=init/head.o init/main.o  \
 	@echo         CC	$<
 	@$(CC) $(CFLAGS) -o $@ $<
 
-kernel1.bin: $(OBJS)
+kernel.bin: $(OBJS)
 	@echo         LD      OBJS
 	@ld -m elf_i386 -e _start -Ttext 0xC0010000 --oformat binary \
 	    -Map kernel.map -o kernel.bin $(OBJS)

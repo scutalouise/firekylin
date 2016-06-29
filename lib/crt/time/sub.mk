@@ -3,5 +3,6 @@ LIBC_OBJ+=time/time.o      \
           time/localtime.o \
           time/mktime.o    \
           time/ctime.o     \
-          time/asctime.o
+          time/asctime.o   \
+          time/clock.o
           

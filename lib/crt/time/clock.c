@@ -7,19 +7,12 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#include "stdio_loc.h"
+#include <time.h>
 
-void fflush(FILE *stream)
+/*
+ * Not Implemented.
+ */
+clock_t clock()
 {
-	if(!stream){
-		for(int i=0;i<MAX_OPEN;i++){
-			if(!__iotab[i])
-				continue ;
-			fflush(__iotab[i]);
-		}
-	}
-
-	if(stream->_flag& WRITING){
-
-	}
+	return -1;
 }

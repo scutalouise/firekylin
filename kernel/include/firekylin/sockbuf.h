@@ -7,19 +7,18 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#include "stdio_loc.h"
+#ifndef _SOCKBUF_H
+#define _SOCKBUF_H
 
-void fflush(FILE *stream)
-{
-	if(!stream){
-		for(int i=0;i<MAX_OPEN;i++){
-			if(!__iotab[i])
-				continue ;
-			fflush(__iotab[i]);
-		}
-	}
+#include <net/arp.h>
+//#include <net/ip.h>
+//#include <net/>
 
-	if(stream->_flag& WRITING){
+struct sockbuf{
+	struct sockbuf *next;
 
-	}
-}
+
+
+};
+
+#endif

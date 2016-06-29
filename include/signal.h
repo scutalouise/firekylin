@@ -11,8 +11,8 @@
 #define _SIGNAL_H
 
 #include <sys/types.h>
-#include <sys/errno.h>
 #include <sys/signal.h>
+#include <errno.h>
 
 sigfunc_t signal(int signo,sigfunc_t fun);
 

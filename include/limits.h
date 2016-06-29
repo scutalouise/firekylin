@@ -24,6 +24,8 @@
 #define SHORT_MAX	      32767
 #define USHORT_MAX	     65535U
 
+#define SHRT_MAX	SHORT_MAX
+
 /* definitions of int */
 #define INT_BIT		         32
 #define INT_MIN		-2147483648
@@ -37,4 +39,7 @@
 #define ULONG_MAX	 4294967295U
 
 #define PATH_MAX	512
+
+#define RAND_MAX	0x7ffffffff
+
 #endif

@@ -7,19 +7,8 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#include "stdio_loc.h"
+#include <firekylin/kernel.h>
+#include <firekylin/mm.h>
+#include <firekylin/sockbuf.h>
 
-void fflush(FILE *stream)
-{
-	if(!stream){
-		for(int i=0;i<MAX_OPEN;i++){
-			if(!__iotab[i])
-				continue ;
-			fflush(__iotab[i]);
-		}
-	}
 
-	if(stream->_flag& WRITING){
-
-	}
-}

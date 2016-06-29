@@ -15,7 +15,7 @@ int fputs(FILE *stream, char *s)
 	int r;
 
 	while (*s) {
-		r = __putc(FILE, *s);
+		r = __putc(stream, *s);
 		i++;
 		if (r == EOF)
 			return 0;

@@ -22,9 +22,13 @@ typedef struct {
 
 extern char **environ;
 
-extern void *malloc(long nbytes);
-extern void free(void *p);
-extern char *getenv(char *name);
-extern void exit(int exit_code);
+extern int    abs(int i);
+extern void * malloc(long nbytes);
+extern void   free(void *p);
+extern char * getenv(char *name);
+extern void   exit(int exit_code);
+
+#define EXIT_SUCCESS	0
+#define EXIT_FAILURE	1
 
 #endif

@@ -10,6 +10,8 @@
 #ifndef _MATH_H
 #define _MATH_H
 
+#define HUGE_VAL	(0.0/0.0)
+
 #define M_E            2.7182818284590452354   /* e 		*/
 #define M_LOG2E        1.4426950408889634074   /* log_2 e 	*/
 #define M_LOG10E       0.43429448190325182765  /* log_10 e 	*/
@@ -35,7 +37,7 @@ extern double exp(double x);
 extern double pow(double x, double y);
 extern double ln(double x);
 extern double lg(double x);
-extern double log(double a,double b);
+//extern double log(double a,double b);
 extern double sinh(double x);
 extern double cosh(double x);
 extern double tanh(double x);

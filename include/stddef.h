@@ -14,7 +14,7 @@
 
 #ifndef __PTRDIFF_T
 #define __PTRDIFF_T
-typedef long prtdiff_t;
+typedef long ptrdiff_t;
 #endif
 
 #ifndef __WCHAR_T

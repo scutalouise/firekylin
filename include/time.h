@@ -52,5 +52,6 @@ extern char *     asctime(struct tm *tmptr);
 extern char *     ctime(time_t *tp);
 extern struct tm* gmtime(time_t *tp);
 extern struct tm* localtime(time_t *tp);
+extern clock_t    clock();
 
 #endif
