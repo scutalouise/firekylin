@@ -14,22 +14,27 @@
 
 char buf[1024];
 
+void do_cat(int fd)
+{
+	int size;
+	while ((size = read(fd, buf, 1024)) > 0)
+		write(STDOUT_FILENO, buf, size);
+}
+
 int main(int argc, char *argv[])
 {
-	int fd,size;
-	//if(argc<2)
-	//	return 0;
+	int fd;
+	if (argc < 2) {
+		do_cat(0);
+		return 0;
+	}
 
-	//fd=open(argv[1],O_RDWR);
-//	if(fd <0){
-//		printf("fopen error");
-//		exit(0);
-//	}
-//	printf("\n in cat");
-	fd=0;
-	while((size=read(fd,buf,1024)))
-	{
-		printf("cat  %d",size);
-		write(STDOUT_FILENO,buf,size);
+	for (int i = 1; i < argc; i++) {
+		fd = open(argv[1], O_RDWR);
+		if (fd < 0) {
+			printf("fopen error");
+			continue ;
+		}
+		do_cat(fd);
 	}
 }

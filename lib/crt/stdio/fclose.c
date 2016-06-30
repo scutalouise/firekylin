@@ -11,30 +11,17 @@
 
 int fclose(FILE *stream)
 {
-	int i, retval;
 
 	if (!stream)
 		return EOF;
 
-	for (i = 0; i < MAX_OPEN; i++) {
-		if (stream == __iotab[i]) {
-			__iotab[i] = 0;
-			break;
-		}
-	}
-	if (i >= MAX_OPEN)
-		return EOF;
-
 	fflush(stream);
-
-	retval = close(stream->_fd);
 
 	if (stream->_buf){
 		free(stream->_buf);
 		stream->_buf=NULL;
 	}
 
-	if (stream != stdin && stream != stdout && stream != stderr)
-		free(stream);
-	return retval;
+	stream->_flag=0;
+	return close(stream->_fd);
 }

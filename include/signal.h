@@ -14,7 +14,10 @@
 #include <sys/signal.h>
 #include <errno.h>
 
-sigfunc_t signal(int signo,sigfunc_t fun);
+extern sigact_t sigact(int signo, sigact_t action);
+extern int sigmask(int how, sigset_t *set, sigset_t *oset);
+extern int sigsend(pid_t pid, int signo);
+extern int raise(int signo);
 
 static inline int sigaddset(sigset_t *set, int signo)
 {

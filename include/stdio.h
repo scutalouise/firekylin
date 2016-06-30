@@ -41,8 +41,44 @@ extern FILE * stdin;
 extern FILE * stdout;
 extern FILE * stderr;
 
+extern FILE * fopen(const char *filename, const char *mode);
+extern int    fgetc(FILE *stream);
+extern char * fgets(char * buf, size_t n, FILE *stream);
+extern int    fputc(int ch, FILE *stream);
+extern int    fputs(const char *s, FILE *stream);
+extern size_t fread(void * ptr, size_t size, size_t nobj, FILE *stream);
+extern size_t fwrite(const void * ptr, size_t size, size_t nobj, FILE *stream);
+extern int    fseek(FILE *stream, off_t off, int where);
+extern int    fflush(FILE *stream);
+extern int    fsetbuf(FILE *stream, int mode, char *buf, size_t size);
+extern int    fclose(FILE *stream);
+
 extern int printf(char *fmt, ...);
-extern int sprintf(char *buf, char*fmt, ...);
+extern int sprintf(char *buf, char *fmt, ...);
+extern int fprintf(FILE *stream, char *fmt, ...);
+
+//extern int rename(const char *old, const char *new);
+//extern int remove(const char *path);
+
+static inline int rename(const char *old, const char *new)
+{
+	return 0;
+}
+
+static inline int remove(const char *path)
+{
+	return 0;
+}
+
+static inline int ftell(FILE *stream)
+{
+	return fseek(stream, 0, SEEK_CUR);
+}
+
+static inline int rewind(FILE *stream)
+{
+	return fseek(stream, 0, SEEK_SET);
+}
 
 static inline int fileno(FILE *stream)
 {
@@ -59,12 +95,63 @@ static inline int ferror(FILE *stream)
 	return stream->_flag & (_IOERR | _IOEOF);
 }
 
-static inline int fclrerr(FILE *stream)
+static inline int clearerr(FILE *stream)
 {
 	return stream->_flag &= ~(_IOERR | _IOEOF);
 }
 
-#define getc(stream)	fgetc(stream)
-#define putc(stream,c)	fputc(stream,c)
+static inline char *gets(char *buf)
+{
+	return fgets(buf, 1024, stdin);
+}
+
+static inline int getc(FILE *stream)
+{
+	return fgetc(stream);
+}
+
+static inline int getchar(void)
+{
+	return fgetc(stdin);
+}
+
+static inline int puts(char *s)
+{
+	return fputs(s, stdout);
+}
+static inline int putc(int c, FILE *stream)
+{
+	return fputc(c, stream);
+}
+
+static inline int putchar(int c)
+{
+	return fputc(c, stdout);
+}
+
+static inline int ungetc(int c, FILE *stream)
+{
+	return EOF;
+}
+
+static inline int fscanf(FILE *stream,char *fmt,...)
+{
+	return -1;
+}
+
+static inline int setvbuf(FILE *stream,char *buf,int mode ,size_t size)
+{
+	return -1;
+}
+
+static inline FILE *tmpfile(void)
+{
+	return NULL;
+}
+
+static inline char * tmpnam(char *ptr)
+{
+	return NULL;
+}
 
 #endif

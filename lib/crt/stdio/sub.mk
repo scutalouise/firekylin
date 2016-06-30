@@ -1,8 +1,5 @@
-LIBC_OBJ+=stdio/printf.o     \
-	  stdio/sprintf.o    \
-	  stdio/__iotab.o    \
+LIBC_OBJ+=stdio/iotab.o      \
 	  stdio/fopen.o      \
-	  stdio/fclose.o     \
 	  stdio/fgetc.o      \
 	  stdio/fgets.o      \
 	  stdio/fputc.o      \
@@ -10,5 +7,9 @@ LIBC_OBJ+=stdio/printf.o     \
 	  stdio/fread.o      \
 	  stdio/fwrite.o     \
 	  stdio/fseek.o	     \
-	  stdio/ftell.o
-	  
+	  stdio/fflush.o     \
+	  stdio/fclose.o     \
+	  stdio/printf.o     \
+	  stdio/sprintf.o    \
+	  stdio/fprintf.o
+	 

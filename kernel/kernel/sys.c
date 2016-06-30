@@ -88,9 +88,9 @@ int sys_alarm(unsigned long seconds)
 	current = CURRENT_TASK();
 	old = current->alarm;
 
-	current->alarm = seconds ? (clock + seconds * HZ) : 0;
+	current->alarm = seconds ? (click + seconds * HZ) : 0;
 	if (old)
-		return (old - clock) / HZ;
+		return (old - click) / HZ;
 	return 0;
 }
 
@@ -109,5 +109,5 @@ int sys_setime(long *p)
 	if ((CURRENT_TASK() )->uid != 0)
 		return -EPERM;
 
-	return start_time = *p - clock / HZ;
+	return start_time = *p - click / HZ;
 }

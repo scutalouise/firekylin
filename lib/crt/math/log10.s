@@ -7,11 +7,11 @@
 ; * it under the terms of The BSD License, see LICENSE.
 ; */
 
-global lg
+global log10
 
 ;log (base 10) m=log (base 10) 2 * log (base 2) m
 
-lg:
+log10:
 	fldlg2			; st0=log (base 10) 2
 	fld  qword [esp+4]
 	fyl2x			; st0=st1 *log (base 2) st0

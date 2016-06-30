@@ -13,6 +13,8 @@ complie:
 	make -C kernel
 	make -C lib
 	make -C bin
+	make -C test
+	make -C lua
 	
 cdrom:
 	@make complie 2>&1 > /dev/null
@@ -25,6 +27,7 @@ clean:
 	make clean -C kernel
 	make clean -C lib
 	make clean -C bin
+	make clean -C test
 	-rm -rf iso
 	-rm cdrom.iso hd.img
 

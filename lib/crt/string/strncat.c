@@ -9,15 +9,16 @@
 
 #include <string.h>
 
-char *strncat(char *dst, char *src ,size_t n)
+char *strncat(char *s1, const char *s2 ,size_t n)
 {
-	char *tmp = dst;
+	char *tmp = s1;
+	char *ts2=(char *)s2;
 
 	while (*tmp)
 		tmp++;
 
-	while (n-- && *src)
-		*tmp++ = *src++;
+	while (n-- && *ts2)
+		*tmp++ = *ts2++;
 
-	return dst;
+	return s1;
 }

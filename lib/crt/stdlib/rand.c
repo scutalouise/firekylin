@@ -7,6 +7,8 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
+#include <stdlib.h>
+
 static int __seed;
 
 int rand(void)

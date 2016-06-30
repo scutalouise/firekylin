@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-char * getenv(char * name)
+char * getenv(const char * name)
 {
 	int len = strlen(name);
 	char ** env = environ;

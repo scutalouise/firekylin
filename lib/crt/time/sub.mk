@@ -4,5 +4,7 @@ LIBC_OBJ+=time/time.o      \
           time/mktime.o    \
           time/ctime.o     \
           time/asctime.o   \
-          time/clock.o
+          time/clock.o     \
+          time/difftime.o  \
+          time/strftime.o  \
           

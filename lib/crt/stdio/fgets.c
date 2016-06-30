@@ -9,13 +9,16 @@
 
 #include "stdio_loc.h"
 
-char * fgets(FILE *stream, char *buf, size_t n)
+char * fgets(char * buf, size_t n, FILE *stream)
 {
 	char c;
 	char *p = buf;
 
-	while (n-- && (c = __getc(stream) != EOF) &&c != '\n')
+	while (n-- && (c = getc(stream) != EOF)) {
 		*p++ = c;
+		if (c == '\n')
+			break;
+	}
 
 	if (feof(stream))
 		return NULL;

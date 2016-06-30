@@ -9,22 +9,22 @@
 
 #include "stdio_loc.h"
 
-int fread(FILE *stream, char *buf, size_t size, size_t nmemb)
+size_t fread(void * ptr, size_t size, size_t nobj, FILE *stream)
 {
-	int tmp_len=size * nmemb;
-	int done=0;
-	int c;
+	int tmp_len, done, c;
+	char *buf = (char*) ptr;
 
-	if(!tmp_len)
+	tmp_len = size * nobj;
+	if (!tmp_len)
 		return 0;
 
-	while(tmp_len--){
-		c=__getc(stream);
-		if(c==EOF)
+	while (tmp_len--) {
+		c = fgetc(stream);
+		if (c == EOF)
 			break;
-		*buf++=c;
+		*buf++ = c;
 		done++;
 	}
 
-	return done/nmemb;
+	return done / size;
 }

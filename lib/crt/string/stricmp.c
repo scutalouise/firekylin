@@ -10,12 +10,15 @@
 #include <string.h>
 #include <ctype.h>
 
-int stricmp(char *s1, char *s2)
+int stricmp(const char *s1, const char *s2)
 {
-	while (*s1 && *s2 && toupper(*s1)==toupper(*s2)){
-		s1++;
-		s2++;
+	char *ts1=(char *)s1;
+	char *ts2=(char *)s2;
+
+	while (*ts1 && *ts2 && toupper(*ts1)==toupper(*ts2)){
+		ts1++;
+		ts2++;
 	}
 
-	return (int)(*s1-*s2);
+	return (int)(*ts1-*ts2);
 }

@@ -19,7 +19,7 @@ typedef struct{
 	long edi;
 }jmp_buf;
 
-extern int  setjmp(jmp_buf env);
-extern void longjmp(jmp_buf env,int val);
+extern int  setjmp(jmp_buf buf);
+extern void longjmp(jmp_buf buf,int val);
 
 #endif

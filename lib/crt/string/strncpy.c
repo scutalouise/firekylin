@@ -9,12 +9,13 @@
 
 #include <string.h>
 
-char *strncpy(char *dst, char *src, size_t n)
+char *strncpy(char *dst, const char *src, size_t n)
 {
 	char *t = dst;
+	char *t2=(char *)src;
 
-	while (n-- && *src)
-		*t++ = *src++;
+	while (n-- && *t2)
+		*t++ = *t2++;
 	if(n)
 		*t=0;
 	return dst;

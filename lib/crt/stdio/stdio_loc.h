@@ -8,33 +8,13 @@
  */
 
 #include <sys/fcntl.h>
+#include <sys/unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #define MAX_OPEN	NR_OPEN
 
-extern FILE * __iotab[];
+extern FILE __iotab[];
 
 #define READING		0x0100
 #define WRITING		0x0200
-
-extern int __fillbuf(FILE *stream);
-extern int __flushbuf(FILE *stream, int ch);
-
-static inline int __getc(FILE *stream)
-{
-	if (stream->_cnt) {
-		stream->_cnt--;
-		return *stream->_ptr++;
-	} else
-		return __fillbuf(stream);
-}
-
-static inline int __putc(FILE *stream, int c)
-{
-	if (stream->_cnt) {
-		stream->_cnt--;
-		return *stream->_ptr++ = c;
-	} else
-		return __flushbuf(stream, c);
-}

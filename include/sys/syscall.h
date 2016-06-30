@@ -51,6 +51,9 @@
 #define __NR_sync		38
 #define __NR_getime		39
 #define __NR_setime		40
+#define __NR_sigsend		41
+#define __NR_sigmask		42
+#define __NR_sigact		43
 
 #define __syscall0(type,name) 			\
 type name(void)					\
@@ -61,7 +64,7 @@ type name(void)					\
 	    :"a"(__NR_##name));			\
 	if(res<0){				\
 		errno=-res;			\
-		return -1;			\
+		return (type)(-1);		\
 	}					\
 	return (type)res;			\
 }
@@ -75,7 +78,7 @@ type name(typeb argb)				\
 	    :"a"(__NR_##name),"b"(argb));	\
 	if(res<0){				\
 		errno=-res;			\
-		return -1;			\
+		return (type)(-1);		\
 	}					\
 	return (type)res;			\
 }
@@ -89,7 +92,7 @@ type name(typeb argb,typec argc)			\
 	    :"a"(__NR_##name),"b"(argb),"c"(argc));	\
 	if(res<0){					\
 		errno=-res;				\
-		return -1;				\
+		return (type)(-1);			\
 	}						\
 	return (type)res;				\
 }
@@ -103,7 +106,7 @@ type name(typeb argb,typec argc,typed argd)			\
 	    :"a"(__NR_##name),"b"(argb),"c"(argc),"d"(argd));	\
 	if(res<0){						\
 		errno=-res;					\
-		return -1;					\
+		return (type)(-1);				\
 	}							\
 	return (type)res;					\
 }
@@ -117,7 +120,7 @@ type name(typeb argb,typec argc,typed argd,typee arge)			  \
 	    :"a"(__NR_##name),"b"(argb),"c"(argc),"d"(argd),"D"(arge));	  \
 	if(res<0){						          \
 		errno=-res;					          \
-		return -1;					          \
+		return (type)(-1);				          \
 	}							          \
 	return (type)res;					          \
 }

@@ -19,12 +19,10 @@
 #define UCHAR_MAX	       255U
 
 /* definitions of short */
-#define SHORT_BIT	         16
-#define SHORT_MIN	     -32768
-#define SHORT_MAX	      32767
-#define USHORT_MAX	     65535U
-
-#define SHRT_MAX	SHORT_MAX
+#define SHRT_BIT	         16
+#define SHRT_MIN	     -32768
+#define SHRT_MAX	      32767
+#define USHRT_MAX	     65535U
 
 /* definitions of int */
 #define INT_BIT		         32

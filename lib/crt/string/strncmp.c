@@ -9,14 +9,17 @@
 
 #include <string.h>
 
-int strncmp(char *s1, char *s2, size_t n)
+int strncmp(const char *s1, const char *s2, size_t n)
 {
+	char *ts1=(char *)s1;
+	char *ts2=(char *)s2;
+
 	while (n--) {
-		if (*s1 && (*s1 == *s2)) {
-			s1++;
-			s2++;
+		if (*ts1 && (*ts1 == *ts2)) {
+			ts1++;
+			ts2++;
 		} else {
-			return (*s1 - *s2);
+			return (*ts1 - *ts2);
 		}
 	}
 	return 0;

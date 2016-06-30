@@ -9,12 +9,13 @@
 
 #include <string.h>
 
-char *strcat(char *dst, char *src)
+char * strcat(char *s1, const char *s2)
 {
-	char *tmp = dst;
+	char *tmp = s1;
+	char *tmp2 = (char*) s2;
 	while (*tmp)
 		tmp++;
-	while (*src)
-		*tmp++ = *src++;
-	return dst;
+	while (*tmp2)
+		*tmp++ = *tmp2++;
+	return s1;
 }

@@ -9,16 +9,44 @@
 
 #include "stdio_loc.h"
 
-int fputc(FILE *stream, int ch)
+int fputc(int ch, FILE *stream)
 {
-	__putc(stream, ch);
-	if ((stream->_flag & 0x000f) == _IONBF) {
+	if (!stream)
+		return EOF;
+
+	if (ferror(stream))
+		return EOF;
+
+	if (stream->_flag & READING)
 		fflush(stream);
-		return 0;
+
+	if (stream->_cnt <= 0) {
+
+		stream->_flag |=WRITING;
+
+		if (!stream->_buf) {
+			stream->_buf = malloc(BUFSIZ);
+			if (!stream->_buf) {
+				stream->_flag |= _IOERR;
+				return EOF;
+			}
+			stream->_bufsize = BUFSIZ;
+			stream->_ptr = stream->_buf;
+		}
+
+		int tmp = stream->_ptr - stream->_buf;
+		if (tmp > 0) {
+			if (write(stream->_fd, stream->_buf, tmp) != tmp) {
+				stream->_flag |= _IOERR;
+				return EOF;
+			}
+		}
+		stream->_cnt = stream->_bufsize;
+		stream->_ptr = stream->_buf;
 	}
-	if (((stream->_flag & 0x000f) == _IONBF) && (ch = '\n')) {
-		fflush(stream);
-		return 0;
-	}
-	return 0;
+
+	stream->_cnt--;
+	*stream->_ptr++ = ch;
+
+	return ch;
 }

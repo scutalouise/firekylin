@@ -12,7 +12,7 @@
 typedef void (*atexit_func_t)(void);
 
 atexit_func_t atexit_func_tab[32];
-int atexit_func_num ;
+int atexit_func_num;
 
 void exit(int exit_code)
 {

@@ -9,17 +9,25 @@
 
 #include "stdio_loc.h"
 
-void fflush(FILE *stream)
+int fflush(FILE *stream)
 {
-	if(!stream){
-		for(int i=0;i<MAX_OPEN;i++){
-			if(!__iotab[i])
-				continue ;
-			fflush(__iotab[i]);
+
+	if (!stream){
+		for (int i = 0; i < MAX_OPEN; i++)
+			if (__iotab[i]._flag)
+				fflush(&__iotab[i]);
+	}
+
+	if (stream->_flag & WRITING) {
+		int size = stream->_ptr - stream->_buf;
+		if (size && (write(stream->_fd, stream->_buf, size) != size)) {
+			stream->_flag |= _IOERR;
 		}
 	}
 
-	if(stream->_flag& WRITING){
+	stream->_cnt = 0;
+	stream->_ptr = stream->_buf;
+	stream->_flag &= ~(READING | WRITING);
 
-	}
+	return 0;
 }

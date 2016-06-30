@@ -40,6 +40,7 @@ sudo mkdir -p ~/tmpdir/dev
 sudo mkdir -p ~/tmpdir/boot
 sudo mkdir -p ~/tmpdir/lib
 sudo mkdir -p ~/tmpdir/home
+sudo mkdir -p ~/tmpdir/test
 
 # create dev spciel node 
 

@@ -9,9 +9,9 @@
 
 #include <string.h>
 
-size_t strnlen(char *s, size_t n)
+size_t strnlen(const char *s, size_t n)
 {
-	char *t = s;
+	char *t = (char *)s;
 
 	while (n-- && *t)
 		t++;

@@ -152,24 +152,24 @@ void ne2k_receive(void)
 	case 0x0806:
 		printk("arp");
 		struct arphdr *ah = (struct arphdr *) eh->eh_data;
-		printk("htype:%x\n", bswapw(ah->ah_hrd));
-		printk("ptype:%x\n", bswapw(ah->ah_pro));
-		printk("haddr_len:%x\n", ah->ah_hln);
-		printk("paddr_len:%x\n", ah->ah_pln);
-		printk("src_haddr:%x:%x:%x:%x:%x:%x", ah->ah_sha[0],
-				ah->ah_sha[1], ah->ah_sha[2],
-				ah->ah_sha[3], ah->ah_sha[4],
-				ah->ah_sha[5]);
-		printk("src_paddr:%d.%d.%d.%d", ah->ah_spa[0],
-				ah->ah_spa[1], ah->ah_spa[2],
-				ah->ah_spa[3]);
-		printk("target_haddr:%x:%x:%x:%x:%x:%x", ah->ah_tha[0],
-				ah->ah_tha[1], ah->ah_tha[2],
-				ah->ah_tha[3], ah->ah_tha[4],
-				ah->ah_tha[5]);
-		printk("target_paddr:%d.%d.%d.%d", ah->ah_tpa[0],
-				ah->ah_tpa[1], ah->ah_tpa[2],
-				ah->ah_tpa[3]);
+		printk("htype:%x\n", bswapw(ah->arp_hrd));
+		printk("ptype:%x\n", bswapw(ah->arp_pro));
+		printk("haddr_len:%x\n", ah->arp_hln);
+		printk("paddr_len:%x\n", ah->arp_pln);
+		printk("src_haddr:%x:%x:%x:%x:%x:%x", ah->arp_sha[0],
+				ah->arp_sha[1], ah->arp_sha[2],
+				ah->arp_sha[3], ah->arp_sha[4],
+				ah->arp_sha[5]);
+		printk("src_paddr:%d.%d.%d.%d", ah->arp_spa[0],
+				ah->arp_spa[1], ah->arp_spa[2],
+				ah->arp_spa[3]);
+		printk("target_haddr:%x:%x:%x:%x:%x:%x", ah->arp_tha[0],
+				ah->arp_tha[1], ah->arp_tha[2],
+				ah->arp_tha[3], ah->arp_tha[4],
+				ah->arp_tha[5]);
+		printk("target_paddr:%d.%d.%d.%d", ah->arp_tpa[0],
+				ah->arp_tpa[1], ah->arp_tpa[2],
+				ah->arp_tpa[3]);
 		break;
 	default:
 		printk("unknow");

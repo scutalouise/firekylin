@@ -26,13 +26,13 @@ void sigsend(struct task *p, int signo)
 
 void do_signal(unsigned long unused)
 {
-	struct trapframe *tf=(struct trapframe *)&unused;
+	struct trapframe *tf = (struct trapframe *) &unused;
 	struct task * current;
 	sigset_t signal;
 	int signr;
 
-	if(!(tf->cs & 3))
-		return ;
+	if (!(tf->cs & 3))
+		return;
 
 	current = CURRENT_TASK();
 
@@ -53,12 +53,12 @@ void do_signal(unsigned long unused)
 				do_exit(1 << signr);
 		}
 
-		unsigned long *esp = (unsigned long *)tf->esp;
+		unsigned long *esp = (unsigned long *) tf->esp;
 		*(--esp) = tf->eax;
 		*(--esp) = signr + 1;
 		*(--esp) = tf->eip;
-		tf->eip = (unsigned long)current->sighandle[signr];
-		tf->esp =(unsigned long) esp;
+		tf->eip = (unsigned long) current->sighandle[signr];
+		tf->esp = (unsigned long) esp;
 		current->sigarrive &= ~(1 << signr);
 		return;
 	}
@@ -68,21 +68,10 @@ void do_signal(unsigned long unused)
 
 int sys_sigctl(int cmd, int param1, int param2, int param3)
 {
-	struct task **p;
 	struct task *current = CURRENT_TASK();
 	int ret;
-	pid_t pid;
-	int signo;
 
 	switch (cmd) {
-	case SIGCTL_SETMASK:
-		ret = current->sigmask;
-		current->sigmask = param1
-				& ((1 << (SIGKILL - 1) | 1 << (SIGSTOP - 1)));
-		return ret;
-	case SIGCTL_GETMASK:
-		return current->sigmask;
-
 	case SIGCTL_SETSUSPEND:
 		ret = current->sigsuspend;
 		current->sigsuspend = param1
@@ -92,36 +81,8 @@ int sys_sigctl(int cmd, int param1, int param2, int param3)
 	case SIGCTL_GETSUSPEND:
 		return current->sigsuspend;
 
-	case SIGCTL_SETHANDLE:
-		ret = (int) current->sighandle[param1 - 1];
-		current->sighandle[param1 - 1] = (sigfunc_t ) param2;
-		break;
-
-	case SIGCTL_SEND:
-		pid = (pid_t) param1;
-		signo = param2;
-
-		if (signo < 0 || signo > NR_SIG)
-			return -EINVAL;
-
-		if (pid > 0) {
-			for (p = task_table; p < task_table + NR_TASK; p++) {
-				if (*p && (*p)->pid == pid)
-					sigsend(*p, signo);
-			}
-		}
-
-		if (pid < 0) {
-			pid = -pid;
-			for (p = task_table; p < task_table + NR_TASK; p++) {
-				if (*p && (*p)->grp == pid)
-					sigsend(*p, signo);
-			}
-		}
-		return 0;
-
 	case SIGCTL_PAUSE:
-		sleep_on(NULL,TASK_STATE_PAUSE);
+		sleep_on(NULL, TASK_STATE_PAUSE);
 		return -EINTR;
 
 	default:
@@ -129,4 +90,72 @@ int sys_sigctl(int cmd, int param1, int param2, int param3)
 
 	}
 	return -ERROR;
+}
+
+int sys_sigsend(pid_t pid, unsigned int signo)
+{
+	struct task **p;
+
+	if (signo > NR_SIG)
+		return -EINVAL;
+
+	if (pid > 0) {
+		for (p = task_table; p < task_table + NR_TASK; p++) {
+			if (*p && (*p)->pid == pid)
+				sigsend(*p, signo);
+		}
+	}
+
+	if (pid < 0) {
+		pid = -pid;
+		for (p = task_table; p < task_table + NR_TASK; p++) {
+			if (*p && (*p)->grp == pid)
+				sigsend(*p, signo);
+		}
+	}
+	return 0;
+}
+
+int sys_sigmask(int how, sigset_t *set, sigset_t *oset)
+{
+	struct task *current = CURRENT_TASK();
+
+	if (oset)
+		*oset = current->sigmask;
+
+	if (!set)
+		return -ERROR;
+
+	switch (how) {
+	case SIG_BLOCK:
+		current->sigmask |= *set;
+		break;
+	case SIG_UNBLOCK:
+		current->sigmask &= ~(*set);
+		break;
+	case SIG_SETMASK:
+		current->sigmask = *set;
+		break;
+	default:
+		return -EINVAL;
+	}
+	current->sigmask &= ~(1 << (SIGKILL - 1) | 1 << (SIGSTOP - 1));
+
+	return 0;
+}
+
+sigact_t sys_sigact(unsigned int signo, sigact_t sigact)
+{
+	struct task *current;
+	sigact_t oact;
+
+	if(signo >=NR_SIG)
+		return (sigact_t)(-EINVAL);
+
+	current=CURRENT_TASK();
+
+	oact=current->sighandle[signo-1];
+	current->sighandle[signo-1]=sigact;
+
+	return oact;
 }

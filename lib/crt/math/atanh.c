@@ -11,5 +11,5 @@
 
 double atan(double x)
 {
-	return ln((1+x)/(1-x))/2.0;
+	return log((1+x)/(1-x))/2.0;
 }

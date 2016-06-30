@@ -11,17 +11,10 @@
 
 int fseek(FILE *stream, off_t offset, int where)
 {
-	int retval = 0;
+	if(!stream)
+		return EOF;
 
-	if (stream->_flag & WRITING) {
-		fflush(stream);
-		stream->_flag &= ~WRITING;
-	}
+	fflush(stream);
 
-	retval=lseek(stream->_fd, offset, where);
-
-	stream->_cnt=0;
-	stream->_ptr=stream->_buf;
-
-	return 0;
+	return lseek(stream->_fd, offset, where);
 }

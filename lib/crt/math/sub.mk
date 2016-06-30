@@ -7,9 +7,8 @@ LIBC_OBJ+=math/sin.o   \
           math/atan2.o \
           math/exp.o   \
           math/pow.o   \
-          math/ln.o    \
-	  math/lg.o    \
-	  math/log.o   \
+          math/log.o   \
+	  math/log10.o \
 	  math/sinh.o  \
           math/cosh.o  \
           math/tanh.o  \
@@ -22,5 +21,7 @@ LIBC_OBJ+=math/sin.o   \
           math/floor.o \
           math/ceil.o  \
           math/fmod.o  \
-          math/ldexp.o
+          math/ldexp.o \
+          math/modf.o  \
+          math/frexp.o
 	  

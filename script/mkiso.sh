@@ -55,8 +55,14 @@ if [ ! $? ]; then
 	exit
 fi
 
-echo "installing command ..."
+echo "installing bin ..."
 sudo make PREFIX=$HOME/tmpdir/bin  install -C bin 2>&1 > /dev/null
+
+echo "installing test ..."
+sudo make PREFIX=$HOME/tmpdir/test  install -C test 2>&1 > /dev/null
+
+echo "installing lua ..."
+sudo make PREFIX=$HOME/tmpdir/bin  install -C lua 2>&1 > /dev/null
 
 sync
 sync

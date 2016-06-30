@@ -25,16 +25,9 @@ int main(int argc, char **argv)
 	printf("fd1=%d,fd2=%d",fd[0],fd[1]);
 
 	memset(buf,'A',1024);
-	//printf("write into pipe");
-	//write(fd[1],buf,1024);
-	//printf("write pipe over");
 	memset(buf2,'B',1024);
-	int i=4;
-
 
 	if(!fork()){
-		//read(fd[0],buf2,256);
-		//write(1,buf2,512);
 		close(0);
 		printf("---%d",dup(fd[0]));
 		close(fd[0]);
@@ -50,7 +43,6 @@ int main(int argc, char **argv)
 		printf("father write over");
 		close(fd[0]);
 		close(fd[1]);
-		//_exit(0);
 		wait(-1,NULL,0);
 	}
 }

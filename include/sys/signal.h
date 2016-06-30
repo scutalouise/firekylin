@@ -34,19 +34,19 @@
 #define SIGTTIN		20
 #define	SIGTTOU		21
 
-#define SIGCTL_SETMASK		1
-#define SIGCTL_GETMASK		2
 #define SIGCTL_SETSUSPEND	3
 #define SIGCTL_GETSUSPEND	4
-#define SIGCTL_SETHANDLE	5
-#define SIGCTL_SEND		6
-#define SIGCTL_PAUSE		7
+#define SIGCTL_PAUSE		5
 
 typedef unsigned long 	  sigset_t;
-typedef void        	(*sigfunc_t)(int signo, int ret);
+typedef void        	(*sigact_t)(int signo, int ret);
 
-#define SIG_ERR		((sigfunc_t)-1)
-#define SIG_DFL		((sigfunc_t)0)
-#define SIG_IGN		((sigfunc_t)1)
+#define SIG_BLOCK	1
+#define SIG_UNBLOCK	2
+#define SIG_SETMASK	3
+
+#define SIG_ERR		((sigact_t)-1)
+#define SIG_DFL		((sigact_t)0)
+#define SIG_IGN		((sigact_t)1)
 
 #endif

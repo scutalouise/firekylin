@@ -9,21 +9,18 @@
 
 #include "stdio_loc.h"
 
-int fwrite(FILE *stream, char *buf, size_t size, size_t nmemb)
+size_t fwrite(const void * ptr, size_t size, size_t nobj, FILE *stream)
 {
-	int tmp_len=size * nmemb;
-	int done=0;
-	int c;
+	int tmp_len, done;
+	char *buf = (char*) ptr;
 
-	if(!tmp_len)
+	tmp_len = size * nobj;
+
+	if (!tmp_len)
 		return 0;
 
-	while(tmp_len--){
-		c=__putc(stream,*buf);
-		if(c==EOF)
-			break;
+	while (tmp_len-- && (fputc(*buf++, stream) != EOF))
 		done++;
-	}
 
-	return done/nmemb;
+	return done / nobj;
 }

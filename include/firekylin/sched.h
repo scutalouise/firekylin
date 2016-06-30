@@ -67,7 +67,7 @@ struct task {
 	sigset_t      sigarrive;	/* sig arrived map 	*/
 	sigset_t      sigmask;		/* sig mask    map	*/
 	sigset_t      sigsuspend;	/* sig suspend map	*/
-	sigfunc_t     sighandle[NR_SIG];/* sig handle table	*/
+	sigact_t      sighandle[NR_SIG];/* sig handle table	*/
 	unsigned int  tty; 		/* control tty. 	*/
 	struct inode *pwd; 		/* current dir inode. 	*/
 	struct file  *file[NR_OPEN]; 	/* file open point. 	*/

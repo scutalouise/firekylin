@@ -16,15 +16,15 @@
 #define	ARP_PADDR_LEN	4		/* Size of IP address		*/
 
 struct arphdr{
-	unsigned short ah_hrd;		/* format of hardware address	*/
-	unsigned short ah_pro;		/* format of protocol address	*/
-	unsigned char  ah_hln;		/* length of hardware address 	*/
-	unsigned char  ah_pln;		/* length of protocal address	*/
-	unsigned short ah_op;		/* arp/rarp operation		*/
-	unsigned char  ah_sha[ARP_HADDR_LEN];
-	unsigned char  ah_spa[ARP_PADDR_LEN];
-	unsigned char  ah_tha[ARP_HADDR_LEN];
-	unsigned char  ah_tpa[ARP_PADDR_LEN];
+	unsigned short arp_hrd;		/* format of hardware address	*/
+	unsigned short arp_pro;		/* format of protocol address	*/
+	unsigned char  arp_hln;		/* length of hardware address 	*/
+	unsigned char  arp_pln;		/* length of protocal address	*/
+	unsigned short arp_op;		/* arp/rarp operation		*/
+	unsigned char  arp_sha[ARP_HADDR_LEN];
+	unsigned char  arp_spa[ARP_PADDR_LEN];
+	unsigned char  arp_tha[ARP_HADDR_LEN];
+	unsigned char  arp_tpa[ARP_PADDR_LEN];
 };
 
 /* Values of arphdr->ah_hrd */

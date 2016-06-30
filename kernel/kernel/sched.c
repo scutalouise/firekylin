@@ -20,7 +20,7 @@
 #define LATCH		(1193180/HZ)
 
 time_t start_time;
-clock_t clock;
+clock_t click;
 
 struct task * task_table[NR_TASK];
 struct task * priority[NR_PRIO];
@@ -174,7 +174,7 @@ static void do_clock(struct trapframe *tf)
 	struct task *current=CURRENT_TASK();
 
 	outb(0x20, 0x20);
-	clock++;
+	click++;
 
 	if(tf->cs&3){
 		current->utime++;

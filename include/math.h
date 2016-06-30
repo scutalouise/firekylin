@@ -35,9 +35,8 @@ extern double atan(double x);
 extern double atan2(double x, double y);
 extern double exp(double x);
 extern double pow(double x, double y);
-extern double ln(double x);
-extern double lg(double x);
-//extern double log(double a,double b);
+extern double log(double x);
+extern double log10(double x);
 extern double sinh(double x);
 extern double cosh(double x);
 extern double tanh(double x);
@@ -51,5 +50,7 @@ extern double floor(double x);
 extern double ceil(double x);
 extern double fmod(double x, double m);
 extern double ldexp(double x, int i);
+extern double modf(double x, double *ipart);
+extern double frexp(double x, int *exptr);
 
 #endif

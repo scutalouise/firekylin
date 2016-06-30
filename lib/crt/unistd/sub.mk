@@ -31,4 +31,7 @@ LIBC_OBJ+=unistd/getuid.o \
 	  unistd/rmdir.o \
 	  unistd/unlink.o \
 	  unistd/mount.o  \
-	  unistd/umount.o
+	  unistd/umount.o \
+	  unistd/sigsend.o \
+	  unistd/sigmask.o \
+	  unistd/sigact.o

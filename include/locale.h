@@ -22,10 +22,14 @@ struct lconv{
 	char decimal_point[10];
 };
 
+static inline char * setlocale(int category, const char *locale)
+{
+	return -1;
+}
+
 static inline struct lconv * localeconv()
 {
 	return (void*)0;
 }
-
 
 #endif

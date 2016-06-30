@@ -12,5 +12,5 @@
 
 void abort(void)
 {
-	//sigsend(getpid(),SIGABRT);
+	sigsend(getpid(), SIGABRT);
 }

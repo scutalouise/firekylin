@@ -10,6 +10,8 @@
 #ifndef _STDLIB_H
 #define _STDLIB_H
 
+#include <sys/types.h>
+
 typedef struct {
 	int quot;
 	int rem;
@@ -24,11 +26,23 @@ extern char **environ;
 
 extern int    abs(int i);
 extern void * malloc(long nbytes);
+extern void * realloc(void *ptr, size_t size);
+extern void * calloc(size_t nelem, size_t elsize);
 extern void   free(void *p);
-extern char * getenv(char *name);
+extern char * getenv(const char *name);
 extern void   exit(int exit_code);
+extern unsigned long strtoul(const char *str, char **endptr, int base);
+extern double strtod(const char *ptr, char **endptr);
+extern int  rand(void);
+extern void srand(unsigned int seed);
+
 
 #define EXIT_SUCCESS	0
 #define EXIT_FAILURE	1
+
+static inline int system(const char *cmd)
+{
+	return -1;
+}
 
 #endif

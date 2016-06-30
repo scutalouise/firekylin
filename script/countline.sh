@@ -13,10 +13,10 @@ SUM_DIR=0
 SUM_FILE=0
 SUM_LINE=0
 
-for dir in include kernel libc command ;
+for dir in include kernel lib bin test ;
 do
 	DIR=`ls -lR $dir |grep ^d |wc -l`
-	FILE=`ls -lR $dir|grep ^- |wc -l`
+	FILE=`ls -lR $dir |grep ^- |wc -l`
 	LINE=`find $dir -name *.[chs] |xargs grep -v ^$$ |wc -l`
 	
 	# not count head commit .

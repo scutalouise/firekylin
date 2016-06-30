@@ -7,7 +7,7 @@
 ; * it under the terms of The BSD License, see LICENSE.
 ; */
 
-extern main,exit
+extern main, exit, _edata, _end
 global _start,environ
 
 section .text
@@ -17,6 +17,11 @@ _start:
 	mov  es,ax
 	mov  eax,[esp+8]
 	mov  dword [environ],eax
+	mov  edi, _edata
+	mov  ecx, _end
+	sub  ecx, edi
+	xor  eax,eax
+	rep  stosb
 	call main
 	push eax
 	call exit

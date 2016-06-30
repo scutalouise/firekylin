@@ -25,15 +25,16 @@ global setjmp,longjmp
 
 setjmp:
 	pop ecx
-	mov edx,[esp]
-	mov [edx],ebp
-	mov [edx+4],esp
-	mov [edx+8],ecx
-	mov [edx+12],ebx
-	mov [edx+16],esi
-	mov [edx+20],edi
+	;mov edx,[esp]
+	;mov [edx],ebp
+	;mov [edx+4],esp
+	;mov [edx+8],ecx
+	;mov [edx+12],ebx
+	;mov [edx+16],esi
+	;mov [edx+20],edi
 	xor eax,eax
-	jmp [ecx]
+	push ecx
+	ret
 
 longjmp:
 	mov edx,[esp+4]

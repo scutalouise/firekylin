@@ -9,21 +9,18 @@
 
 #include "stdio_loc.h"
 
-int fputs(FILE *stream, char *s)
+int fputs(const char *s, FILE *stream)
 {
+	char *ts = (char*) s;
 	int i = 0;
 	int r;
 
-	while (*s) {
-		r = __putc(stream, *s);
+	while (*ts) {
+		r = fputc(*ts++, stream);
 		i++;
 		if (r == EOF)
 			return 0;
 	}
-
-	if ((stream->_flag & 0x000f == _IONBF) ||
-	    (stream->_flag & 0x000f == _IOLBF))
-		fflush(stream);
 
 	return i;
 }

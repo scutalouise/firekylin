@@ -9,11 +9,12 @@
 
 #include <string.h>
 
-char *strcpy(char *dst, char *src)
+char *strcpy(char *dst, const char *src)
 {
 	char *tmp = dst;
-	while (*src)
-		*tmp++ = *src++;
+	char *t =(char *)src;
+	while (*t)
+		*tmp++ = *t++;
 	*tmp = 0;
 	return dst;
 }

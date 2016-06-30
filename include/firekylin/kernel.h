@@ -20,9 +20,9 @@ extern int printk(char * fmt, ...);
 extern void panic(char * fmt, ...);
 
 extern time_t start_time;
-extern clock_t clock;
+extern clock_t click;
 
-#define current_time()	start_time + clock / HZ;
+#define current_time()	start_time + click / HZ;
 
 extern void do_exit(long status);
 

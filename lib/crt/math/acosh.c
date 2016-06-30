@@ -11,5 +11,5 @@
 
 double acosh(double x)
 {
-	return ln(x + sqrt(x*x - 1));
+	return log(x + sqrt(x*x - 1));
 }

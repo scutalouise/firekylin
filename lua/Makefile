@@ -13,7 +13,7 @@ LD=ld -m elf_i386 -T ../script/ldscript  ../lib/csu/csu.o
 
 SFLAGS=-f elf32
 CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
-       -fno-stack-protector -I ../include
+       -fno-stack-protector -I ../include -D_ANSIC_COMP_
 LIB=../lib/crt/crt.a
 
 LUA_LIB_O=lua-5.1/src/lapi.o     \
@@ -53,13 +53,14 @@ LUA_LIB_O=lua-5.1/src/lapi.o     \
 
 complie:liblua.a lua luac 
 
-lua:
+lua:lua-5.1/src/lua.c liblua.a ../lib/crt/crt.a
 	$(CC) $(CFLAGS) -o lua.o  lua-5.1/src/lua.c
 	$(LD) -o lua lua.o ./liblua.a ../lib/crt/crt.a
 
 luac:
 	$(CC) $(CFLAGS) -o luac.o  lua-5.1/src/luac.c
-	$(LD) -o luac luac.o ./liblua.a ../lib/crt/crt.a	
+	$(CC) $(CFLAGS) -o print.o  lua-5.1/src/print.c
+	$(LD) -o luac luac.o print.o ./liblua.a ../lib/crt/crt.a	
 	
 liblua.a: $(LUA_LIB_O)
 	ar rcs liblua.a $(LUA_LIB_O)

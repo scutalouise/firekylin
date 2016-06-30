@@ -9,29 +9,25 @@
 
 #include "stdio_loc.h"
 
-FILE *fopen(char *filename, char *mode)
+FILE *fopen(const char *filename, const char *mode)
 {
 	int fd;
 	FILE *f;
 
-	f = (FILE *)malloc(sizeof(FILE));
-	if (!f)
+	fd = open(filename, O_RDWR | O_CREAT);
+	if (fd < 0)
 		return NULL;
-	fd = open(filename, O_RDWR);
-	if (fd < 0) {
-		free(f);
-		return NULL;
-	}
+
 	for (int i = 0; i < MAX_OPEN; i++) {
-		if (__iotab[i])
+		if (__iotab[i]._flag)
 			continue;
-		__iotab[i] = f;
+		f = &__iotab[i];
 		f->_fd=fd;
 		f->_flag=_IOFBF;
 		f->_cnt=0;
 		f->_bufsize=0;
-		f->_buf=0;
-		f->_ptr=0;
+		f->_buf=NULL;
+		f->_ptr=NULL;
 		return f;
 	}
 	return NULL;
