@@ -7,13 +7,9 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#include <time.h>
+#include <sys/types.h>
+#include <sys/syscall.h>
 #include <sys/times.h>
+#include <errno.h>
 
-clock_t clock(void)
-{
-	struct tms tmsptr;
-
-	times(&tmsptr);
-	return tmsptr.tms_utime + tmsptr.tms_stime;
-}
+__syscall1(clock_t, times, struct tms*, tmsptr);

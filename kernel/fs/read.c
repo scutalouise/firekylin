@@ -93,37 +93,28 @@ int sys_read(int fd, char *buf, size_t size)
 	return res;
 }
 
-long exec_load_file(struct inode *inode, struct buffer*bh)
+long exec_load_file(struct file *file, char *buf)
 {
 	Elf32_Ehdr *ehdr;
 	Elf32_Phdr *phdr;
-	long entry;
-	long buf_page;
-	struct file file;
+
 	struct task *current = CURRENT_TASK();
 
-	buf_page = __va(get_page());
-	memcpy((char*) buf_page, bh->b_data, 1024);
-	brelse(bh);
-
-	file.f_inode = inode;
-
-	ehdr = (Elf32_Ehdr *) buf_page;
+	ehdr = (Elf32_Ehdr *) buf;
 
 	for (int i = 0; i < ehdr->e_phnum; i++) {
-		phdr = (Elf32_Phdr *) (buf_page + ehdr->e_phoff
+		phdr = (Elf32_Phdr *) (buf + ehdr->e_phoff
 				+ i * ehdr->e_phentsize);
 		if (!phdr->p_vaddr)
 			continue;
 		alloc_mm(current->pdtr, phdr->p_vaddr, phdr->p_memsz);
-		file.f_pos = phdr->p_offset;
-		inode->i_op->file_read(&file, (char*) phdr->p_vaddr,
+		file->f_pos = phdr->p_offset;
+		file->f_inode->i_op->file_read(file, (char*) phdr->p_vaddr,
 				phdr->p_filesz);
 		current->sbrk = phdr->p_vaddr + phdr->p_memsz;
 		phdr++;
 	}
 	current->sbrk = (current->sbrk + 0xf) & 0xfffffff0;
-	entry = ehdr->e_entry;
-	put_page(__pa(buf_page));
-	return entry;
+
+	return ehdr->e_entry;
 }

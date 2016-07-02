@@ -24,7 +24,7 @@ extern  sys_lseek,  sys_fcntl,  sys_ioctl,   sys_pipe,    sys_mknod
 extern  sys_mkdir,  sys_link,   sys_rename,  sys_unlink,  sys_rmdir
 extern  sys_chdir,  sys_mount,  sys_umount,  sys_stat,    sys_fstat
 extern  sys_chmod,  sys_chown,  sys_utime,   sys_sync,    sys_getime
-extern  sys_setime, sys_sigsend, sys_sigmask, sys_sigact
+extern  sys_setime, sys_sigsend, sys_sigmask, sys_sigact, sys_times
 
 syscall_table:
     dd  sys_fork,   sys_exec,   sys_sbrk,    sys_wait,    sys_exit
@@ -35,7 +35,7 @@ syscall_table:
     dd  sys_mkdir,  sys_link,   sys_rename,  sys_unlink,  sys_rmdir
     dd  sys_chdir,  sys_mount,  sys_umount,  sys_stat,    sys_fstat
     dd  sys_chmod,  sys_chown,  sys_utime,   sys_sync,    sys_getime
-    dd  sys_setime, sys_sigsend, sys_sigmask, sys_sigact
+    dd  sys_setime, sys_sigsend, sys_sigmask, sys_sigact, sys_times
 
 div_zero:
 	push 0

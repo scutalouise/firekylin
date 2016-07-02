@@ -41,6 +41,16 @@ sudo mkdir -p ~/tmpdir/boot
 sudo mkdir -p ~/tmpdir/lib
 sudo mkdir -p ~/tmpdir/home
 sudo mkdir -p ~/tmpdir/test
+sudo mkdir -p ~/tmpdir/etc
+
+
+# create some test file 
+
+sudo cp /etc/crontab ~/tmpdir/etc/crontab
+sudo cp /etc/shadow  ~/tmpdir/etc/shadow
+sudo cp /etc/shells  ~/tmpdir/etc/shells
+sudo cp /etc/mtab    ~/tmpdir/etc/mtab
+sudo cp /etc/fstab   ~/tmpdir/etc/fstab
 
 # create dev spciel node 
 

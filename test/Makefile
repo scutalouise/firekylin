@@ -16,9 +16,10 @@ CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../include
 LIB=../lib/crt/crt.a
 
-OBJS=tpipe tsig test1 t_strcspn tmath t_strtod tstdio tsetjmp tenv tfgets
+OBJS=tpipe tsig test1 t_strcspn tmath t_strtod tstdio tsetjmp tenv tfgets \
+     t_times
 
-LUA_OBJS=tlua1.lua
+RAW_OBJS=tlua1.lua t1.sh
 
 .s.o:
 	@$(AS) $(SFLAGS) -o $@  $<
@@ -27,9 +28,9 @@ LUA_OBJS=tlua1.lua
 
 all:$(OBJS)
 
-install: $(OBJS) $(LUA_OBJS)
+install: $(OBJS)
 	for obj in $(OBJS) ; do cp $$obj $(PREFIX)/$$obj; done
-	for obj in $(LUA_OBJS) ; do cp $$obj $(PREFIX)/$$obj; done
+	for obj in $(RAW_OBJS) ; do cp $$obj $(PREFIX)/$$obj; done
 
 clean:
 	-rm *.o $(OBJS)

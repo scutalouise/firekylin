@@ -54,6 +54,7 @@
 #define __NR_sigsend		41
 #define __NR_sigmask		42
 #define __NR_sigact		43
+#define __NR_times		44
 
 #define __syscall0(type,name) 			\
 type name(void)					\

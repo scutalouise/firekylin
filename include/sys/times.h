@@ -7,13 +7,18 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#include <time.h>
-#include <sys/times.h>
+#ifndef _SYS_TIMES_H
+#define _SYS_TIMES_H
 
-clock_t clock(void)
-{
-	struct tms tmsptr;
+#include <sys/types.h>
 
-	times(&tmsptr);
-	return tmsptr.tms_utime + tmsptr.tms_stime;
-}
+struct tms {
+	clock_t tms_utime;
+	clock_t tms_stime;
+	clock_t tms_cutime;
+	clock_t tms_cstime;
+};
+
+clock_t times(struct tms *tmsptr);
+
+#endif

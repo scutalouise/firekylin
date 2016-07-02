@@ -9,73 +9,88 @@
 
 #include <sys/stat.h>
 #include <sys/errno.h>
+#include <sys/fcntl.h>
+#include <arch/string.h>
 #include <firekylin/kernel.h>
 #include <firekylin/mm.h>
 #include <firekylin/fs.h>
-#include "../fs/minix/minix.h"
 
 /* define in file fs/read.c */
-extern long exec_load_file(struct inode *inode, struct buffer*bh);
+extern long exec_load_file(struct file *file, char *buf);
 
 static int count(char **arg)
 {
-	int count=0;
-	while(*arg){
+	int count = 0;
+	while (*arg++)
 		count++;
-		arg++;
-	}
 	return count;
 }
 
-static long copy_string(char **argv,char **envp)
+static long copy_string(char **sh_arg, char **argv, char **envp)
 {
-	static char *__arg[]={NULL};
-	static long __base=0x400FF000;
+	static char *__arg[] = { NULL };
+	static long __base = 0x400FF000;
 
-	int argv_count=0;
-	int envp_count=0;
+	int sharg_count;
+	int argv_count;
+	int envp_count;
 	long arg_page;
-	char *s,*tmp;
+	char *s, *tmp;
 	long *tmpl;
 
-	if(!argv)
-		argv=__arg;
-	if(!envp)
-		envp=__arg;
+	if (!argv)
+		argv = __arg;
+	if (!envp)
+		envp = __arg;
 
-	argv_count=count(argv);
-	envp_count=count(envp);
+	sharg_count = count(sh_arg);
+	argv_count = count(argv);
+	envp_count = count(envp);
 
-	arg_page=__va(get_page());
-
-	tmpl=(long*)arg_page;
-	*tmpl++=argv_count;			/* argc */
-	*tmpl++=__base+4*3;     		/* argv */
-	*tmpl++=__base+4*(3+argv_count+1);	/* envp */
-
-	s=(char*)arg_page+4*( 3+argv_count+1+envp_count+1);
-
-	while(*argv){
-		*tmpl++=__base+(long)s-arg_page;
-		tmp=*argv;
-		while(*tmp){
-			*s++=*tmp++;
-		}
-		*s++=0;
+	if (sharg_count && argv_count) {
+		argv_count--;
 		argv++;
 	}
-	*tmpl++=0;
 
-	while(*envp){
-		*tmpl++=__base+(long)s-arg_page;
-		tmp=*envp;
-		while(*tmp){
-			*s++=*tmp++;
+	arg_page = __va(get_page());
+
+	tmpl = (long*) arg_page;
+	*tmpl++ = sharg_count + argv_count;                        /* argc */
+	*tmpl++ = __base + 4 * 3;                                  /* argv */
+	*tmpl++ = __base + 4 * (3 + sharg_count + argv_count + 1); /* envp */
+
+	s = (char*) arg_page + 4 * ( sharg_count + argv_count + envp_count + 5);
+
+	while (*sh_arg) {
+		*tmpl++ = __base + (long) s - arg_page;
+		tmp = *sh_arg;
+		while (*tmp) {
+			*s++ = *tmp++;
 		}
-		*s++=0;
+		*s++ = 0;
+		sh_arg++;
+	}
+	while (*argv) {
+		*tmpl++ = __base + (long) s - arg_page;
+		tmp = *argv;
+		while (*tmp) {
+			*s++ = *tmp++;
+		}
+		*s++ = 0;
+		argv++;
+	}
+	*tmpl++ = 0;
+
+	while (*envp) {
+		*tmpl++ = __base + (long) s - arg_page;
+		tmp = *envp;
+		while (*tmp) {
+			*s++ = *tmp++;
+		}
+		*s++ = 0;
 		envp++;
 	}
-	*tmpl++=0;
+	*tmpl++ = 0;
 
 	return __pa(arg_page);
 }
@@ -83,49 +98,114 @@ static long copy_string(char **argv,char **envp)
 int sys_exec(char *filename, char **argv, char **envp)
 {
 	struct inode *inode;
-	struct buffer *buf;
 	struct task * current;
 	long entry;
 	long arg_page;
+	char *buf;
+	struct file tmpfile;
+	char *sh_arg[16];
 
 	current = CURRENT_TASK();
 
 	if (!(inode = namei(filename, NULL)))
 		return -ENOENT;
 
-	if(!S_ISREG(inode->i_mode)){
+	if (!S_ISREG(inode->i_mode)) {
 		iput(inode);
 		return -EACCESS;
 	}
 
-	if (!(buf = bread(inode->i_dev, minix1_rbmap(inode,0))))
-		return -EIO;
+	buf = (char*) __va(get_page());
 
-	if (!strncmp(buf->b_data, "\0x7FELF", 4)){
-		brelse(buf);
+	tmpfile.f_inode = inode;
+	tmpfile.f_pos = 0;
+	tmpfile.f_mode = O_READ;
+
+	if (inode->i_op->file_read(&tmpfile, buf, 128) < 0) {
+		put_page(__pa(buf));
+		iput(inode);
+		return -EIO;
+	}
+
+	sh_arg[0] = NULL;
+
+	if (buf[0] == '#' && buf[1] == '!') {
+		memcpy(buf + 1024, buf, 128);
+		buf[1024 + 127] = 0;
+
+		char *p = buf + 1024 + 2;
+		int i = 0;
+
+		while (*p) {
+			while (*p == ' ')
+				p++;
+			sh_arg[i] = p;
+			while (*p != ' ' && *p != '\r' && *p != '\n')
+				p++;
+			if (*p == '\n' || *p == '\r') {
+				*p = 0;
+				i++;
+				break;
+			}
+			*p++ = 0;
+			i++;
+			if (i >= 14)
+				break;
+		}
+		sh_arg[i] = filename;
+		sh_arg[i + 1] = NULL;
+
+		iput(inode);
+		if (!(inode = namei(sh_arg[0], NULL))) {
+			put_page(__pa(buf));
+			return -ENOENT;
+		}
+
+		if (!S_ISREG(inode->i_mode)) {
+			put_page(__pa(buf));
+			iput(inode);
+			return -EACCESS;
+		}
+
+		tmpfile.f_inode = inode;
+		tmpfile.f_pos = 0;
+		tmpfile.f_mode = O_READ;
+
+		if (inode->i_op->file_read(&tmpfile, buf, 128) < 0) {
+			put_page(__pa(buf));
+			iput(inode);
+			return -EIO;
+		}
+	}
+
+	if (!strncmp(buf, "\0x7FELF", 4)) {
+		put_page(__pa(buf));
 		iput(inode);
 		return -ENOEXEC;
 	}
-	arg_page=copy_string(argv,envp);
+
+	arg_page = copy_string(sh_arg, argv, envp);
 
 	free_mm();
 
-	entry=exec_load_file(inode,buf);
+	entry = exec_load_file(&tmpfile, buf);
+	put_page(__pa(buf));
+	iput(inode);
 
 	map_page(0x40100000 - 4096, arg_page, current->pdtr);
-	iput(inode);
 
 	current->stack = 0x40FF0000;
 
-	__asm__ (" fninit ");
-	__asm__( " movl %%eax,%%cr3"::"a"(current->pdtr));
-	__asm__( " pushl $0x23;"
-	         " pushl $0x400FF000;"
-	         " pushl $0x13200;"
-	         " pushl $0x1b;"
-	         " pushl %%eax;"
-	         " iret"
-	         ::"a"(entry));
+	__asm__ (
+		" fninit; "
+		" movl %%eax,%%cr3;"
+		" pushl $0x23;"
+		" pushl $0x400FF000;"
+		" pushl $0x13200;"
+		" pushl $0x1b;"
+		" pushl %%ebx;"
+		" iret"
+		::"a"(current->pdtr), "b"(entry));
 
 	return 0;
 }

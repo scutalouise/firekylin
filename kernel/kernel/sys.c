@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <sys/errno.h>
 #include <sys/param.h>
+#include <sys/times.h>
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 #include <firekylin/mm.h>
@@ -57,6 +58,20 @@ gid_t sys_setgid(gid_t gid)
 	if ((CURRENT_TASK() )->uid != 0)
 		return -EPERM;
 	return (CURRENT_TASK() )->gid = gid;
+}
+
+clock_t sys_times(struct tms *tmsptr)
+{
+	struct task *current = CURRENT_TASK();
+
+	if (tmsptr) {
+		tmsptr->tms_utime = current->utime;
+		tmsptr->tms_stime = current->stime;
+		tmsptr->tms_cutime = current->cutime;
+		tmsptr->tms_cstime = current->cstime;
+	}
+
+	return current->start;
 }
 
 /*

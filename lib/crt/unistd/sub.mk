@@ -34,4 +34,5 @@ LIBC_OBJ+=unistd/getuid.o \
 	  unistd/umount.o \
 	  unistd/sigsend.o \
 	  unistd/sigmask.o \
-	  unistd/sigact.o
+	  unistd/sigact.o  \
+	  unistd/times.o
