@@ -50,17 +50,13 @@ sudo mknod ~/tmpdir/dev/port c  1  2
 sudo mknod ~/tmpdir/dev/null c  1  3
 sudo mknod ~/tmpdir/dev/full c  1  4
 
-sudo mknod ~/tmpdir/dev/tty  c  2  0
+sudo mknod ~/tmpdir/dev/tty0 c  2  0
 sudo mknod ~/tmpdir/dev/tty1 c  2  1
 sudo mknod ~/tmpdir/dev/tty2 c  2  2
 sudo mknod ~/tmpdir/dev/tty3 c  2  3
-sudo mknod ~/tmpdir/dev/tty4 c  2  4
-sudo mknod ~/tmpdir/dev/tty5 c  2  5
-sudo mknod ~/tmpdir/dev/tty6 c  2  6
-sudo mknod ~/tmpdir/dev/tty7 c  2  7
 
-sudo mknod ~/tmpdir/dev/com0 c  2  8
-sudo mknod ~/tmpdir/dev/com1 c  2  9
+sudo mknod ~/tmpdir/dev/com0 c  2  4
+sudo mknod ~/tmpdir/dev/com1 c  2  5
 
 sudo mknod ~/tmpdir/dev/rd   b  1  0
 

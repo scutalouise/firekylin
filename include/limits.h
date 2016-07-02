@@ -31,12 +31,12 @@
 #define UINT_MAX        4294967295U
 
 /* Definitions of long */
-#define LONG_BIT	          32
-#define LONG_MIN	 -LONG_MAX-1
-#define LONG_MAX	  2147483647
-#define ULONG_MAX	 4294967295U
+#define LONG_BIT	         32
+#define LONG_MIN	-LONG_MAX-1
+#define LONG_MAX	 2147483647
+#define ULONG_MAX	4294967295U
 
-#define PATH_MAX	512
+#define PATH_MAX	        512
 
 #define RAND_MAX	0x7ffffffff
 

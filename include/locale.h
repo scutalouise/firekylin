@@ -24,7 +24,7 @@ struct lconv{
 
 static inline char * setlocale(int category, const char *locale)
 {
-	return -1;
+	return (void*)0;
 }
 
 static inline struct lconv * localeconv()

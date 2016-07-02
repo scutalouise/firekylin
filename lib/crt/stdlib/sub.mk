@@ -12,4 +12,5 @@ LIBC_OBJ+=stdlib/abort.o \
 	  stdlib/calloc.o  \
 	  stdlib/raise.o   \
 	  stdlib/strtod.o  \
-	  stdlib/strtoul.o
+	  stdlib/strtoul.o \
+	  stdlib/setjmp.o

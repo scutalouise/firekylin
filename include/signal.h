@@ -19,6 +19,11 @@ extern int sigmask(int how, sigset_t *set, sigset_t *oset);
 extern int sigsend(pid_t pid, int signo);
 extern int raise(int signo);
 
+static inline signal(int signo, sigact_t sigact)
+{
+	return NULL;
+}
+
 static inline int sigaddset(sigset_t *set, int signo)
 {
 	if (signo < 0 || signo > 32) {

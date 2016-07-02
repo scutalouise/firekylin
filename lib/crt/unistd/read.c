@@ -12,4 +12,4 @@
 #include <sys/unistd.h>
 #include <errno.h>
 
-__syscall3(ssize_t, read, int, fd, char*, buf, size_t, size);
+__syscall3(ssize_t, read, int, fd, void*, buf, size_t, size);

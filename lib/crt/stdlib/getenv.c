@@ -16,8 +16,8 @@ char * getenv(const char * name)
 	char ** env = environ;
 	char * tmp;
 
-	while (env) {
-		tmp = *env;
+	while (*env) {
+		tmp = *env++;
 		if (strncmp(name, tmp, len))
 			continue;
 		if (tmp[len] == '=')

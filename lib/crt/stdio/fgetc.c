@@ -47,5 +47,6 @@ int fgetc(FILE *stream)
 	}
 
 	stream->_cnt--;
+
 	return *stream->_ptr++;
 }

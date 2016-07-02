@@ -52,7 +52,7 @@ struct trapframe {
 
 #define T_IRQ           32
 
-#define IRQ_TIMER       32
+#define IRQ_CLOCK       32
 #define IRQ_KBD         33
 #define IRQ_COM1        36
 #define IRQ_IDE         46

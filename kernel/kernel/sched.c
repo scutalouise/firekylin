@@ -30,25 +30,26 @@ void dump_task()
 	struct task *p;
 	irq_lock();
 	printk("dump task:\n");
-	printk("  index   pid  state   count   priority\n");
+	printk(" index  pid    ppid    grp    sid   state    count priority\n");
 
-	for(int i=0;i<NR_TASK;i++){
-		if(!task_table[i])
-			continue ;
-		p=task_table[i];
-		printk(" %5d %5d  %5d  %5d  %5d\n",
-			i, p->pid , p->state,p->count, p->priority);
+	for (int i = 0; i < NR_TASK; i++) {
+		if (!task_table[i])
+			continue;
+		p = task_table[i];
+		printk("%5d %5d %5d %5d  %5d  %5d %5d %5d  %5d\n", i, p->pid,
+				p->parent->pid, p->grp, p->sid, p->state,
+				p->count, p->priority);
 	}
 	printk("dump priortiy\n");
 	printk("priority  list \n");
-	for(int i=0;i <NR_PRIO;i++){
-		if(!priority[i])
-			continue ;
-		printk("%5d ",i);
-		p=priority[i];
-		while(p){
-			printk("%#x ",p);
-			p=p->next;
+	for (int i = 0; i < NR_PRIO; i++) {
+		if (!priority[i])
+			continue;
+		printk("%5d ", i);
+		p = priority[i];
+		while (p) {
+			printk("%#x ", p);
+			p = p->next;
 		}
 	}
 	irq_unlock();
@@ -108,16 +109,16 @@ void sleep_on(struct task **wait, int state)
 	if (wait) {
 		current->next = *wait;
 		*wait = current;
-	}else
-		current->next=NULL;
+	} else
+		current->next = NULL;
 	irq_unlock();
 	sched();
 }
 
 void wake_up_proc(struct task *p)
 {
-	if(p->state == TASK_STATE_READY)
-		return ;
+	if (p->state == TASK_STATE_READY)
+		return;
 	irq_lock();
 	p->state = TASK_STATE_READY;
 	p->next = priority[p->priority];
@@ -145,47 +146,44 @@ void setpriority(int pr)
 	struct task *current;
 	struct task *p;
 
-	if(pr >=NR_PRIO){
-		printk("priority too big :%d",pr);
-		return ;
+	if (pr >= NR_PRIO) {
+		printk("priority too big :%d", pr);
+		return;
 	}
 
-	current=CURRENT_TASK();
+	current = CURRENT_TASK();
 
 	/* remove from old list */
-	p=priority[current->priority];
-	if(p==current)
-		priority[current->priority]=current->next;
-	else{
-		while(p->next && p->next !=current)
-			p=p->next;
-		if(p->next)
-			p->next=p->next->next;
+	p = priority[current->priority];
+	if (p == current)
+		priority[current->priority] = current->next;
+	else {
+		while (p->next && p->next != current)
+			p = p->next;
+		if (p->next)
+			p->next = p->next->next;
 	}
 
 	/* add to new list */
-	current->priority=pr;
-	current->next=priority[current->priority];
-	priority[current->priority]=current;
+	current->priority = pr;
+	current->next = priority[current->priority];
+	priority[current->priority] = current;
 }
 
 static void do_clock(struct trapframe *tf)
 {
-	struct task *current=CURRENT_TASK();
+	extern void do_timer(void);
+	struct task *current = CURRENT_TASK();
 
 	outb(0x20, 0x20);
 	click++;
 
-	if(tf->cs&3){
+	if (tf->cs & 3) {
 		current->utime++;
-	}else
+	} else
 		current->stime++;
 
-	/* do timer */
-//	if(timer_list && timer_list->time <=clock){
-//		(timer_list->func)(timer_list->data);
-//		timer_list=timer_list->next;
-//	}
+	do_timer();
 
 	if (--current->count < 0)
 		sched();
@@ -200,6 +198,7 @@ void sched_init(void)
 	current->state = TASK_STATE_READY;
 	task_table[0] = current;
 	current->priority = NR_PRIO - 1;
+	current->parent = current;
 	current->next = NULL;
 	priority[NR_PRIO - 1] = current;
 

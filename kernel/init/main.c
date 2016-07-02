@@ -9,13 +9,8 @@
 
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
-#include <firekylin/driver.h>
-#include <firekylin/mm.h>
-#include <firekylin/fs.h>
-#include <firekylin/lock.h>
 #include <arch/portio.h>
 #include <arch/string.h>
-#include <firekylin/multiboot2.h>
 
 #define BCD_BIN(c)	(c=c/16*10+c%16)
 
@@ -29,10 +24,12 @@ extern void pci_init();
 extern void ne2k_init();
 extern void buffer_init();
 extern void sched_init();
-extern void softirq_init(void);
+extern void softirq_init();
+extern void timer_init();
 extern int  sys_fork();
 extern int  sys_exec(char *filename, char **argv, char **envp);
 extern void mount_root(void);
+extern void dump_pci(void);
 
 static void time_init()
 {
@@ -72,8 +69,10 @@ void start(void)
 	}
 
 	setpriority(5);
-	buffer_init();
+
 	softirq_init();
+	timer_init();
+	buffer_init();
 	mount_root();
 
 	sys_exec("/bin/init", NULL, NULL);

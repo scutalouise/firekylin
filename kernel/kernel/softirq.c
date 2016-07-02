@@ -14,8 +14,8 @@
 #define NR_SOFTIRQ	16
 
 struct softirq_action {
-	void (*action)(unsigned long data);
-	unsigned long data;
+	void (*action)(long data);
+	long data;
 };
 
 unsigned long softirq_map;
@@ -25,48 +25,35 @@ struct task *softirq_wait;
 
 void softirq_raise(unsigned int index)
 {
-	if(index>=NR_SOFTIRQ)
-		return ;
+	if (index >= NR_SOFTIRQ)
+		return;
 	irq_lock();
-	softirq_map|=1<<index;
+	softirq_map |= 1 << index;
 	irq_unlock();
 	wake_up(&softirq_wait);
 }
 
-int softirq_setaction(unsigned int index, void (*action)(unsigned long data),
-		unsigned long data)
+int softirq_setaction(unsigned int index, void (*action)(long data), long data)
 {
-	if (index >NR_SOFTIRQ )
-		panic("set_sofirq_action index too big %d",index);
+	if (index > NR_SOFTIRQ)
+		panic("set_sofirq_action index too big %d", index);
 
-	if(softirq_actions[index].action !=NULL)
-		panic("set_softirq_action action has exsit %d",index);
+	if (softirq_actions[index].action != NULL)
+		panic("set_softirq_action action has exsit %d", index);
 
-	softirq_actions[index].action=action;
-	softirq_actions[index].data=data;
+	softirq_actions[index].action = action;
+	softirq_actions[index].data = data;
 
 	return 0;
 }
 
 extern int sys_fork(void);
 
-void softirq_init(void)
+void do_softirq(void)
 {
-	printk("init softirq\n");
-	softirq_map = 0;
-	for (int i = 0; i < NR_SOFTIRQ; i++) {
-		softirq_actions[i].action = NULL;
-		softirq_actions[i].data = 0;
-	}
-	softirq_wait = NULL;
-
-	if(sys_fork())
-		return ;
-
 	setpriority(1);
 
 	while (1) {
-
 		while (!softirq_map)
 			sleep_on(&softirq_wait, TASK_STATE_BLOCK);
 
@@ -79,4 +66,12 @@ void softirq_init(void)
 			(softirq_actions[i].action)(softirq_actions[i].data);
 		}
 	}
+}
+
+void softirq_init(void)
+{
+	printk("init softirq\n");
+
+	if (!sys_fork())
+		do_softirq();
 }

@@ -40,6 +40,8 @@ extern char*  strerror(int errno);
 extern char * strpbrk(const char *s1, const char *s2);
 extern size_t strcspn(const char *s1, const char *s2);
 
+extern int    strcoll(const char *s1, const char *s2);
+
 /*
  * todo
  */

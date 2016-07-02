@@ -10,28 +10,37 @@
 #include <string.h>
 
 static char *err_str[]={
-	"unknown error",
-	"generic error",
-	"operation not permitted",
-	"no such file or directory",
-	"interrupted function call",
-	"input/output error",
-	"arg list too long",
-	"is a directory",
-	"invalid argument",
-	"permission denied",
-	"bad file descriptor",
-	"not a directory",
-	"not enough space",
-	"resource temporarily unavailable",
-	"exec format error",
-	"no such device",
-	"too many open files"
+	"1.unknown error",
+	"2.generic error",
+	"3.operation not permitted",
+	"4.no such file or directory",
+	"5.interrupted function call",
+	"6.input/output error",
+	"7.arg list too long",
+	"8.is a directory",
+	"9.invalid argument",
+	"10.permission denied",
+	"11.bad file descriptor",
+	"12.not a directory",
+	"13.not enough space",
+	"14.resource temporarily unavailable",
+	"15.exec format error",
+	"16.no such device",
+	"17.too many open files",
+	"18.",
+	"19.",
+	"20.",
+	"21.",
+	"22.",
+	"23.",
+	"24.",
+	"25.",
 };
 
 char *strerror(int errno)
 {
-	if(errno<0 || errno>16){
+	printf("--dbg:errno:%d\n",errno);
+	if(errno<0 || errno>24){
 		return err_str[0];
 	}
 	return err_str[errno];

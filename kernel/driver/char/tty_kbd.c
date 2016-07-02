@@ -7,7 +7,6 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#include <firekylin/kbd.h>
 #include <firekylin/kernel.h>
 #include <firekylin/trap.h>
 #include <firekylin/tty.h>
@@ -60,6 +59,7 @@ static int cap;
 extern void select_con(int con);
 
 void dump_task();
+void dump_mem();
 
 static void do_kbd(struct trapframe *tf)
 {
@@ -92,11 +92,10 @@ static void do_kbd(struct trapframe *tf)
 		case F1:
 		case F2:
 		case F3:
-		case F4:
-		case F5:
-		case F6:
-		case F7:
 			select_con(s-F1);
+			break;
+		case F10:
+			dump_mem();
 			break;
 		case F11:
 			dump_task();

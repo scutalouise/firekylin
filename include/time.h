@@ -56,5 +56,4 @@ extern clock_t    clock();
 extern double     difftime(time_t time1, time_t time0);
 extern size_t     strftime(char *buf, size_t size, const char *fmt, struct tm *tmptr);
 
-
 #endif

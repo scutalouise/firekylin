@@ -24,8 +24,11 @@ void free(void *p)
 {
 	struct block_list *bp, *tmp;
 
+	if(!p)
+		return ;
+	
 	bp = (struct block_list *) p - 1;
-
+	
 	for (tmp = &base; tmp->next; tmp = tmp->next) {
 		if (!(tmp < bp && bp < tmp->next))
 			continue;

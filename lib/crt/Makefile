@@ -17,7 +17,6 @@ CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
 include ctype/sub.mk
 include dirent/sub.mk
 include math/sub.mk
-include setjmp/sub.mk
 include stdio/sub.mk
 include stdlib/sub.mk
 include string/sub.mk

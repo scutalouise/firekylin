@@ -12,16 +12,18 @@
 #include <firekylin/timer.h>
 #include <firekylin/lock.h>
 
-static struct timer *timer_list;
+static struct timer *timer_list=NULL;
 
 void add_timer(struct timer *timer_ptr)
 {
-	struct timer *tmp=timer_list;
+	struct timer *tmp = timer_list;
 
 	irq_lock();
 	if (!timer_list) {
 		timer_list = timer_ptr;
 		timer_ptr->next = NULL;
+		irq_unlock();
+		return ;
 	}
 
 	while (tmp->next && (tmp->next->time < timer_ptr->time))
@@ -44,4 +46,28 @@ void del_timer(struct timer *timer_ptr)
 		tmp = tmp->next;
 	tmp->next = tmp->next->next;
 	irq_unlock();
+}
+
+void timer_softirq_action(long unused)
+{
+	if (!timer_list) {
+		printk("timer_list is NULL");
+		return;
+	}
+
+	(timer_list->func)(timer_list->data);
+	timer_list = timer_list->next;
+}
+
+void do_timer(void)
+{
+	if (!timer_list)
+		return;
+	if (click >= timer_list->time)
+		softirq_raise(SOFTIRQ_TIMER);
+}
+
+void timer_init(void)
+{
+	softirq_setaction(SOFTIRQ_TIMER, &timer_softirq_action, 0);
 }

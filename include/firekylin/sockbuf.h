@@ -11,8 +11,11 @@
 #define _SOCKBUF_H
 
 #include <net/arp.h>
-//#include <net/ip.h>
-//#include <net/>
+#include <net/ip.h>
+#include <net/icmp.h>
+#include <net/igmp.h>
+#include <net/tcp.h>
+#include <net/udp.h>
 
 struct sockbuf{
 	struct sockbuf *next;

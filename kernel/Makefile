@@ -10,9 +10,9 @@
 AS=nasm
 CC=gcc
 
-SFLAGS=-f elf32
-CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
-       -fno-stack-protector -I ./include -I ../include
+SFLAGS=-g -f elf32 -g 
+CFLAGS=-g -c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
+       -fno-stack-protector -I ../include
 
 OBJS=init/head.o init/main.o  \
      kernel/entry.o kernel/trap.o    kernel/util.o  \
@@ -21,8 +21,8 @@ OBJS=init/head.o init/main.o  \
      kernel/fork.o  kernel/exec.o    kernel/wait.o  \
      kernel/exit.o  kernel/trace.o \
      mm/memory.o \
-     driver/char/console.o driver/char/keyboard.o driver/char/serial.o \
-     driver/char/tty.o driver/char/mem.o\
+     driver/char/tty_con.o driver/char/tty_kbd.o driver/char/tty_rs.o \
+     driver/char/tty_io.o  driver/char/mem.o \
      driver/block/ramdisk.o driver/block/floppy.o driver/block/atapi.o \
      driver/driver.o driver/pci.o driver/ne2k.o \
      fs/buffer.o fs/super.o fs/inode.o fs/read.o fs/stat.o fs/open.o \

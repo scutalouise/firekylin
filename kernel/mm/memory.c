@@ -94,7 +94,7 @@ void do_page_fault(struct trapframe *tf)
 		return;
 
 	if (cr2 > 0x41000000 || cr2 < 0x40000000) {
-		printk("CS:EIP=%8x:%8x\t EFLAGS=%8x\t SS:ESP=%8x:%8x\t", tf->cs,
+		printk("CS:EIP=%x:%x EFLAGS=%x SS:ESP=%x:%x\t", tf->cs,
 				tf->eip, tf->eflags, tf->ss, tf->esp);
 		panic("cr2=%x\n", cr2);
 	}
@@ -146,6 +146,20 @@ void free_mm(void)
 	__asm__( " movl %%eax,%%cr3"::"a"(current->pdtr));
 }
 
+void dump_mem(void)
+{
+	int free = 0;
+	struct page_struct *p = page_table;
+
+	for (int i = 0; i < NR_PAGE; i++) {
+		if (!p->count)
+			free++;
+		p++;
+	}
+
+	printk("Mem :%dMB  page :%d  free :%d", memsize >> 20, NR_PAGE, free);
+}
+
 void mm_init(void)
 {
 	int page_table_page_use;
@@ -176,6 +190,9 @@ void mm_init(void)
 		}
 	}
 
+	if(memsize > 256*1024*1024)
+		memsize=256*1024*1024;
+
 	p = (unsigned long*) __va(0);
 	*p = 0;
 	for (i = 0; i < memsize >> 22; i++)
@@ -193,7 +210,7 @@ void mm_init(void)
 	for (int i = 0; i < page_table_page_use; i++)
 		(page_table + i)->count = 100;
 
-	for (int i=page_table_page_use; i<NR_PAGE;i++)
+	for (int i = page_table_page_use; i < NR_PAGE; i++)
 		(page_table + i)->count = 0;
 
 	set_trap_handle(14, do_page_fault);

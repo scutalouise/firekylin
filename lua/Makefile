@@ -11,9 +11,9 @@ AS=nasm
 CC=gcc
 LD=ld -m elf_i386 -T ../script/ldscript  ../lib/csu/csu.o
 
-SFLAGS=-f elf32
-CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
-       -fno-stack-protector -I ../include -D_ANSIC_COMP_
+SFLAGS=-g -f elf32
+CFLAGS=-g -c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
+       -fno-stack-protector -I ../include 
 LIB=../lib/crt/crt.a
 
 LUA_LIB_O=lua-5.1/src/lapi.o     \

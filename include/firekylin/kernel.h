@@ -13,6 +13,11 @@
 #include <sys/types.h>
 #include <sys/param.h>
 
+typedef char * va_list;
+
+#define va_start(ap,fmt)   ap=(va_list)&fmt+sizeof(int)
+#define va_arg(ap,type)	  (ap+=sizeof(int),*((type*)(ap-sizeof(int))))
+
 #define max(a,b)	((a)>=(b) ? (a) : (b))
 #define min(a,b)	((a)<=(b) ? (a) : (b))
 
@@ -30,8 +35,11 @@ extern void do_exit(long status);
 
 extern void sigsend(struct task *p, int signo);
 
+#define SOFTIRQ_TIMER		0
+#define SOFTIRQ_INET		1
+
 extern void softirq_raise(unsigned int index);
-extern int  softirq_setaction(unsigned int index,
-		void (*action)(unsigned long data), unsigned long data);
+extern int softirq_setaction(unsigned int index, void (*action)(long data),
+		long data);
 
 #endif

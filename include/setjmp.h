@@ -10,16 +10,9 @@
 #ifndef _SETJMP_H
 #define _SETJMP_H
 
-typedef struct{
-	long ebp;
-	long esp;
-	long eip;
-	long ebx;
-	long esi;
-	long edi;
-}jmp_buf;
+typedef long jmp_buf[6];
 
 extern int  setjmp(jmp_buf buf);
-extern void longjmp(jmp_buf buf,int val);
+extern void longjmp(jmp_buf buf, int val);
 
 #endif

@@ -1,1 +1,0 @@
-LIBC_OBJ+=setjmp/setjmp.o

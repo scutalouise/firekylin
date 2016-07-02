@@ -11,13 +11,16 @@
 
 char * fgets(char * buf, size_t n, FILE *stream)
 {
-	char c;
+	int c;
 	char *p = buf;
 
-	while (n-- && (c = getc(stream) != EOF)) {
+	while (n-- && (c = fgetc(stream)) != EOF) {
+		//printf("(%c(%d))",c,c);
 		*p++ = c;
-		if (c == '\n')
+		if (c == '\n'){
+			*p=0;
 			break;
+		}
 	}
 
 	if (feof(stream))

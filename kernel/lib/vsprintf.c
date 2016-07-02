@@ -7,8 +7,8 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#include <firekylin/stdarg.h>
 #include <firekylin/ctype.h>
+#include <firekylin/kernel.h>
 #include <arch/string.h>
 
 #define F_ZEROPAD	1
@@ -49,9 +49,9 @@ static char *i_format(char *str, int num, int base, int width, int prec,
 		u_num=u_num/base;
 	}while(u_num);
 
-	if (i>prec)
-		prec=i;
-	width-=prec;
+	//if (i>prec)
+	//	prec=i;
+	//width-=prec;
 	if (!(flag&(F_ZEROPAD | F_LEFT)))
 		while(width-->0)
 			*str++ = ' ';
@@ -68,8 +68,8 @@ static char *i_format(char *str, int num, int base, int width, int prec,
 	if (!(flag&F_LEFT))
 		while(width-->0)
 			*str++ = c;
-	while(i<prec--)
-		*str++ = '0';
+	//while(i<prec--)
+	//	*str++ = '0';
 	while(i-->0)
 		*str++ = tmp[i];
 	while(width-->0)
@@ -152,10 +152,10 @@ int vsprintf(char *buf, char *fmt, va_list arg)
 		case 's':
 			s = va_arg(arg, char *);
 			len = strlen(s);
-			if (prec < 0)
-				prec = len;
-			else if (len > prec)
-				len = prec;
+			//if (prec < 0)
+			//	prec = len;
+			//else if (len > prec)
+			//	len = prec;
 			if (!(flag & F_LEFT))
 				while (len < width--)
 					*str++ = ' ';
