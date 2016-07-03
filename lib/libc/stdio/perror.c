@@ -7,11 +7,12 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#ifndef _UNISTD_H
-#define _UNISTD_H
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
 
-#pragma  message("<unistd.h> Deprecated, use <sys/unistd.h> instead")
-
-#include <sys/unistd.h>
-
-#endif
+void perror(const char *s)
+{
+	fprintf(stderr, "%s:%s", s, strerror(errno));
+	fflush(stderr);
+}

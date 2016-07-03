@@ -7,9 +7,15 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
+#include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 
-long atol(char *s)
+int sprintf(char * buf, const char *fmt,...)
 {
-	return (long) strtol(s, (char**) NULL, 10);
+	va_list ap;
+	int i;
+
+	i=strvformat(buf,256,fmt,va_start(ap,fmt));
+	return i;
 }

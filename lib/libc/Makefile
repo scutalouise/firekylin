@@ -10,13 +10,12 @@
 AS=nasm
 CC=gcc
 
-SFLAGS=-f elf32
-CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
+SFLAGS=-g -f elf32
+CFLAGS=-g -c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../../include
 
 include ctype/sub.mk
 include dirent/sub.mk
-include math/sub.mk
 include stdio/sub.mk
 include stdlib/sub.mk
 include string/sub.mk
@@ -30,13 +29,14 @@ include unistd/sub.mk
 	@echo         CC	$<
 	@$(CC) $(CFLAGS) -o $@  $<
 
-crt.a: $(LIBC_OBJ)
-	@echo         AR       OBJS
-	@ar rcs    crt.a     $(LIBC_OBJ) 
+libc.a: $(LIBC_OBJ)
+	@echo         AR       libc
+	@ar rcs   libc.a       $(LIBC_OBJ) 
 
 install:libc.a
-	cp  crt.a  $(PREFIX)/crt.a
+	@echo installing libc ...
+	@-cp  libc.a  $(PREFIX)/libc.a
 
 clean: 
-	@echo libcrt cleaning...
-	@-rm crt.a $(LIBC_OBJ)
+	@echo cleaning libc ...
+	@-rm libc.a $(LIBC_OBJ)

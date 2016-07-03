@@ -46,54 +46,73 @@ static void init_com_control(unsigned short port)
 static int com_write(struct tty_struct *tty)
 {
 	char ch;
+	short port = tty->private;
 
 	while (!isempty(&(tty->out))) {
-		ch = GETCH(&(com_tty[0].out));
-		while((inb(0x3f8 + LSR) & 0x20)==0)
+		ch = GETCH(&(tty->out));
+		while ((inb(port + LSR) & 0x20) == 0)
 			;
-		outb(0x3f8 + DATA , ch);
+		outb(port + DATA, ch);
 	}
-	wake_up(&(com_tty[0].out.wait));
+	wake_up(&(tty->out.wait));
 	return 0;
 }
 
 void do_com(struct trapframe *tf)
 {
 	char iir, data;
+	short port;
+	struct tty_struct *tty;
 
-	while (1) {
-		iir = inb(0x3fa);
-		if (iir & 1)
-			break;
-		switch (iir & 0x6) {
-		case 0:
-			inb(0x3f8 + 6);
-			break;
-		case 2:
-			printk("do_com iir&0x6=2");
-			break;
-		case 4:
-			data = inb(0x3f8);
-			if (!isfull(&com_tty[0].raw)) {
-				PUTCH(&com_tty[0].raw, data);
-				copy_to_cook(&com_tty[0]);
-			}
-			break;
-		case 6:
-			inb(0x3f8 + 5);
-			break;
-		}
+	if (tf->nr == 0x24) {
+		port = COM1;
+		tty = &com_tty[0];
+	} else if (tf->nr == 0x23) {
+		port = COM2;
+		tty = &com_tty[1];
+	} else {
+		printk("wrong com intr %x", tf->nr);
+		return;
 	}
+
+	iir = inb(port + IIR);
+	switch (iir & 0x6) {
+	case 0:
+		//inb(0x3f8 + 6);
+		break;
+	case 2:
+		printk("do_com iir&0x6=2");
+		break;
+	case 4:
+		data = inb(port + DATA);
+		if (!isfull(&tty->raw)) {
+			PUTCH(&tty->raw, data);
+			copy_to_cook(tty);
+		}
+		break;
+	case 6:
+		//inb(0x3f8 + 5);
+		break;
+	}
+
 	outb(0x20, 0x20);
 }
 
 void com_init(void)
 {
-	init_com_control(0x3f8);
+	init_com_control(COM1);
+	init_com_control(COM2);
 	set_trap_handle(0x24, do_com);
-	outb(0x21, inb(0x21) & (~0x10));
-	for (int i = 0; i < MAX_COM; i++) {
-		tty_table[1+MAX_CON + i] = &com_tty[i];
-		com_tty[i].write = com_write;
-	}
+	set_trap_handle(0x23, do_com);
+	outb(0x21, inb(0x21) & (~0x18));
+
+	tty_table[1 + MAX_CON] = &com_tty[0];
+	tty_table[1 + MAX_CON + 1] = &com_tty[1];
+
+	com_tty[0].write = com_write;
+	com_tty[0].private = COM1;
+	com_tty[0].termios.c_oflag = ONLCR;
+	com_tty[1].write = com_write;
+	com_tty[1].private = COM2;
+	com_tty[1].termios.c_oflag = ONLCR;
 }

@@ -9,12 +9,12 @@
 
 AS=nasm
 CC=gcc
-LD=ld -m elf_i386 -T ../../script/ldscript  ../../lib/csu/csu.o
+LD=ld -m elf_i386 -T ../../script/ldscript  ../../lib/csu/crt.o
 
 SFLAGS=-g -f elf32
 CFLAGS=-g -c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../../include 
-LIB=../../lib/crt/crt.a
+LIB=../../lib/libc/libc.a  ../../lib/libm/libm.a
 
 P=$(shell echo $$HOME)
 S=$(P)/lua-5.1/src
@@ -41,14 +41,14 @@ lua: $(S) $(S)/lua.o comp.o lualib.a $(LIB)
 
 lualib.a:$(OBJS)
 	@echo  AR  OBJS
-	@-ar rcs lualib.a $(OBJS)
+	@ar rcs lualib.a $(OBJS)
 
 install: 
-	-cp lua   $(PREFIX)/lua
+	cp lua   $(PREFIX)/lua
 
 clean:
 	@echo cleaning lua ...
-	@-rm lua $(S)/lua.o comp.o lualib.a $(OBJS)
+	@rm lua $(S)/lua.o comp.o lualib.a $(OBJS)
 	
 $(P)/lua-5.1:$(P)/lua-5.1.tar.gz
 	echo Uncompressing lua-5.1.tar.gz ...

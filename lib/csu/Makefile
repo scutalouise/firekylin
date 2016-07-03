@@ -10,8 +10,8 @@
 AS=nasm
 CC=gcc
 
-SFLAGS=-f elf32
-CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
+SFLAGS=-g -f elf32
+CFLAGS=-g -c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../../include
     
 .s.o:
@@ -21,8 +21,8 @@ CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
 	@echo         CC	$<
 	@$(CC) $(CFLAGS) -o $@  $<
 
-csu.o:csu.s
+crt.o: crt.s
 
 clean: 
 	@echo libcsu cleaning...
-	@-rm csu.o
+	@-rm crt.o

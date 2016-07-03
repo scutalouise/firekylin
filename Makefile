@@ -38,13 +38,15 @@ count:
 qemu:
 	qemu -net nic,model=ne2k_pci,vlan=1,macaddr=12:54:00:12:34:56 \
 	     -serial tcp::4444,server,nowait  \
+	     -serial tcp::4445,server,nowait  \
 	     -boot d -cdrom cdrom.iso -hda hd.img
 
 qemuS:
 	qemu -net nic,model=ne2k_pci,vlan=1,macaddr=12:54:00:12:34:56 \
 	     -serial tcp::4444,server,nowait  \
+	     -serial tcp::4445,server,nowait  \
 	     -S -gdb tcp::1234 -boot d -cdrom cdrom.iso -hda hd.img
-	     
+
 bochs:
 	bochs -q -f script/bochsrc
 	

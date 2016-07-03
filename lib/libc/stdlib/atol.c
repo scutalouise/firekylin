@@ -7,9 +7,9 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#include <string.h>
+#include <stdlib.h>
 
-int atoi(char *s)
+long atol(const char *s)
 {
-	return (int) strtol(s, (char**) NULL, 10);
+	return (long) strtol(s, (char**) NULL, 10);
 }

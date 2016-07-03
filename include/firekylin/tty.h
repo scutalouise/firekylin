@@ -42,23 +42,22 @@
 
 #define TTY_BUF_SIZE 1024
 struct tty_buf {
-	char           buf[TTY_BUF_SIZE];
-	unsigned short head;
-	unsigned short tail;
-	unsigned short count;
-	unsigned short lines;
-	struct task  * wait;
+	char             buf[TTY_BUF_SIZE];
+	unsigned short   head;
+	unsigned short   tail;
+	unsigned short   count;
+	unsigned short   lines;
+	struct task  *   wait;
 };
 
 struct tty_struct {
-	struct termios termios;
-	unsigned int   pgrp;
-	struct tty_buf raw;
-	struct tty_buf cook;
-	struct tty_buf out;
-	int   (*write)(struct tty_struct *tty);
-	unsigned long  parm1;
-	unsigned long  parm2;
+	struct termios   termios;
+	unsigned int     pgrp;
+	struct tty_buf   raw;
+	struct tty_buf   cook;
+	struct tty_buf   out;
+	int            (*write)(struct tty_struct *tty);
+	unsigned long    private;
 };
 
 static inline int isfull(struct tty_buf *buf)

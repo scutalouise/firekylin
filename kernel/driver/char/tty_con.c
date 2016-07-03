@@ -92,7 +92,8 @@ static int con_write(struct tty_struct *tty)
 {
 	char ch;
 	int res = 0;
-	cur_console =(int)(tty-tty_table[1]);
+	cur_console =tty->private;
+
 	irq_lock();
 	while (!isempty(&(tty->out))) {
 		ch=GETCH(&(tty->out));
@@ -152,6 +153,8 @@ void con_init()
 		color = 8;
 		tty_table[cur_console+1]=&con_tty[cur_console];
 		con_tty[cur_console].write=&con_write;
+		con_tty[cur_console].private=cur_console;
+		con_tty[cur_console].termios.c_lflag=ECHO;
 	}
 }
 

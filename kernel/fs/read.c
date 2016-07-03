@@ -62,7 +62,7 @@ int sys_read(int fd, char *buf, size_t size)
 		return -EBADF;
 
 	lock_file(file);
-	lock_inode(file->f_inode);
+	//lock_inode(file->f_inode);
 
 	switch (file->f_inode->i_mode & S_IFMT) {
 	case S_IFREG:
@@ -87,7 +87,7 @@ int sys_read(int fd, char *buf, size_t size)
 	if (res > 0)
 		file->f_pos += res;
 
-	unlock_inode(file->f_inode);
+	//unlock_inode(file->f_inode);
 	unlock_file(file);
 
 	return res;

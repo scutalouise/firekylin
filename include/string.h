@@ -39,9 +39,10 @@ extern char*  strerror(int errno);
 
 extern char * strpbrk(const char *s1, const char *s2);
 extern size_t strcspn(const char *s1, const char *s2);
-
+extern size_t strspn(const char *s1, const char *s2);
 extern int    strcoll(const char *s1, const char *s2);
 
 extern int    strformat(char *buf, size_t size, char *fmt, ...);
 extern int    strvformat(char *buf, size_t size, char *fmt, va_list arg);
+
 #endif

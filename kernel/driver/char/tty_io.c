@@ -23,9 +23,10 @@ void copy_to_cook(struct tty_struct *tty)
 	while (!isempty(&(tty->raw))) {
 		ch = GETCH(&(tty->raw));
 		PUTCH(&(tty->cook), ch);
-
-		PUTCH(&(tty->out), ch);
-		tty->write(tty);
+		if (tty->termios.c_lflag & ECHO) {
+			PUTCH(&(tty->out), ch);
+			tty->write(tty);
+		}
 		wake_up(&(tty->cook.wait));
 	}
 }
@@ -41,7 +42,7 @@ static int tty_read(dev_t dev, char * buf, off_t off, size_t size)
 		return -1;
 	}
 
-	tty = tty_table [MINOR(dev)];
+	tty = tty_table[MINOR(dev)];
 
 	irq_lock();
 	while (left) {
@@ -73,11 +74,14 @@ static int tty_write(dev_t dev, char * buf, off_t off, size_t size)
 
 	if (MINOR(dev) == 0)
 		return -1;
-	tty = tty_table [MINOR(dev)];
+
+	tty = tty_table[MINOR(dev)];
 
 	while (left) {
 		if (!isfull(&(tty->out))) {
 			ch = *buf++;
+			if(ch == '\n' && (tty->termios.c_oflag & ONLCR))
+				PUTCH(&(tty->out), '\r');
 			PUTCH(&(tty->out), ch);
 			left--;
 			continue;

@@ -9,8 +9,10 @@
 
 lib:
 	make -C csu
-	make -C crt
+	make -C libc
+	make -C libm
 
 clean: 
 	make clean -C csu
-	make clean -C crt
+	make clean -C libc
+	make clean -C libm

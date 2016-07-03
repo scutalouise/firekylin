@@ -79,6 +79,8 @@ int get_cmd(char *buf)
 			buf[i] = 0;
 			return i;
 		}
+		if(ch == '\r')
+			continue;
 
 		if (ch == '\b' && i > 0)
 			i--;
@@ -142,8 +144,8 @@ int main(void)
 
 	//do_cls(0,NULL);
 
-	printf("\n\rWelcome To FireKylin 0.1 !\n\r");
-	printf("More info:http://bbs.firekylin.cc\n\r");
+	printf("Welcome To FireKylin 0.1 !\n");
+	printf("More info:http://bbs.firekylin.cc\n");
 
 	while (1) {
 

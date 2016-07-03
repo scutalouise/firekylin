@@ -56,10 +56,10 @@ extern int    fsetbuf(FILE *stream, int mode, char *buf, size_t size);
 extern int    fclose(FILE *stream);
 
 extern int printf(char *fmt, ...);
-extern int sprintf(char *buf, char *fmt, ...);
-extern int fprintf(FILE *stream, char *fmt, ...);
-extern int snprintf(char * buf, size_t size, char *fmt, ...);
-extern int vsnprintf(char * buf, size_t size, char *fmt, va_list ap);
+extern int sprintf(char *buf, const char *fmt, ...);
+extern int fprintf(FILE *stream, const char *fmt, ...);
+extern int snprintf(char * buf, size_t size, const char *fmt, ...);
+extern int vsnprintf(char * buf, size_t size, const char *fmt, va_list ap);
 
 static inline int rename(const char *old, const char *new)
 {
@@ -116,7 +116,7 @@ static inline int getchar(void)
 	return fgetc(stdin);
 }
 
-static inline int puts(char *s)
+static inline int puts(const char *s)
 {
 	return fputs(s, stdout);
 }

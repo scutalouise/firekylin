@@ -14,4 +14,5 @@ LIBC_OBJ+=stdio/iotab.o      \
 	  stdio/sprintf.o    \
 	  stdio/fprintf.o    \
 	  stdio/snprintf.o   \
-	  stdio/vsnprintf.o 
+	  stdio/vsnprintf.o  \
+	  stdio/perror.o

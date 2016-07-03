@@ -7,21 +7,18 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#include <sys/unistd.h>
 #include <stdio.h>
-#include <stdarg.h>
 #include <string.h>
+#include <stdarg.h>
+#include <sys/unistd.h>
 
-int fprintf(FILE *stream, char *fmt, ...)
+int printf(char *fmt,...)
 {
+	char buf[2048];
 	va_list ap;
 	int i;
-	char buf[512];
 
-	fflush(stream);
-
-	i=strvformat(buf,512,fmt,va_start(ap,fmt));
-	write(fileno(stream),buf,i);
-
+	i=strvformat(buf,256,fmt,va_start(ap,fmt));
+	write(STDOUT_FILENO,buf,i);
 	return i;
 }

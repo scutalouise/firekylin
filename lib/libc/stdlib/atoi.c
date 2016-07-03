@@ -7,11 +7,9 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
+#include <stdlib.h>
 
-int vsnprintf(char * buf, size_t size, char *fmt, va_list ap)
+int atoi(const char *s)
 {
-	return strvformat(buf, size, fmt, ap);
+	return (int) strtol(s, (char**) NULL, 10);
 }

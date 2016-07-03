@@ -8,13 +8,17 @@
 # */
 
 complie:
-	make -C lua
-	make -C tcc
+	-make -C lua
+	-make -C tcc
+	-make -C nasm
 
 install:
-	make PREFIX=$(PREFIX)  install -C lua
-	make PREFIX=$(PREFIX)  install -C tcc
+	-make PREFIX=$(PREFIX)  install -C lua
+	-make PREFIX=$(PREFIX)  install -C tcc
+	-make PREFIX=$(PREFIX)  install -C nasm
 
 clean: 
-	make clean -C lua
-	make clean -C tcc
+	-make clean -C lua
+	-make clean -C tcc
+	-make clean -C nasm
+	

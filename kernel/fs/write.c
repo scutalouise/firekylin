@@ -62,7 +62,7 @@ int sys_write(int fd, char *buf, size_t size)
 		return -EBADF;
 
 	lock_file(file);
-	lock_inode(file->f_inode);
+	//lock_inode(file->f_inode);
 
 	if (file->f_mode & O_APPEND)
 		file->f_pos = file->f_inode->i_size;
@@ -92,12 +92,11 @@ int sys_write(int fd, char *buf, size_t size)
 	if ((S_ISREG(file->f_inode->i_mode) || S_ISDIR(file->f_inode->i_mode))
 			&& file->f_pos > file->f_inode->i_size) {
 		file->f_inode->i_size = file->f_pos;
-		file->f_inode->i_ctime = current_time()
-		;
+		file->f_inode->i_ctime = current_time();
 		file->f_inode->i_flag |= I_DIRTY;
 	}
 
-	unlock_inode(file->f_inode);
+	//unlock_inode(file->f_inode);
 	unlock_file(file);
 
 	return res;

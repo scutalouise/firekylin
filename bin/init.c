@@ -13,19 +13,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+char *envp[] = { "PATH=/bin:/test", NULL };
+
+char *ttys[] = { "/dev/tty1", "/dev/tty2", "/dev/tty3", "/dev/com1",
+		"/dev/com2", NULL };
+
 int main(int argc, char **argv)
 {
-	char *envp[]={
-		"PATH=/bin:/test",
-		NULL
-	};
+	char **p = ttys;
 
-	if(!fork()){
-		if(open("/dev/tty1",O_RDWR,0)<0)
-			exit(0);
-		dup(0);
-		dup(0);
-		execve("/bin/sh",NULL,envp);
+	while (*p) {
+		if (!fork()) {
+			close(0);
+			close(1);
+			close(2);
+			if (open(*p, O_RDWR, 0) < 0)
+				exit(0);
+			dup(0);
+			dup(0);
+			execve("/bin/sh", NULL, envp);
+		}
+		p++;
 	}
 
 	wait(0, NULL, 0);

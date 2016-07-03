@@ -11,7 +11,7 @@
 #include <string.h>
 #include <stdarg.h>
 
-int snprintf(char * buf, size_t size, char *fmt, ...)
+int snprintf(char * buf, size_t size, const char *fmt, ...)
 {
 	va_list ap;
 	int i;

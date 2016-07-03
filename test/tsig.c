@@ -27,12 +27,12 @@ int main(int argc, char *argv[])
 
 	sigact(SIGUSR1, signal_handle);
 	printf("set singal handle ok!\n");
-	int i=5;
-	while(i--){
+	int j=5;
+	while(j--){
 
 		sigsend(getpid(),SIGUSR1);
 
-		for(int i=0;i<0xffffff;i++);
+		for(int i=0;i<0xfffff;i++);
 
 		printf("have send signal\n");
 

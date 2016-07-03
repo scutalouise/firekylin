@@ -43,6 +43,10 @@ extern float strtof(const char *ptr, char **endptr);
 extern double strtod(const char *ptr, char **endptr);
 extern long double strtold(const char *ptr, char **endptr);
 
+extern void abort(void);
+extern int atoi(const char *s);
+extern long atol(const char *s);
+
 #define EXIT_SUCCESS	0
 #define EXIT_FAILURE	1
 

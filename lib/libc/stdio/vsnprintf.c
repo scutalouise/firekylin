@@ -7,11 +7,11 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#ifndef _UNISTD_H
-#define _UNISTD_H
+#include <stdio.h>
+#include <string.h>
+#include <stdarg.h>
 
-#pragma  message("<unistd.h> Deprecated, use <sys/unistd.h> instead")
-
-#include <sys/unistd.h>
-
-#endif
+int vsnprintf(char * buf, size_t size, const char *fmt, va_list ap)
+{
+	return strvformat(buf, size, fmt, ap);
+}
