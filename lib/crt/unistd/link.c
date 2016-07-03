@@ -12,4 +12,4 @@
 #include <sys/unistd.h>
 #include <errno.h>
 
-__syscall2(int,link,char *,name,char *,newname);
+__syscall2(int, link, const char *, name, const char *, newname);

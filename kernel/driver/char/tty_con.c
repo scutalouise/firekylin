@@ -10,8 +10,8 @@
 #include <arch/portio.h>
 #include <arch/string.h>
 #include <firekylin/kernel.h>
-#include <firekylin/tty.h>
 #include <firekylin/lock.h>
+#include <firekylin/tty.h>
 
 struct console {
 	unsigned long base;
@@ -21,7 +21,8 @@ struct console {
 	unsigned char color;
 };
 
-struct console con_table[MAX_CON];
+static struct console con_table[MAX_CON];
+static struct tty_struct con_tty[MAX_CON];
 
 unsigned int fg_console;
 unsigned int cur_console;
@@ -32,18 +33,7 @@ unsigned int cur_console;
 #define y	(con_table[cur_console].y)
 #define color	(con_table[cur_console].color)
 
-int __echo__=1;
-
-void con_init()
-{
-	for (int cur_console = 0; cur_console < MAX_CON; cur_console++) {
-		origin = base = 0xc00b8000 + 25 * 80 * 2 * cur_console;
-		x = y = 0;
-		color = 15;
-	}
-}
-
-void srcup()
+static void srcup()
 {
 	if (y < 25)
 		return;
@@ -52,7 +42,7 @@ void srcup()
 	y = 24;
 }
 
-void write_char(char ch)
+static void write_char(char ch)
 {
 	char *p = (char*)( base + (y * 80 + x) * 2);
 	if (ch == '\r')
@@ -82,7 +72,7 @@ void write_char(char ch)
 	}
 }
 
-void set_orign(void)
+static void set_orign(void)
 {
 	outb(0x3d4, 12);
 	outb(0x3d5, (base-0xc00b8000)>>9 & 0xff);
@@ -90,7 +80,7 @@ void set_orign(void)
 	outb(0x3d5, (base-0xc00b8000)>>1 & 0xff);
 }
 
-void set_cur(void)
+static void set_cur(void)
 {
 	outb(0x3d4, 14);
 	outb(0x3d5, ((base + (y * 80 + x)*2 -0xc00b8000) >> 9) & 0xff);
@@ -98,11 +88,11 @@ void set_cur(void)
 	outb(0x3d5, (base + (y * 80 + x)*2 -0xc00b8000)>>1 & 0xff);
 }
 
-int con_write(struct tty_struct *tty)
+static int con_write(struct tty_struct *tty)
 {
 	char ch;
 	int res = 0;
-	cur_console = tty-tty_table-1;
+	cur_console =(int)(tty-tty_table[1]);
 	irq_lock();
 	while (!isempty(&(tty->out))) {
 		ch=GETCH(&(tty->out));
@@ -135,10 +125,6 @@ int con_write(struct tty_struct *tty)
 					y = tmp_y;
 			} else if (ch == 'C')
 				color = ((tmp_x << 4) & 0xf0) | (tmp_y & 0xf);
-			else if (ch=='E')
-				__echo__=0;
-			else if (ch=='e')
-				__echo__=1;
 		} else
 			write_char(ch);
 		res++;
@@ -156,5 +142,23 @@ void select_con(int con)
 	fg_console=con;
 	cur_console=con;
 	set_orign();
+	set_cur();
+}
+
+void con_init()
+{
+	for (int cur_console = 0; cur_console < MAX_CON; cur_console++) {
+		origin = base = 0xc00b8000 + 25 * 80 * 2 * cur_console;
+		color = 8;
+		tty_table[cur_console+1]=&con_tty[cur_console];
+		con_tty[cur_console].write=&con_write;
+	}
+}
+
+void con_print(char *buf, int len)
+{
+	cur_console=fg_console;
+	while(len--)
+		write_char(*buf++);
 	set_cur();
 }

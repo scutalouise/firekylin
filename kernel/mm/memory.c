@@ -157,7 +157,7 @@ void dump_mem(void)
 		p++;
 	}
 
-	printk("Mem :%dMB  page :%d  free :%d", memsize >> 20, NR_PAGE, free);
+	printk("Mem :%dMB  page :%d free :%d\n", memsize >> 20, NR_PAGE, free);
 }
 
 void mm_init(void)
@@ -214,4 +214,5 @@ void mm_init(void)
 		(page_table + i)->count = 0;
 
 	set_trap_handle(14, do_page_fault);
+	dump_mem();
 }

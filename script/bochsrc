@@ -20,6 +20,6 @@ pci: enabled=1, chipset=i440fx, slot1=pcivga, slot2=ne2k
 
 ne2k:mac=b0:c4:20:00:00:00, ethmod=win32, ethdev=\Device\NPF_{2D94D85D-ED85-4E72-BE44-57F20AFA97E6}
 
-#com1: enabled=1, mode=socket-server, dev=localhost:8888
+com1: enabled=1, mode=socket-server, dev=localhost:8888
 
 boot:cdrom

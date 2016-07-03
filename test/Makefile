@@ -17,7 +17,7 @@ CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
 LIB=../lib/crt/crt.a
 
 OBJS=tpipe tsig test1 t_strcspn tmath t_strtod tstdio tsetjmp tenv tfgets \
-     t_times
+     t_times tcom1
 
 RAW_OBJS=tlua1.lua t1.sh
 

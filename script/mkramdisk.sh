@@ -13,7 +13,7 @@
 
 if [ ! -f ~/ramdisk.img ] ; then
 	echo "creating ramdisk image file:$HOME/ramdisk.img"
-	dd   if=/dev/zero of=$HOME/ramdisk.img bs=1024 count=1024 2> /dev/null
+	dd   if=/dev/zero of=$HOME/ramdisk.img bs=1024 count=2048 2> /dev/null
 	echo "creating minix file system in image file:$HOME/ramdisk.img"
 	sudo mkfs.minix -1 $HOME/ramdisk.img > /dev/null
 fi
@@ -60,24 +60,24 @@ sudo mknod ~/tmpdir/dev/port c  1  2
 sudo mknod ~/tmpdir/dev/null c  1  3
 sudo mknod ~/tmpdir/dev/full c  1  4
 
-sudo mknod ~/tmpdir/dev/tty0 c  2  0
+sudo mknod ~/tmpdir/dev/tty  c  2  0
 sudo mknod ~/tmpdir/dev/tty1 c  2  1
 sudo mknod ~/tmpdir/dev/tty2 c  2  2
 sudo mknod ~/tmpdir/dev/tty3 c  2  3
 
-sudo mknod ~/tmpdir/dev/com0 c  2  4
-sudo mknod ~/tmpdir/dev/com1 c  2  5
+sudo mknod ~/tmpdir/dev/com1 c  2  4
+sudo mknod ~/tmpdir/dev/com2 c  2  5
 
 sudo mknod ~/tmpdir/dev/rd   b  1  0
 
 sudo mknod ~/tmpdir/dev/fd0  b  2  0
-sudo mknod ~/tmpdir/dev/fd1  b  2  1
+#sudo mknod ~/tmpdir/dev/fd1  b  2  1
 
 sudo mknod ~/tmpdir/dev/hda  b  3  0
 sudo mknod ~/tmpdir/dev/hda1 b  3  1
 sudo mknod ~/tmpdir/dev/hda2 b  3  2
-sudo mknod ~/tmpdir/dev/hda3 b  3  3
-sudo mknod ~/tmpdir/dev/hda4 b  3  4
+#sudo mknod ~/tmpdir/dev/hda3 b  3  3
+#sudo mknod ~/tmpdir/dev/hda4 b  3  4
 
 # umount the ramdisk
 

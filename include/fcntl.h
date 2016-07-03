@@ -7,10 +7,12 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#include <sys/types.h>
-#include <sys/syscall.h>
-#include <sys/unistd.h>
-#include <sys/stat.h>
-#include <errno.h>
+#ifndef _FCNTL_H
+#define _FCNTL_H
 
-__syscall1(int, unlink, const char *,filename);
+#include <sys/fcntl.h>
+
+#define O_RDONLY	O_READ
+#define O_WRONLY	O_WRITE
+
+#endif

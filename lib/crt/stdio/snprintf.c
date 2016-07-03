@@ -7,10 +7,15 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#include <sys/types.h>
-#include <sys/syscall.h>
-#include <sys/unistd.h>
-#include <sys/stat.h>
-#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdarg.h>
 
-__syscall1(int, unlink, const char *,filename);
+int snprintf(char * buf, size_t size, char *fmt, ...)
+{
+	va_list ap;
+	int i;
+
+	i = strvformat(buf, size, fmt, va_start(ap, fmt));
+	return i;
+}

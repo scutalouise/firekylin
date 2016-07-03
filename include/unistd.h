@@ -7,10 +7,9 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#include <sys/types.h>
-#include <sys/syscall.h>
-#include <sys/unistd.h>
-#include <sys/stat.h>
-#include <errno.h>
+#ifndef _UNISTD_H
+#define _UNISTD_H
 
-__syscall1(int, unlink, const char *,filename);
+#include <sys/unistd.h>
+
+#endif

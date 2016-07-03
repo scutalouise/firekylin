@@ -11,10 +11,8 @@
 #include <firekylin/kernel.h>
 #include <firekylin/lock.h>
 
-extern unsigned fg_console;
-extern int tty_write(dev_t dev,char * buf,off_t off,size_t size);
-
-extern int vsprintf(char* buf, char* fmt, va_list ap);
+extern int  vsprintf(char* buf, char* fmt, va_list ap);
+extern void con_print(char *buf, int len);
 
 static char printk_buf[512];
 
@@ -25,7 +23,7 @@ int printk(char* fmt, ...)
 
 	va_start(ap, fmt);
 	i = vsprintf(printk_buf, fmt, ap);
-	tty_write(fg_console+1, printk_buf, 0, i);
+	con_print(printk_buf,i);
 	return i;
 }
 
@@ -37,7 +35,7 @@ void panic(char* fmt, ...)
 	printk("\nKernel Panic: ");
 	va_start(ap, fmt);
 	i = vsprintf(printk_buf, fmt, ap);
-	tty_write(fg_console+1,printk_buf, 0,i);
+	con_print(printk_buf,i);
 	irq_disable();
 	__asm__("hlt");
 }

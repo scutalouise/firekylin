@@ -16,11 +16,11 @@
 #include <arch/string.h>
 
 /*
- * ramdisk start at phyiscal address:0x200000 len:0x100000
+ * ramdisk start at phyiscal address:0x200000 len:0x200000
  * it will load a ramdisk by GRUB.
  */
 static unsigned long rd_start = __va(0x200000);
-static unsigned long rd_sectors = 0x100000 / 512;
+static unsigned long rd_sectors = 0x200000 / 512;
 static sleeplock_t rd_lock;
 
 #define lock_rd()	require_lock(&rd_lock)

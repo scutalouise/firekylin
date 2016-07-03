@@ -14,7 +14,7 @@ complie:
 	make -C lib
 	make -C bin
 	make -C test
-	-make -C lua
+	make -C contrib
 	
 cdrom:
 	@make complie 2>&1 > /dev/null
@@ -28,7 +28,7 @@ clean:
 	make clean -C lib
 	make clean -C bin
 	make clean -C test
-	-make clean -C lua
+	make clean -C contrib
 	-rm -rf iso
 	-rm cdrom.iso hd.img
 
@@ -37,10 +37,12 @@ count:
 
 qemu:
 	qemu -net nic,model=ne2k_pci,vlan=1,macaddr=12:54:00:12:34:56 \
+	     -serial tcp::4444,server,nowait  \
 	     -boot d -cdrom cdrom.iso -hda hd.img
 
 qemuS:
 	qemu -net nic,model=ne2k_pci,vlan=1,macaddr=12:54:00:12:34:56 \
+	     -serial tcp::4444,server,nowait  \
 	     -S -gdb tcp::1234 -boot d -cdrom cdrom.iso -hda hd.img
 	     
 bochs:

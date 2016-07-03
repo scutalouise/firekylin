@@ -21,7 +21,7 @@ OBJS=init/head.o init/main.o  \
      kernel/fork.o  kernel/exec.o    kernel/wait.o  \
      kernel/exit.o  kernel/trace.o \
      mm/memory.o \
-     driver/char/tty_con.o driver/char/tty_kbd.o driver/char/tty_rs.o \
+     driver/char/tty_con.o driver/char/tty_kbd.o driver/char/tty_com.o \
      driver/char/tty_io.o  driver/char/mem.o \
      driver/block/ramdisk.o driver/block/floppy.o driver/block/atapi.o \
      driver/driver.o driver/pci.o driver/ne2k.o \

@@ -35,10 +35,10 @@
 
 #define C(x) (x - '@')
 
-#define MAX_CON		7	/* max vitrual console 	*/
+#define MAX_CON		3	/* max vitrual console 	*/
 #define MAX_COM		2	/* max rs232		*/
 
-#define MAX_TTY		(MAX_CON+MAX_COM)
+#define MAX_TTY		(1+MAX_CON+MAX_COM)
 
 #define TTY_BUF_SIZE 1024
 struct tty_buf {
@@ -87,7 +87,7 @@ static inline void PUTCH(struct tty_buf *buf,char ch)
 	buf->head=(buf->head +1)% TTY_BUF_SIZE;
 }
 
-extern struct tty_struct tty_table[MAX_TTY+1];
+extern struct tty_struct *tty_table[MAX_TTY];
 extern unsigned int fg_console;
 extern void copy_to_cook(struct tty_struct *tty);
 

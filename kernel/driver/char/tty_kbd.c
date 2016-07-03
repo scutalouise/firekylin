@@ -107,8 +107,8 @@ static void do_kbd(struct trapframe *tf)
 				else if (s >= 'A' && s <= 'Z')
 					s = s + 32;
 			}
-			PUTCH(&(tty_table[fg_console+1].raw),s);
-			copy_to_cook(&tty_table[fg_console+1]);
+			PUTCH(&(tty_table[fg_console+1]->raw),s);
+			copy_to_cook(tty_table[fg_console+1]);
 			break;
 		}
 	} else {

@@ -42,11 +42,6 @@ extern size_t strcspn(const char *s1, const char *s2);
 
 extern int    strcoll(const char *s1, const char *s2);
 
-/*
- * todo
- */
-extern int   strtol(char *s, char **endptr, int base);
-
 extern int    strformat(char *buf, size_t size, char *fmt, ...);
 extern int    strvformat(char *buf, size_t size, char *fmt, va_list arg);
 #endif

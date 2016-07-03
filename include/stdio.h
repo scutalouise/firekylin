@@ -12,6 +12,7 @@
 
 #include <sys/types.h>
 #include <sys/param.h>
+#include <stdarg.h>
 
 #define	SEEK_SET	0
 #define	SEEK_CUR	1
@@ -42,6 +43,7 @@ extern FILE * stdout;
 extern FILE * stderr;
 
 extern FILE * fopen(const char *filename, const char *mode);
+extern FILE * fdopen(int fd, const char *mode);
 extern int    fgetc(FILE *stream);
 extern char * fgets(char * buf, size_t n, FILE *stream);
 extern int    fputc(int ch, FILE *stream);
@@ -56,9 +58,8 @@ extern int    fclose(FILE *stream);
 extern int printf(char *fmt, ...);
 extern int sprintf(char *buf, char *fmt, ...);
 extern int fprintf(FILE *stream, char *fmt, ...);
-
-//extern int rename(const char *old, const char *new);
-//extern int remove(const char *path);
+extern int snprintf(char * buf, size_t size, char *fmt, ...);
+extern int vsnprintf(char * buf, size_t size, char *fmt, va_list ap);
 
 static inline int rename(const char *old, const char *new)
 {
@@ -134,12 +135,17 @@ static inline int ungetc(int c, FILE *stream)
 	return EOF;
 }
 
-static inline int fscanf(FILE *stream,char *fmt,...)
+static inline int sscanf(char *s, char *fmt,...)
 {
 	return -1;
 }
 
-static inline int setvbuf(FILE *stream,char *buf,int mode ,size_t size)
+static inline int fscanf(FILE *stream, char *fmt,...)
+{
+	return -1;
+}
+
+static inline int setvbuf(FILE *stream, char *buf,int mode ,size_t size)
 {
 	return -1;
 }

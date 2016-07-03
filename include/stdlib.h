@@ -31,11 +31,17 @@ extern void * calloc(size_t nelem, size_t elsize);
 extern void   free(void *p);
 extern char * getenv(const char *name);
 extern void   exit(int exit_code);
-extern unsigned long strtoul(const char *str, char **endptr, int base);
-extern double strtod(const char *ptr, char **endptr);
 extern int  rand(void);
 extern void srand(unsigned int seed);
 
+extern long strtol(const char *str, char **endptr, int base);
+extern long long strtoll(const char *str, char **endptr, int base);
+extern unsigned long strtoul(const char *str, char **endptr, int base);
+extern unsigned long long strtoull(const char *str, char **endptr, int base);
+
+extern float strtof(const char *ptr, char **endptr);
+extern double strtod(const char *ptr, char **endptr);
+extern long double strtold(const char *ptr, char **endptr);
 
 #define EXIT_SUCCESS	0
 #define EXIT_FAILURE	1
