@@ -15,11 +15,11 @@
 int main(int argc, char **argv)
 {
 	if(argc!=4){
-		printf("Usage:mount special target type");
+		fprintf(stderr, "Usage:mount special target type");
 		_exit(0);
 	}
 	if(mount(argv[1],argv[2],argv[3],0)<0){
-		printf("%d:%s",errno,strerror(errno));
+		fprintf(stderr, "%d:%s",errno,strerror(errno));
 	}
 	return 0;
 }

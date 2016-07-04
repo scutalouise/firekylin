@@ -15,12 +15,11 @@
 #endif
 
 typedef unsigned long 	size_t;
-typedef long 		ssize_t;
+typedef signed   long 	ssize_t;
 
 typedef unsigned long 	time_t;
 typedef unsigned long 	clock_t;
 
-typedef unsigned int 	id_t;
 typedef unsigned int 	uid_t;
 typedef unsigned int 	gid_t;
 typedef unsigned int 	pid_t;

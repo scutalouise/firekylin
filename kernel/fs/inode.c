@@ -44,10 +44,10 @@ no_dev:
 		if (!inode->i_count) {
 			inode->i_count++;
 			unlock_inode_table();
-			ilock(inode);
+			lock_inode(inode);
 			if(inode->i_flag&I_DIRTY){
 				inode->i_op->inode_write(inode);
-				iunlock(inode);
+				unlock_inode(inode);
 				goto repeat;
 			}
 			inode->i_dev = dev;
@@ -71,7 +71,7 @@ void iput(struct inode * inode)
 	if (!inode)
 		return;
 
-	if (inode->i_count == 0)
+	if (inode->i_count <= 0)
 		panic("put_inode:put free inode");
 
 	if (--inode->i_count == 0 && inode->i_dev) {

@@ -92,7 +92,7 @@ int main(int argc,char **argv)
 	if(argc>=2)
 		fd=open(argv[1],O_RDWR,0);
 	else
-		fd=open("default.vi",O_RDWR,0);
+		fd=open("default.vi",O_CREAT | O_RDWR,0);
 	if(fd<0){
 		printf("%s",strerror(errno));
 		exit(0);

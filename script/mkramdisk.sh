@@ -13,7 +13,7 @@
 
 if [ ! -f ~/ramdisk.img ] ; then
 	echo "creating ramdisk image file:$HOME/ramdisk.img"
-	dd   if=/dev/zero of=$HOME/ramdisk.img bs=1024 count=6144 2> /dev/null
+	dd   if=/dev/zero of=$HOME/ramdisk.img bs=1024 count=2048 2> /dev/null
 	echo "creating minix file system in image file:$HOME/ramdisk.img"
 	sudo mkfs.minix -1 $HOME/ramdisk.img > /dev/null
 fi

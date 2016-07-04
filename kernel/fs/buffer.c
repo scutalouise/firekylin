@@ -76,9 +76,15 @@ static struct buffer * getblk(dev_t dev, int block)
 
 void brelse(struct buffer *buf)
 {
+	if(!buf)
+		return ;
+
 	lock_buffer_table();
-	if (--buf->b_count < 0)
-		panic("put_buffer:buffer_count <0");
+
+	if (--buf->b_count < 0){
+		printk("put_buffer:buffer_count <0");
+		buf->b_count=0;
+	}
 
 	if (buf->b_count == 0) {
 		if (!free_list_head)

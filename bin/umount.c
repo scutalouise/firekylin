@@ -15,11 +15,11 @@
 int main(int argc, char **argv)
 {
 	if(argc!=2){
-		printf("Usage: umount special ");
+		fprintf(stderr, "Usage: umount special ");
 		_exit(0);
 	}
 	if(umount(argv[1])<0){
-		printf("%d:%s",errno,strerror(errno));
+		fprintf(stderr, "%d:%s",errno,strerror(errno));
 	}
 	return 0;
 }

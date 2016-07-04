@@ -50,7 +50,7 @@ int read_pipe(struct file *file, char *buf, size_t size)
 	int left = size;
 	struct inode *inode=file->f_inode;
 	struct pipe_i_ext *i_ext=(struct pipe_i_ext *)inode->i_ext;
-	printk("-----pipe read come here-------");
+	//printk("-----pipe read come here-------");
 	while (left) {
 		chars = min(left, i_ext->size);
 		for (int i = chars; i > 0; i--) {
@@ -75,7 +75,7 @@ int write_pipe(struct file *file, char *buf, size_t size)
 	int left = size;
 	struct inode *inode=file->f_inode;
 	struct pipe_i_ext *i_ext=(struct pipe_i_ext *)inode->i_ext;
-	printk("pipe write----");
+	//printk("pipe write----");
 	while (left) {
 		chars = min(left,4096- i_ext->size);
 		for (int i = chars; i > 0; i--) {

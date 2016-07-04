@@ -10,9 +10,9 @@
 #ifndef _FCNTL_H
 #define _FCNTL_H
 
-#pragma  message("<fcntl.h> Deprecated, use <sys/fcntl.h> instead")
-#pragma  message("O_RDONLY Deprecated, use O_READ instead")
-#pragma  message("O_WRONLY Deprecated, use O_WRITE instead")
+//#pragma  message("<fcntl.h> Deprecated, use <sys/fcntl.h> instead")
+//#pragma  message("O_RDONLY Deprecated, use O_READ instead")
+//#pragma  message("O_WRONLY Deprecated, use O_WRITE instead")
 
 #include <sys/fcntl.h>
 

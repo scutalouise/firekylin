@@ -13,6 +13,8 @@
 #include <sys/types.h>
 #include <sys/param.h>
 
+#include <firekylin/sched.h>
+
 typedef char * va_list;
 
 #define va_start(ap,fmt)   ap=(va_list)&fmt+sizeof(int)
@@ -30,8 +32,6 @@ extern clock_t click;
 #define current_time()	start_time + click / HZ;
 
 extern void do_exit(long status);
-
-#include <firekylin/sched.h>
 
 extern void sigsend(struct task *p, int signo);
 

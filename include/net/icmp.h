@@ -13,8 +13,8 @@
 struct icmphdr{
 	unsigned char  icmp_type;
 	unsigned char  icmp_unused;
-	unsigned short igmp_checksum;
-	unsigned char  igmp_data[0];
+	unsigned short icmp_checksum;
+	unsigned char  icmp_data[0];
 };
 
 #endif

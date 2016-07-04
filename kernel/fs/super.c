@@ -48,8 +48,10 @@ struct super * get_super(dev_t dev)
 
 void put_super(struct super *super)
 {
-	if (!super)
-		panic("put NULL super block");
+	if (!super){
+		printk("put NULL super block");
+		return ;
+	}
 
 	if (--super->s_count < 0)
 		panic("put free super block");
@@ -184,7 +186,8 @@ void mount_root(void)
 	printk("Mounting root file system on dev:%x",ROOT_DEV);
 	super->s_dev = ROOT_DEV;
 	super->s_op = &minix_fs_operation;
-	super->s_op->super_read(super);
+	if(super->s_op->super_read(super))
+		printk("root dev mount error");
 	root_inode = iunlock(iget(ROOT_DEV, 1));
 	task->pwd = iunlock(idup(root_inode));
 	printk("    [done]\n");

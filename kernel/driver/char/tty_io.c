@@ -44,17 +44,17 @@ static int tty_read(dev_t dev, char * buf, off_t off, size_t size)
 
 	tty = tty_table[MINOR(dev)];
 
-	irq_lock();
+	//irq_lock();
 	while (left) {
 		if (!isempty(&(tty->cook))) {
 			ch = GETCH(&(tty->cook));
 			*buf++ = ch;
 			if (ch == '\n') {
-				irq_unlock();
+				//irq_unlock();
 				return size - left + 1;
 			}
 			if (ch == C('D')) {
-				irq_unlock();
+				//irq_unlock();
 				return size - left;
 			}
 			left--;
@@ -62,7 +62,7 @@ static int tty_read(dev_t dev, char * buf, off_t off, size_t size)
 		}
 		sleep_on(&(tty->cook.wait), TASK_STATE_BLOCK);
 	}
-	irq_unlock();
+	//irq_unlock();
 	return size - left;
 }
 
@@ -97,8 +97,8 @@ static int tty_ioctl(dev_t dev, int cmd, long arg)
 	return -1;
 }
 
-static struct char_device tty = { "TTY", NULL, NULL, tty_read, tty_write,
-		tty_ioctl };
+static 
+struct char_device tty = { "TTY", NULL, NULL, tty_read, tty_write, tty_ioctl };
 
 void tty_init(void)
 {

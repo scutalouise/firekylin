@@ -31,7 +31,7 @@ OBJS=$(S)/tcc.o      $(S)/libtcc.o   $(S)/tccpp.o    $(S)/tccgen.o   \
 
 CFLAGS+=-DTCC_TARGET_I386 -DCONFIG_TCC_STATIC -UTCC_IS_NATIVE -I . -I $(S)
 	
-tcc: $(S) $(S)/config.h $(OBJS) comp.o $(LIB) 
+tcc: $(S)  $(OBJS) comp.o $(LIB) 
 	@echo  LD  tcc
 	@$(LD) -o $@ $(OBJS) comp.o $(LIB)
 		
@@ -41,9 +41,6 @@ install:
 clean:
 	@echo cleaning tcc ...
 	@rm tcc  $(S)/config.h $(OBJS) comp.o 
-
-$(S)/config.h:config.h
-	@cp config.h $(S)/config.h
 	
 $(P)/tcc-0.9.26:$(P)/tcc-0.9.26.tar.bz2
 	echo Uncompressing tcc-0.9.26.tar.bz2 ...

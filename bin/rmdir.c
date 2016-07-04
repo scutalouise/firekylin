@@ -15,9 +15,9 @@
 int main(int argc, char **argv)
 {
 	if(argc<2){
-		printf("Usage:rmdir dirname");
+		fprintf(stderr, "Usage:rmdir dirname");
 		_exit(0);
 	}
 	if(rmdir(argv[1])<0)
-		printf("error:mkdir");
+		fprintf(stderr, "error:mkdir");
 }

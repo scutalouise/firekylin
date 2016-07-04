@@ -24,7 +24,7 @@ int char_open(dev_t dev)
 	int major = MAJOR(dev);
 
 	if (major > DEV_CHAR_MAX || !char_table[major]) {
-		printk("char dev not exist:%x", dev);
+		printk("dev not exist:%x", dev);
 		return -ENODEV;
 	}
 	if (char_table[major]->open)
@@ -37,7 +37,7 @@ int blk_open(dev_t dev)
 	int major = MAJOR(dev);
 
 	if (major > DEV_BLK_MAX || !blk_table[major]) {
-		printk("block dev not exist:%x", dev);
+		printk("dev not exist:%x", dev);
 		return -ENODEV;
 	}
 	if (blk_table[major]->open)

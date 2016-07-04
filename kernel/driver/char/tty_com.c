@@ -64,6 +64,8 @@ void do_com(struct trapframe *tf)
 	short port;
 	struct tty_struct *tty;
 
+	outb(0x20, 0x20);
+	
 	if (tf->nr == 0x24) {
 		port = COM1;
 		tty = &com_tty[0];
@@ -94,8 +96,6 @@ void do_com(struct trapframe *tf)
 		//inb(0x3f8 + 5);
 		break;
 	}
-
-	outb(0x20, 0x20);
 }
 
 void com_init(void)

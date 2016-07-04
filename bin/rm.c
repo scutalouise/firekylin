@@ -15,9 +15,9 @@
 int main(int argc, char **argv)
 {
 	if(argc<2){
-		printf("Usage:rm name ...");
+		fprintf(stderr, "Usage:rm name ...");
 		_exit(0);
 	}
 	if(unlink(argv[1])<0)
-		printf("%s",strerror(errno));
+		fprintf(stderr, "%s",strerror(errno));
 }

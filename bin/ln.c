@@ -13,7 +13,7 @@
 int main(int argc, char **argv)
 {
 	if(argc<3){
-		printf("Usage:link name newname");
+		fprintf(stderr, "Usage:link name newname");
 		_exit(0);
 	}
 	return link(argv[1],argv[2]);

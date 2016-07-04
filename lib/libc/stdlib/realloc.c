@@ -11,12 +11,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct block_list {
-	struct block_list *next;
-	long size;
-	char padding[8];
-};
-
 void * realloc(void *ptr, size_t size)
 {
 	void *tmp;
@@ -27,9 +21,7 @@ void * realloc(void *ptr, size_t size)
 		return NULL;
 
 	if (ptr) {
-		struct block_list *bp = (struct block_list *) ptr - 1;
-		memcpy((char*) tmp, (char*) ptr,
-				(bp->size-1) * sizeof(struct block_list));
+		memcpy((char*) tmp, (char*) ptr, size);
 		free(ptr);
 	}
 	return tmp;

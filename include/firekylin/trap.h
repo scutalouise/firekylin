@@ -11,22 +11,22 @@
 #define _TRAP_H
 
 struct trapframe {
-	unsigned long eax;
-	unsigned long ebx;
-	unsigned long ecx;
-	unsigned long edx;
-	unsigned long edi;
-	unsigned long esi;
-	unsigned long ebp;
-	unsigned long ds;
-	unsigned long es;
-	unsigned long nr;
-	unsigned long err;
-	unsigned long eip;
-	unsigned long cs;
-	unsigned long eflags;
-	unsigned long esp;
-	unsigned long ss;
+	unsigned int  eax;
+	unsigned int  ebx;
+	unsigned int  ecx;
+	unsigned int  edx;
+	unsigned int  edi;
+	unsigned int  esi;
+	unsigned int  ebp;
+	unsigned int  ds;
+	unsigned int  es;
+	unsigned int  nr;
+	unsigned int  err;
+	unsigned int  eip;
+	unsigned int  cs;
+	unsigned int  eflags;
+	unsigned int  esp;
+	unsigned int  ss;
 };
 
 #define T_DIVIDE         0      /* divide error				*/
@@ -49,8 +49,6 @@ struct trapframe {
 #define T_ALIGN         17      /* aligment check			*/
 #define T_MCHK          18      /* machine check			*/
 #define T_SIMDERR       19      /* SIMD floating point error		*/
-
-#define T_IRQ           32
 
 #define IRQ_CLOCK       32
 #define IRQ_KBD         33

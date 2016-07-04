@@ -50,4 +50,6 @@ typedef void        	(*sigact_t)(int signo, int ret);
 #define SIG_DFL		((sigact_t)0)
 #define SIG_IGN		((sigact_t)1)
 
+#define signal(a,b)
+
 #endif

@@ -61,9 +61,9 @@ void start(void)
 	dev_init();
 	mm_init();
 	pci_init();
-	sched_init();
 	ne2k_init();
-
+	sched_init();
+	
 	if (sys_fork()) {
 		__asm__("__hlt:hlt ; jmp __hlt");
 	}

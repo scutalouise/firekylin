@@ -162,10 +162,10 @@ static void hd_identify(void)
 	 * Note: here don't check the partion available.
 	 */
 	part = (struct partition *) ((char*) buf + 0x1be);
-	printk("IDE disk partion:\n");
+//	printk("IDE disk partion:\n");
 	for (int i = 0; i < 4; i++) {
-		printk("\tpart%d: start:%d,size:%d\n", i, part->start_sect,
-				part->nr_sects);
+//		printk("\tpart%d: start:%d,size:%d\n", i, part->start_sect,
+//				part->nr_sects);
 		hd_size[i + 1].start_sector = part->start_sect;
 		hd_size[i + 1].nr_sector = part->nr_sects;
 		part++;

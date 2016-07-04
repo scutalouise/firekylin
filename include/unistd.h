@@ -10,7 +10,7 @@
 #ifndef _UNISTD_H
 #define _UNISTD_H
 
-#pragma  message("<unistd.h> Deprecated, use <sys/unistd.h> instead")
+//#pragma  message("<unistd.h> Deprecated, use <sys/unistd.h> instead")
 
 #include <sys/unistd.h>
 

@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 	for (int i = 1; i < argc; i++) {
 		fd = open(argv[i], O_RDWR);
 		if (fd < 0) {
-			printf("fopen error :%s\n",argv[i]);
+			fprintf(stderr,"fopen error :%s\n",argv[i]);
 			continue ;
 		}
 		do_cat(fd);

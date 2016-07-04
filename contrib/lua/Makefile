@@ -35,9 +35,9 @@ OBJS=$(S)/lapi.o     $(S)/lcode.o    $(S)/ldebug.o   $(S)/ldo.o      \
 	@echo         CC	$<
 	@$(CC) $(CFLAGS) -o $@  $<
 
-lua: $(S) $(S)/lua.o comp.o lualib.a $(LIB)
+lua: $(S) $(S)/lua.o lualib.a $(LIB)
 	@echo LD  lua 
-	@$(LD) -o  $@ $(S)/lua.o comp.o lualib.a $(LIB)
+	@$(LD) -o  $@ $(S)/lua.o lualib.a $(LIB)
 
 lualib.a:$(OBJS)
 	@echo  AR  OBJS
@@ -48,7 +48,7 @@ install:
 
 clean:
 	@echo cleaning lua ...
-	@rm lua $(S)/lua.o comp.o lualib.a $(OBJS)
+	@rm lua $(S)/lua.o lualib.a $(OBJS)
 	
 $(P)/lua-5.1:$(P)/lua-5.1.tar.gz
 	echo Uncompressing lua-5.1.tar.gz ...

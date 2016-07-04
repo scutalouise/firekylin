@@ -19,19 +19,19 @@ int main(int argc, char **argv)
 	int fd1,fd2,size;
 
 	if(argc<3){
-		printf("%s\n","usage:cp src dst");
+		fprintf(stderr, "Usage:cp src dst\n");
 		_exit(0);
 	}
 
 	fd1=open(argv[1],O_READ,0);
 	if(fd1<0){
-		printf("file open error:%s", argv[1]);
+		fprintf(stderr, "file open error:%s", argv[1]);
 		_exit(0);
 	}
 
 	fd2=open(argv[2],O_WRITE,0);
 	if(fd2<0){
-		printf("file open error:%s", argv[2]);
+		fprintf(stderr, "file open error:%s", argv[2]);
 		_exit(0);
 	}
 
