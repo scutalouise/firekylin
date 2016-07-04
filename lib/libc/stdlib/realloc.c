@@ -29,7 +29,7 @@ void * realloc(void *ptr, size_t size)
 	if (ptr) {
 		struct block_list *bp = (struct block_list *) ptr - 1;
 		memcpy((char*) tmp, (char*) ptr,
-				(bp->size) * sizeof(struct block_list));
+				(bp->size-1) * sizeof(struct block_list));
 		free(ptr);
 	}
 	return tmp;

@@ -15,6 +15,8 @@
 #include <arch/string.h>
 #include <firekylin/multiboot2.h>
 
+#define HIGH_MEM	0x800000
+
 static unsigned long memsize;
 static unsigned long NR_PAGE;
 
@@ -27,7 +29,7 @@ phys_t get_page(void)
 	for (int i = 0; i < NR_PAGE; i++, page++) {
 		if (!page->count) {
 			page->count++;
-			return (i << 12) + 0x400000;
+			return (i << 12) + HIGH_MEM;
 		}
 	}
 	panic("out of memory");
@@ -40,12 +42,12 @@ void put_page(phys_t addr)
 
 	if (addr & 0xfff)
 		panic("Try to free Not align 4kB page :%x", addr);
-	if (addr < 0x400000) {
+	if (addr < HIGH_MEM) {
 		printk("Try to free kernel page:%x\n", addr);
 		return;
 	}
 
-	tmp = (addr - 0x400000) >> 12;
+	tmp = (addr - HIGH_MEM) >> 12;
 	if ((page_table + tmp)->count != 1) {
 		printk("Try to err page:%x", addr);
 	}
@@ -94,8 +96,12 @@ void do_page_fault(struct trapframe *tf)
 		return;
 
 	if (cr2 > 0x41000000 || cr2 < 0x40000000) {
-		printk("CS:EIP=%x:%x EFLAGS=%x SS:ESP=%x:%x\t", tf->cs,
+		printk("CS:EIP=%x:%x EFLAGS=%x SS:ESP=%x:%x\n", tf->cs,
 				tf->eip, tf->eflags, tf->ss, tf->esp);
+		if(tf->cs & 3 ){
+			printk("Process Memory err:%x\n",cr2);
+			do_exit(12);
+		}
 		panic("cr2=%x\n", cr2);
 	}
 
@@ -203,7 +209,7 @@ void mm_init(void)
 		*(p + i) = 7 + 0x1000 * i;
 
 	NR_PAGE = memsize / PAGE_SIZE;
-	page_table = (struct page_struct *) __va(0x400000);
+	page_table = (struct page_struct *) __va(HIGH_MEM);
 
 	page_table_page_use = (NR_PAGE * sizeof(struct page_struct) + PAGE_SIZE
 			- 1) / PAGE_SIZE;

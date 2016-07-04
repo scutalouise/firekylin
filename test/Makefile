@@ -16,8 +16,8 @@ CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../include
 LIB=../lib/libc/libc.a  ../lib/libm/libm.a
 
-OBJS=tpipe tsig test1 t_strcspn tmath t_strtod tstdio tsetjmp tenv tfgets \
-     t_times tcom1
+OBJS=tpipe tsig test1 t_strcspn tmath t_strtod tsetjmp  tfgets \
+     t_times tcom1 t_ll
 
 RAW_OBJS=tlua1.lua t1.sh
 

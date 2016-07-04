@@ -10,13 +10,7 @@
 #ifndef _TIME_H
 #define _TIME_H
 
-#include <sys/types.h>
-#include <sys/param.h>
-
-#define CLOCKS_PER_SEC 	HZ
-#define CLK_TCK 	HZ
-
-#define isleap(y)	(((y)%4==0&&(y)%100!=0)||(y)%400==0)
+#include <sys/time.h>
 
 struct tm {
 	int tm_sec; 	/* Seconds [0,60]. 		*/
@@ -28,16 +22,6 @@ struct tm {
 	int tm_wday; 	/* Day of week [0,6] (Sunday=0).*/
 	int tm_yday; 	/* Day of year [0,365].		*/
 	int tm_isdst; 	/* Daylight Savings flag.	*/
-};
-
-struct timeval {
-	time_t tv_sec; 	/* Seconds	*/
-	long   tv_usec; /* Microseconds	*/
-};
-
-struct timespec {
-	time_t tv_sec; 	/* Seconds	*/
-	long   tv_nsec; /* Nanoseconds	*/
 };
 
 #define MIN    		(60L)

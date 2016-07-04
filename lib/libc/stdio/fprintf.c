@@ -20,7 +20,7 @@ int fprintf(FILE *stream, const char *fmt, ...)
 
 	fflush(stream);
 
-	i=strvformat(buf,512,fmt,va_start(ap,fmt));
+	i=vsnprintf(buf,512,fmt,va_start(ap,fmt));
 	write(fileno(stream),buf,i);
 
 	return i;

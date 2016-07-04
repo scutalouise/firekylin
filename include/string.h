@@ -11,7 +11,6 @@
 #define _STRING_H
 
 #include <sys/types.h>
-#include <stdarg.h>
 
 extern void*  memchr(const void *s, int c, size_t n);
 extern int    memcmp(const void *s1, const void *s2, size_t n);
@@ -41,8 +40,5 @@ extern char * strpbrk(const char *s1, const char *s2);
 extern size_t strcspn(const char *s1, const char *s2);
 extern size_t strspn(const char *s1, const char *s2);
 extern int    strcoll(const char *s1, const char *s2);
-
-extern int    strformat(char *buf, size_t size, char *fmt, ...);
-extern int    strvformat(char *buf, size_t size, char *fmt, va_list arg);
 
 #endif

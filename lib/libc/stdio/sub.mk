@@ -10,9 +10,11 @@ LIBC_OBJ+=stdio/iotab.o      \
 	  stdio/fseek.o	     \
 	  stdio/fflush.o     \
 	  stdio/fclose.o     \
+	  stdio/ungetc.o     \
 	  stdio/printf.o     \
-	  stdio/sprintf.o    \
 	  stdio/fprintf.o    \
+	  stdio/sprintf.o    \
 	  stdio/snprintf.o   \
+	  stdio/vsprintf.o   \
 	  stdio/vsnprintf.o  \
 	  stdio/perror.o

@@ -10,8 +10,8 @@
 AS=nasm
 CC=gcc
 
-SFLAGS=-g -f elf32
-CFLAGS=-g -c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
+SFLAGS=-f elf32
+CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../../include
 
 include ctype/sub.mk

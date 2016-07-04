@@ -11,8 +11,8 @@ AS=nasm
 CC=gcc
 LD=ld -m elf_i386 -T ../../script/ldscript  ../../lib/csu/crt.o
 
-SFLAGS=-g -f elf32
-CFLAGS=-g -c -x c  -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
+SFLAGS=-f elf32
+CFLAGS=-c -x c  -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../../include 
 LIB=../../lib/libc/libc.a  ../../lib/libm/libm.a
 
@@ -51,4 +51,4 @@ $(P)/tcc-0.9.26:$(P)/tcc-0.9.26.tar.bz2
 	
 $(P)/tcc-0.9.26.tar.bz2:
 	echo Downloading tcc-0.9.26.tar.bz2 ...
-	wget -P $(P) http://ftp.twaren.net/Unix/NonGNU//tinycc/tcc-0.9.26.tar.bz2
+	wget -P $(P) http://ftp.twaren.net/Unix/NonGNU/tinycc/tcc-0.9.26.tar.bz2

@@ -11,8 +11,8 @@ AS=nasm
 CC=gcc
 LD=ld -m elf_i386 -T ../../script/ldscript  ../../lib/csu/crt.o
 
-SFLAGS=-g -f elf32
-CFLAGS=-g -c -x c  -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
+SFLAGS=-f elf32
+CFLAGS=-c -x c  -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../../include 
 LIB=../../lib/libc/libc.a  ../../lib/libm/libm.a
 
@@ -52,21 +52,21 @@ OBJS=$(S)/nasm.o $(S)/nasmlib.o $(S)/ver.o    \
 CFLAGS+=-DOF_ONLY -DOF_BIN -DOF_COFF -DOF_ELF32 -DHAVE_SNPRINTF \
         -DHAVE_VSNPRINTF -DHAVE_STRICMP -DHAVE_STRNICMP -I . -I $(S)
 
-nasm:$(S) $(OBJS) $(LIB) comp.o
+nasm:$(S) $(OBJS) $(LIB) 
 	@echo  LD  nasm
-	@$(LD) -o $@ $(OBJS) comp.o $(LIB)
+	@$(LD) -o $@  $(OBJS)  $(LIB)
 
 install: 
-	-cp nasm    $(PREFIX)/nasm
+	cp nasm    $(PREFIX)/nasm
 
 clean:
 	@echo cleaning nasm ...
-	@-rm nasm  $(OBJS) 
+	@rm nasm  $(OBJS) 
 		
 $(P)/nasm-2.12:$(P)/nasm-2.12.tar.gz
 	echo Uncompressing nasm-2.12.tar.gz ...
-	-cd $(P) && tar -zxf nasm-2.12.tar.gz
+	cd $(P) && tar -zxf nasm-2.12.tar.gz
 	
 $(P)/nasm-2.12.tar.gz:
 	echo Downloading nasm-2.12.tar.gz ...
-	-wget -P $(P) http://www.nasm.us/pub/nasm/releasebuilds/2.12/nasm-2.12.tar.gz
+	wget -P $(P) http://www.nasm.us/pub/nasm/releasebuilds/2.12/nasm-2.12.tar.gz

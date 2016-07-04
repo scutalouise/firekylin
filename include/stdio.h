@@ -54,12 +54,14 @@ extern int    fseek(FILE *stream, off_t off, int where);
 extern int    fflush(FILE *stream);
 extern int    fsetbuf(FILE *stream, int mode, char *buf, size_t size);
 extern int    fclose(FILE *stream);
+extern int    ungetc(int c, FILE *stream);
 
 extern int printf(char *fmt, ...);
-extern int sprintf(char *buf, const char *fmt, ...);
 extern int fprintf(FILE *stream, const char *fmt, ...);
-extern int snprintf(char * buf, size_t size, const char *fmt, ...);
-extern int vsnprintf(char * buf, size_t size, const char *fmt, va_list ap);
+extern int sprintf(char *buf, const char *fmt, ...);
+extern int snprintf(char *buf, size_t size, const char *fmt, ...);
+extern int vsprintf(char *buf, const char *fmt, va_list arg);
+extern int vsnprintf(char *buf, size_t size, const char *fmt, va_list ap);
 
 static inline int rename(const char *old, const char *new)
 {
@@ -130,33 +132,33 @@ static inline int putchar(int c)
 	return fputc(c, stdout);
 }
 
-static inline int ungetc(int c, FILE *stream)
-{
-	return EOF;
-}
-
 static inline int sscanf(char *s, char *fmt,...)
 {
+	printf("sscanf error");
 	return -1;
 }
 
 static inline int fscanf(FILE *stream, char *fmt,...)
 {
+	printf("fscanf error");
 	return -1;
 }
 
-static inline int setvbuf(FILE *stream, char *buf,int mode ,size_t size)
+static inline int setvbuf(FILE *stream, char *buf, int mode ,size_t size)
 {
+	printf("setvbuf error");
 	return -1;
 }
 
 static inline FILE *tmpfile(void)
 {
+	printf("tmp file error");
 	return NULL;
 }
 
 static inline char * tmpnam(char *ptr)
 {
+	printf("tmpnam error");
 	return NULL;
 }
 

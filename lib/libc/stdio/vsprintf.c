@@ -7,10 +7,6 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#include <stdarg.h>
-#include <ctype.h>
-#include <string.h>
-
 /************************************************************************
  *
  *     %[flag][width][.prec][mod][conv]
@@ -40,6 +36,11 @@
  *
  ***************************************************************************/
 
+#include <stdarg.h>
+#include <ctype.h>
+#include <stdio.h>
+#include <string.h>
+
 #define F_ZEROPAD	1
 #define F_SIGN		2
 #define F_PLUS		4
@@ -57,6 +58,7 @@ static char *i_format(char *str, int num, int base, int width, int prec,
 	char c, sign, tmp[36];
 	int i;
 	char *digits;
+	unsigned int u_num;
 
 	if (base < 2 || base > 36)
 		return str;
@@ -78,10 +80,11 @@ static char *i_format(char *str, int num, int base, int width, int prec,
 	}
 
 	i=0;
+	u_num=num;
 	do{
-		tmp[i++]=digits[num%base];
-		num=num/base;
-	}while(num);
+		tmp[i++]=digits[u_num%base];
+		u_num=u_num/base;
+	}while(u_num);
 
 	if (i>prec)
 		prec=i;
@@ -111,22 +114,23 @@ static char *i_format(char *str, int num, int base, int width, int prec,
 	return str;
 }
 
-int strvformat(char *buf, size_t size, char *fmt, va_list arg)
+int vsprintf(char *buf, const char *fmt, va_list arg)
 {
 	int flag, width, prec;
 	char *s,*str = buf;
 	int len;
+	char *tfmt=(char *)fmt;
 
-	while (*fmt) {
-		if (*fmt != '%') {
-			*str++ = *fmt++;
+	while (*tfmt) {
+		if (*tfmt != '%') {
+			*str++ = *tfmt++;
 			continue;
 		}
 	        /* get flag */
 		flag = 0;
 	repeat1:
-		fmt++;
-		switch (*fmt) {
+		tfmt++;
+		switch (*tfmt) {
 		case '-':
 			flag |= F_LEFT;
 			goto repeat1;
@@ -146,15 +150,15 @@ int strvformat(char *buf, size_t size, char *fmt, va_list arg)
 
 		/* get width */
 		width=-1;
-		if (isdigit(*fmt)){
+		if (isdigit(*tfmt)){
 			width=0;
 			do{
-				width=width*10+*fmt-'0';
-				fmt++;
-			}while(isdigit(*fmt));
+				width=width*10+*tfmt-'0';
+				tfmt++;
+			}while(isdigit(*tfmt));
 		}
-		else if (*fmt == '*') { /* it's the next argument */
-			fmt++;
+		else if (*tfmt == '*') { /* it's the next argument */
+			tfmt++;
 			width = va_arg(arg, int);
 			if (width < 0) {
 				width = -width;
@@ -164,16 +168,16 @@ int strvformat(char *buf, size_t size, char *fmt, va_list arg)
 
 		/*get prec */
 		prec=-1;
-		if (*fmt == '.') {
-			fmt++;
-			if (isdigit(*fmt)){
+		if (*tfmt == '.') {
+			tfmt++;
+			if (isdigit(*tfmt)){
 				prec=0;
 				do{
-					prec=prec*10+*fmt-'0';
-					fmt++;
-				}while(isdigit(*fmt));
+					prec=prec*10+*tfmt-'0';
+					tfmt++;
+				}while(isdigit(*tfmt));
 			}
-			else if (*fmt == '*') { /* it's the next argument */
+			else if (*tfmt == '*') { /* it's the next argument */
 				prec = va_arg(arg, int);
 				if (prec < 0)
 					prec = 0;
@@ -182,12 +186,12 @@ int strvformat(char *buf, size_t size, char *fmt, va_list arg)
 
 		/* get mod */
 		//mod=-1;
-		if (*fmt == 'h' || *fmt == 'l' || *fmt == 'L')
-			//mod = *fmt++;
-			fmt++;
+		if (*tfmt == 'h' || *tfmt == 'l' || *tfmt == 'L')
+			//mod = *tfmt++;
+			tfmt++;
 
 		/* get conv */
-		switch(*fmt++){
+		switch(*tfmt++){
 		case '%':
 			if (!(flag & F_LEFT))
 				while (--width > 0)
@@ -250,14 +254,8 @@ int strvformat(char *buf, size_t size, char *fmt, va_list arg)
 					width, prec, flag);
 			break;
 		default:
-			*str++=*(fmt-1);
+			*str++=*(tfmt-1);
 		}
 	}
 	return (int)(str-buf);
-}
-
-int strformat(char *buf, size_t size, char *fmt, ...)
-{
-	va_list ap;
-	return strvformat(buf, size, fmt, va_start(ap, fmt));
 }

@@ -9,21 +9,19 @@
 
 #include "stdio_loc.h"
 
-char * fgets(char * buf, size_t n, FILE *stream)
+int ungetc(int c, FILE *stream)
 {
-	int c;
-	char *p = buf;
+	if (!stream)
+		return EOF;
+	if (!(stream->_flag & READING))
+		return EOF;
+	if (!stream->_buf)
+		return EOF;
+	if (stream->_ptr <= stream->_buf)
+		return EOF;
 
-	while (n-- && (c = fgetc(stream)) != EOF ) {
-		*p++ = c;
-		if (c == '\n')
-			break;
-	}
+	stream->_cnt++;
+	*--stream->_ptr = c;
 
-	if (feof(stream))
-		return NULL;
-
-	if(n)
-		*p=0;
-	return (p == buf) ? NULL : buf;
+	return c;
 }

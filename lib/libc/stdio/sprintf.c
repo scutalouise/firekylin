@@ -16,6 +16,7 @@ int sprintf(char * buf, const char *fmt,...)
 	va_list ap;
 	int i;
 
-	i=strvformat(buf,256,fmt,va_start(ap,fmt));
+	i=vsprintf(buf, fmt, va_start(ap,fmt));
+
 	return i;
 }

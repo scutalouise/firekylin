@@ -12,13 +12,13 @@
 #include <stdarg.h>
 #include <sys/unistd.h>
 
-int printf(char *fmt,...)
+int printf(char *fmt, ...)
 {
 	char buf[2048];
 	va_list ap;
 	int i;
 
-	i=strvformat(buf,256,fmt,va_start(ap,fmt));
-	write(STDOUT_FILENO,buf,i);
+	i = vsnprintf(buf, 2048, fmt, va_start(ap, fmt));
+	write(STDOUT_FILENO, buf, i);
 	return i;
 }

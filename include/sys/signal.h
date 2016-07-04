@@ -33,6 +33,7 @@
 #define SIGTSTP		19
 #define SIGTTIN		20
 #define	SIGTTOU		21
+#define SIGTERM		22
 
 #define SIGCTL_SETSUSPEND	3
 #define SIGCTL_GETSUSPEND	4

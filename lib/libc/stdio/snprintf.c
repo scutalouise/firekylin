@@ -14,8 +14,6 @@
 int snprintf(char * buf, size_t size, const char *fmt, ...)
 {
 	va_list ap;
-	int i;
 
-	i = strvformat(buf, size, fmt, va_start(ap, fmt));
-	return i;
+	return  vsnprintf(buf, size, fmt, va_start(ap, fmt));
 }

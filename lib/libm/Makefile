@@ -10,15 +10,15 @@
 AS=nasm
 CC=gcc
 
-SFLAGS=-g -f elf32
-CFLAGS=-g -c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
+SFLAGS=-f elf32
+CFLAGS=-c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../../include
 
-LIBM_OBJ= sin.o   cos.o   tan.o   asin.o  acos.o  atan.o  atan2.o \
-          sinh.o  cosh.o  tanh.o  asinh.o acosh.o atanh.o         \
-          exp.o   pow.o   log.o   log10.o sqrt.o  hypot.o         \
-          fabs.o  floor.o ceil.o  fmod.o  modf.o  ldexp.o frexp.o 
-
+LIBM_OBJ= sin.o   cos.o   tan.o   asin.o  acos.o  atan.o  atan2.o      \
+          sinh.o  cosh.o  tanh.o  asinh.o acosh.o atanh.o              \
+          exp.o   pow.o   log.o   log10.o sqrt.o  hypot.o              \
+          fabs.o  floor.o ceil.o  fmod.o  modf.o  ldexp.o frexp.o      \
+          __divdi3.o      __udivdi3.o     __moddi3.o      __umoddi3.o
 .s.o:
 	@echo         AS	$<
 	@$(AS) $(SFLAGS) -o $@  $<
