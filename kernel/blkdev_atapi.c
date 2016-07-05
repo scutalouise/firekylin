@@ -7,14 +7,14 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
+#include <arch/portio.h>
 #include <firekylin/partion.h>
 #include <firekylin/kernel.h>
 #include <firekylin/sched.h>
 #include <firekylin/trap.h>
 #include <firekylin/driver.h>
 #include <firekylin/fs.h>
-#include <arch/portio.h>
-#include "atapi.h"
+#include <firekylin/atapi.h>
 
 struct request {
 	unsigned char busy;

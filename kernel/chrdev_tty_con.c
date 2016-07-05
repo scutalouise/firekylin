@@ -150,7 +150,7 @@ void con_init()
 {
 	for (int cur_console = 0; cur_console < MAX_CON; cur_console++) {
 		origin = base = 0xc00b8000 + 25 * 80 * 2 * cur_console;
-		color = 8;
+		color = 7;
 		tty_table[cur_console+1]=&con_tty[cur_console];
 		con_tty[cur_console].write=&con_write;
 		con_tty[cur_console].private=cur_console;

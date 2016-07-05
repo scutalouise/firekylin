@@ -14,22 +14,21 @@ SFLAGS=-g -f elf32 -g
 CFLAGS=-g -c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../include
 
-OBJS=init/head.o init/main.o  \
-     kernel/entry.o kernel/trap.o    kernel/util.o  \
-     kernel/sched.o kernel/signal.o  kernel/timer.o \
-     kernel/lock.o  kernel/softirq.o kernel/sys.o   \
-     kernel/fork.o  kernel/exec.o    kernel/wait.o  \
-     kernel/exit.o  kernel/trace.o \
-     mm/memory.o \
-     driver/char/tty_con.o driver/char/tty_kbd.o driver/char/tty_com.o \
-     driver/char/tty_io.o  driver/char/mem.o \
-     driver/block/ramdisk.o driver/block/floppy.o driver/block/atapi.o \
-     driver/driver.o driver/pci.o driver/ne2k.o \
-     fs/buffer.o fs/super.o fs/inode.o fs/read.o fs/stat.o fs/open.o \
-     fs/write.o fs/fcntl.o fs/create.o fs/pipe.o fs/ioctl.o fs/close.o \
-     fs/minix/super.o fs/minix/inode.o fs/minix/bitmap.o \
-     fs/minix/namei.o fs/minix/file.o fs/minix/operation.o \
-     lib/mktime.o lib/vsprintf.o lib/ctype.o lib/malloc.o
+OBJS=init_head.o  init_main.o  \
+     kern_entry.o kern_trap.o    kern_util.o  \
+     kern_sched.o kern_signal.o  kern_timer.o \
+     kern_lock.o  kern_softirq.o kern_sys.o   kern_dev.o \
+     kern_fork.o  kern_exec.o    kern_wait.o  kern_exit.o  kern_trace.o \
+     vm_memory.o \
+     chrdev_mem.o \
+     chrdev_tty_con.o chrdev_tty_kbd.o chrdev_tty_com.o chrdev_tty_io.o \
+     blkdev_ramdisk.o blkdev_atapi.o \
+     dev_pci.o        dev_ne2k.o \
+     vfs_buffer.o vfs_super.o vfs_inode.o  vfs_read.o vfs_stat.o  vfs_open.o  \
+     vfs_write.o  vfs_fcntl.o vfs_create.o vfs_pipe.o vfs_ioctl.o vfs_close.o \
+     minixfs/super.o minixfs/inode.o minixfs/bitmap.o \
+     minixfs/namei.o minixfs/file.o  minixfs/operation.o \
+     klib_ctype.o    klib_mktime.o   klib_vsprintf.o 
        
 .s.o:
 	@echo         AS	$<
