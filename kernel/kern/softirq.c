@@ -23,17 +23,18 @@ struct softirq_action softirq_actions[NR_SOFTIRQ];
 
 struct task *softirq_wait;
 
-void softirq_raise(unsigned int index)
+void softirq_raise(int index, long data)
 {
 	if (index >= NR_SOFTIRQ)
 		return;
 	irq_lock();
 	softirq_map |= 1 << index;
+	softirq_actions[index].data=data;
 	irq_unlock();
 	wake_up(&softirq_wait);
 }
 
-int softirq_setaction(unsigned int index, void (*action)(long data), long data)
+int softirq_setaction(int index, void (*action)(long data))
 {
 	if (index > NR_SOFTIRQ)
 		panic("set_sofirq_action index too big %d", index);
@@ -42,7 +43,6 @@ int softirq_setaction(unsigned int index, void (*action)(long data), long data)
 		panic("set_softirq_action action has exsit %d", index);
 
 	softirq_actions[index].action = action;
-	softirq_actions[index].data = data;
 
 	return 0;
 }

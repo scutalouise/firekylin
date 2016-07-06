@@ -64,10 +64,10 @@ void do_timer(void)
 	if (!timer_list)
 		return;
 	if (click >= timer_list->time)
-		softirq_raise(SOFTIRQ_TIMER);
+		softirq_raise(SOFTIRQ_TIMER,(long)0);
 }
 
 void timer_init(void)
 {
-	softirq_setaction(SOFTIRQ_TIMER, &timer_softirq_action, 0);
+	softirq_setaction(SOFTIRQ_TIMER, &timer_softirq_action);
 }

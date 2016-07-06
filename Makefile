@@ -14,7 +14,7 @@ complie:
 	make -C lib
 	make -C bin
 	make -C test
-#	make -C contrib
+	make -C contrib
 	
 cdrom:
 	@make complie 2>&1 > /dev/null
@@ -28,7 +28,7 @@ clean:
 	make clean -C lib
 	make clean -C bin
 	make clean -C test
-#	make clean -C contrib
+	make clean -C contrib
 	-rm -rf iso
 	-rm cdrom.iso hd.img
 

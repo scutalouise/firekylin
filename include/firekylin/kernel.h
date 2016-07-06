@@ -38,8 +38,7 @@ extern void sigsend(struct task *p, int signo);
 #define SOFTIRQ_TIMER		0
 #define SOFTIRQ_INET		1
 
-extern void softirq_raise(unsigned int index);
-extern int softirq_setaction(unsigned int index, void (*action)(long data),
-		long data);
+extern void softirq_raise(int index, long data);
+extern int  softirq_setaction(int index, void (*action)(long data));
 
 #endif

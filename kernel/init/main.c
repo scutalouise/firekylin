@@ -30,6 +30,7 @@ extern int  sys_fork();
 extern int  sys_exec(char *filename, char **argv, char **envp);
 extern void mount_root(void);
 extern void dump_pci(void);
+extern void inet_init(void);
 
 static void time_init()
 {
@@ -71,6 +72,7 @@ void start(void)
 	setpriority(5);
 
 	softirq_init();
+	inet_init();
 	timer_init();
 	buffer_init();
 	mount_root();

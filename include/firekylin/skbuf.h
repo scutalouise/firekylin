@@ -7,8 +7,8 @@
  * it under the terms of The BSD License, see LICENSE.
  */
 
-#ifndef _SOCKBUF_H
-#define _SOCKBUF_H
+#ifndef _SKBUF_H
+#define _SKBUF_H
 
 #include <net/arp.h>
 #include <net/ip.h>
@@ -17,11 +17,23 @@
 #include <net/tcp.h>
 #include <net/udp.h>
 
-struct sockbuf{
-	struct sockbuf *next;
-
-
-
+struct skbuf{
+	struct skbuf  *next;
+	struct ethhdr *eh;
+	union{
+		struct iphdr *ip;
+		struct arphdr *arp;
+	};
+	union{
+		struct icmphdr *icmp;
+		struct igmphdr *igmp;
+		struct udphdr  *udp;
+		struct tcphdr  *tcp;
+	};
+	unsigned char data[0];
 };
+
+extern void free_skbuf(struct skbuf *skb);
+extern struct skbuf *alloc_skbuf(void);
 
 #endif

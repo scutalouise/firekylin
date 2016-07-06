@@ -15,7 +15,7 @@
 
 char *envp[] = { "PATH=/bin:/test", NULL };
 
-char *ttys[] = { "/dev/tty1", "/dev/tty2", "/dev/com1", NULL };
+char *ttys[] = { "/dev/tty1", "/dev/tty2",  NULL };
 
 int main(int argc, char **argv)
 {

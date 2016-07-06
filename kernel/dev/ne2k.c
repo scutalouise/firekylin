@@ -16,6 +16,7 @@
 #include <arch/bits.h>
 #include <net/ether.h>
 #include <net/arp.h>
+#include <firekylin/skbuf.h>
 
 /*
  * ne2k_pci rquipped by bochs or qemu. other unknow.
@@ -106,7 +107,7 @@ int ne2k_send(char *data, short len)
 	return 0;
 }
 
-char buf[1024];
+void inet_rx(struct skbuf *sbk);
 
 void ne2k_receive(void)
 {
@@ -115,6 +116,8 @@ void ne2k_receive(void)
 		unsigned char next;
 		unsigned short len;
 	} info;
+
+	struct skbuf *skb=alloc_skbuf();
 
 	outb(base + RSAR0, 0);
 	outb(base + RSAR1, rx_next);
@@ -127,7 +130,7 @@ void ne2k_receive(void)
 	outb(base + RSAR1, rx_next);
 	outb(base + RBCR0, info.len & 0xff);
 	outb(base + RBCR1, (info.len >> 8) & 0xff);
-	insw(base + DATA, buf, info.len);
+	insw(base + DATA, skb->data, info.len);
 
 	while ((inb(base + ISR) & 0x40) == 0);
 	outb(base + ISR, 0x40);
@@ -138,42 +141,7 @@ void ne2k_receive(void)
 	else
 		outb(base + BNRY, rx_next - 1);
 
-	struct ethhdr *eh = (struct ethhdr *) buf;
-	printk("dst: %x:%x:%x:%x:%x:%x\n", eh->eh_dst[0], eh->eh_dst[1],
-			eh->eh_dst[2], eh->eh_dst[3], eh->eh_dst[4],
-			eh->eh_dst[5]);
-	printk("src: %x:%x:%x:%x:%x:%x\n", eh->eh_src[0], eh->eh_src[1],
-			eh->eh_src[2], eh->eh_src[3], eh->eh_src[4],
-			eh->eh_src[5]);
-	switch (bswapw(eh->eh_type)) {
-	case 0x0800:
-		printk("ip");
-		break;
-	case 0x0806:
-		printk("arp");
-		struct arphdr *ah = (struct arphdr *) eh->eh_data;
-		printk("htype:%x\n", bswapw(ah->arp_hrd));
-		printk("ptype:%x\n", bswapw(ah->arp_pro));
-		printk("haddr_len:%x\n", ah->arp_hln);
-		printk("paddr_len:%x\n", ah->arp_pln);
-		printk("src_haddr:%x:%x:%x:%x:%x:%x", ah->arp_sha[0],
-				ah->arp_sha[1], ah->arp_sha[2],
-				ah->arp_sha[3], ah->arp_sha[4],
-				ah->arp_sha[5]);
-		printk("src_paddr:%d.%d.%d.%d", ah->arp_spa[0],
-				ah->arp_spa[1], ah->arp_spa[2],
-				ah->arp_spa[3]);
-		printk("target_haddr:%x:%x:%x:%x:%x:%x", ah->arp_tha[0],
-				ah->arp_tha[1], ah->arp_tha[2],
-				ah->arp_tha[3], ah->arp_tha[4],
-				ah->arp_tha[5]);
-		printk("target_paddr:%d.%d.%d.%d", ah->arp_tpa[0],
-				ah->arp_tpa[1], ah->arp_tpa[2],
-				ah->arp_tpa[3]);
-		break;
-	default:
-		printk("unknow");
-	}
+	softirq_raise(SOFTIRQ_INET,(long)skb);
 }
 
 void do_ne2k(struct trapframe *tf)
@@ -181,14 +149,11 @@ void do_ne2k(struct trapframe *tf)
 	unsigned char isr;
 	isr = inb(base + ISR);
 	if (isr & 1) {
-		printk("resvice packet ok \n");
 		outb(base + ISR, 0x01);
-
-		ne2k_receive();
-
 		if (irq >= 8)
 			outb(0xa0, 0x20);
 		outb(0x20, 0x20);
+		ne2k_receive();
 		return;
 	}
 	if (isr & 2) {
