@@ -36,8 +36,7 @@ void do_signal(unsigned long unused)
 
 	current = CURRENT_TASK();
 
-	signal = current->sigarrive & (~current->sigmask)
-			& (~current->sigsuspend);
+	signal = current->sigarrive & (~current->sigmask);
 	if (!signal)
 		return;
 
@@ -68,27 +67,6 @@ void do_signal(unsigned long unused)
 
 int sys_sigctl(int cmd, int param1, int param2, int param3)
 {
-	struct task *current = CURRENT_TASK();
-	int ret;
-
-	switch (cmd) {
-	case SIGCTL_SETSUSPEND:
-		ret = current->sigsuspend;
-		current->sigsuspend = param1
-				& ((1 << (SIGKILL - 1) | 1 << (SIGSTOP - 1)));
-		return ret;
-
-	case SIGCTL_GETSUSPEND:
-		return current->sigsuspend;
-
-	case SIGCTL_PAUSE:
-		sleep_on(NULL, TASK_STATE_PAUSE);
-		return -EINTR;
-
-	default:
-		return -ERROR;
-
-	}
 	return -ERROR;
 }
 

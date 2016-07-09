@@ -50,11 +50,11 @@ int do_echo(int argc, char **argv)
 
 int do_cls(int argc, char **argv)
 {
-	printf("\0330;0P");
+	printf("\033[1;1H");
 	for (int i = 0; i < 8 * 24; i++) {
 		printf("          ");
 	}
-	printf("\0330;0P");
+	printf("\033[1;1H");
 	return 0;
 }
 

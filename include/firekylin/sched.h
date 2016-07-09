@@ -66,7 +66,6 @@ struct task {
 	long 	      status; 		/* exit status. 	*/
 	sigset_t      sigarrive;	/* sig arrived map 	*/
 	sigset_t      sigmask;		/* sig mask    map	*/
-	sigset_t      sigsuspend;	/* sig suspend map	*/
 	sigact_t      sighandle[NR_SIG];/* sig handle table	*/
 	unsigned int  tty; 		/* control tty. 	*/
 	struct inode *pwd; 		/* current dir inode. 	*/
@@ -94,7 +93,11 @@ struct task {
     })
 
 #define __switch_to(p)			\
-    ({	__asm__ __volatile__ (		\
+    ({	tss.esp0 = (long)p + 4096;	\
+        __asm__ __volatile__(		\
+	"movl %%eax,%%cr3"		\
+	::"a"(p->pdtr));		\
+        __asm__ __volatile__ (		\
 	"pushl $__ret_switch;"		\
 	"pushf;"			\
 	"pushl %%eax;"			\

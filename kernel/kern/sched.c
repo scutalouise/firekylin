@@ -55,39 +55,75 @@ void dump_task()
 	irq_unlock();
 }
 
+//static void sched(void)
+//{
+//	struct task *p, *q, *current;
+//	int i;
+//
+//	for (i = 0; i < NR_PRIO; i++)
+//		if (priority[i])
+//			break;
+//	if (i >= NR_PRIO)
+//		panic("Don't have ready process");
+//	irq_lock();
+//	p = priority[i];
+//	if (p->count <= 0) {
+//		p->count = 25;
+//		if (p->next) {
+//			priority[i] = p->next;
+//			q = p->next;
+//			while (q->next)
+//				q = q->next;
+//			q->next = p;
+//			p->next = NULL;
+//		}
+//	}
+//	irq_unlock();
+//	current = CURRENT_TASK();
+//
+//	if (priority[i] != current) {
+//		tss.esp0 = (long) priority[i] + 4096;
+//		__asm__("movl %%eax,%%cr3"
+//				::"a"(priority[i]->pdtr));
+//		__switch_to(priority[i]);
+//	}
+//}
+
 static void sched(void)
 {
 	struct task *p, *q, *current;
-	int i;
 
-	for (i = 0; i < NR_PRIO; i++)
-		if (priority[i])
-			break;
-	if (i >= NR_PRIO)
-		panic("Don't have ready process");
-	irq_lock();
-	p = priority[i];
-	if (p->count <= 0) {
-		p->count = 25;
-		if (p->next) {
-			priority[i] = p->next;
-			q = p->next;
-			while (q->next)
-				q = q->next;
-			q->next = p;
-			p->next = NULL;
+	for (int i = 0; i < NR_PRIO; i++){
+		if (!priority[i])
+			continue;
+		irq_lock();
+		p = priority[i];
+		if (p->count <= 0) {
+			p->count = 25;
+			if (p->next) {
+				priority[i] = p->next;
+				q = p->next;
+				while (q->next)
+					q = q->next;
+				q->next = p;
+				p->next = NULL;
+			}
 		}
-	}
-	irq_unlock();
-	current = CURRENT_TASK();
+		irq_unlock();
+		current = CURRENT_TASK();
 
-	if (priority[i] != current) {
-		tss.esp0 = (long) p + 4096;
-		__asm__("movl %%eax,%%cr3"
-				::"a"(priority[i]->pdtr));
-		__switch_to(priority[i]);
+		if (priority[i] != current) {
+			tss.esp0 = (long) priority[i] + 4096;
+			__asm__("movl %%eax,%%cr3"
+					::"a"(priority[i]->pdtr));
+			__switch_to(priority[i]);
+		}
+		return ;
 	}
+	dump_task();
+	panic("Don't have ready process");
 }
+
 
 void sleep_on(struct task **wait, int state)
 {
@@ -115,15 +151,21 @@ void sleep_on(struct task **wait, int state)
 	sched();
 }
 
-void wake_up_proc(struct task *p)
+static void __wake_up_proc(struct task *p)
 {
 	if (p->state == TASK_STATE_READY)
 		return;
-	irq_lock();
 	p->state = TASK_STATE_READY;
 	p->next = priority[p->priority];
 	priority[p->priority] = p;
+}
+
+void wake_up_proc(struct task *p)
+{
+	irq_lock();
+	__wake_up_proc(p);
 	irq_unlock();
+	sched();
 }
 
 void wake_up(struct task **wait)
@@ -136,7 +178,7 @@ void wake_up(struct task **wait)
 	while (*wait) {
 		tmp = *wait;
 		*wait = tmp->next;
-		wake_up_proc(tmp);
+		__wake_up_proc(tmp);
 	}
 	irq_unlock();
 }

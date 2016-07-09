@@ -26,6 +26,7 @@ int main(int argc, char **argv)
 			close(0);
 			close(1);
 			close(2);
+			setsid();
 			if (open(*p, O_RDWR, 0) < 0)
 				exit(0);
 			dup(0);

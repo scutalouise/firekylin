@@ -16,7 +16,7 @@ CFLAGS=-g -c -x c -Wall -m32 -std=c99 -nostdinc -nostdlib -fno-builtin \
        -fno-stack-protector -I ../include
 LIB=../lib/libc/libc.a  ../lib/libm/libm.a
 
-OBJS=init sh ls cat sync mkdir cp rm rmdir ln vi mount umount pvi
+OBJS=init sh ls cat sync mkdir cp rm rmdir ln vi mount umount
 
 .s.o:
 	@$(AS) $(SFLAGS) -o $@  $<

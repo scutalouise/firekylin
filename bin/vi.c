@@ -57,8 +57,8 @@ void draw_win()
 	for(i=0;i<lines;i++)
 		write(0,buf[i].data,buf[i].cnt);
 	while(i++<24)
-		printf("\0330;%dP~\n",i);
-	printf("\0330;0P");
+		printf("\033[1;1H~\n",i);
+	printf("\033[1;1H");
 }
 
 void insert(char ch)
@@ -68,9 +68,9 @@ void insert(char ch)
 		line->data[i+1]=line->data[i];
 	line->data[cur_x++]=ch;
 	line->cnt++;
-	printf("\0330;%dP",cur_y);
+	printf("\033[1;%dP",cur_y);
 	write(0,line->data,line->cnt);
-	printf("\033%d;%dP",cur_x,cur_y);
+	printf("\033[%d;%dP",cur_x,cur_y);
 }
 
 void save()
