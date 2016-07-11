@@ -1,7 +1,10 @@
-/*
- *    include/ctype.h
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #ifndef _CTYPE_H
@@ -28,8 +31,10 @@ extern int isalpha(int c);
 extern int isalnum(int c);
 extern int isgraph(int c);
 extern int isprint(int c);
+extern int isascii(int c);
 extern int tolower(int c);
 extern int toupper(int c);
+extern int toascii(int c);
 
 #define isupper(c)	(__ctype[(c)+1]&(_U))
 #define islower(c)	(__ctype[(c)+1]&(_L))
@@ -42,8 +47,10 @@ extern int toupper(int c);
 #define isalnum(c)	(__ctype[(c)+1]&(_U|_L|_D))
 #define isgraph(c)	(__ctype[(c)+1]&(_P|_U|_L|_D))
 #define isprint(c)	(__ctype[(c)+1]&(_P|_U|_L|_D))
+#define isascii(c)	((c)<=0x7f)
 
-#define tolower(c)	(isupper(c) ? c+=0x20 : c)
-#define toupper(c)	(islower(c) ? c-=0x20 : c)
+#define tolower(c)	(isupper(c) ? (c)+0x20 : (c))
+#define toupper(c)	(islower(c) ? (c)-0x20 : (c))
+#define toascii(c)	((c)&0x7f)
 
 #endif

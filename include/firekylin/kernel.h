@@ -1,78 +1,44 @@
-/*
- *    include/firekylin/kernel.h
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #ifndef _KERNEL_H
 #define _KERNEL_H
 
 #include <sys/types.h>
+#include <sys/param.h>
 
-#define irq_disable() 			\
-    asm("cli");
+#include <firekylin/sched.h>
 
-#define irq_enable() 			\
-    asm("sti");
+typedef char * va_list;
 
-/* Just should be used once in a function */
-#define irq_lock()			\
-    unsigned long  __flag;		\
-    asm("pushf;popl %0;cli":"=m"(__flag))
-
-/* Used must after irq_lock() */
-#define irq_unlock()			\
-    asm("pushl %0;popf"::"m"(__flag))
-
-#define inb(port) 			\
-    ({					\
-	unsigned char __res;		\
-	asm volatile ("in %%dx,%%al"  	\
-		  : "=a"(__res) 	\
-		  :"d"(port));		\
-	__res;				\
-    })
-
-#define outb(port,value)   		\
-    asm("out %%al,%%dx" : :"a"(value),"d"(port))
-
-#define ins(port,buf,size)		\
-    asm("rep insw" :: "D"(buf),"d"(port),"c"(size>>1))
-
-#define outs(port,buf,size)		\
-    asm("rep outsw" :: "S"(buf),"d"(port),"c"(size>>1))
-
-#define memcpy(dst,src,size)		\
-    asm("rep movsb":: "D"(dst),"S"(src),"c"(size)); 
-    
-#define memset(s,c,size)		\
-    asm("rep stosb" ::"D"(s),"a"(c),"c"(size));   
-
-static inline int strncmp(char *s1, char *s2, int n)
-{
-	while (n--) {
-		if (*s1 && (*s1 == *s2)) {
-			s1++;
-			s2++;
-		} else {
-			return (*s1 - *s2);
-		}
-	}
-	return 0;
-}  
-
-static inline char * strncpy(char *dst, char *src, size_t n)
-{
-	char *t = dst;
-	while (n-- && (*t++ = *src++))
-		;
-	return dst;
-}
+#define va_start(ap,fmt)   ap=(va_list)&fmt+sizeof(int)
+#define va_arg(ap,type)	  (ap+=sizeof(int),*((type*)(ap-sizeof(int))))
 
 #define max(a,b)	((a)>=(b) ? (a) : (b))
 #define min(a,b)	((a)<=(b) ? (a) : (b))
 
 extern int printk(char * fmt, ...);
 extern void panic(char * fmt, ...);
+
+extern time_t start_time;
+extern clock_t click;
+
+#define current_time()	start_time + click / HZ;
+
+extern void do_exit(long status);
+
+extern void sigsend(struct task *p, int signo);
+
+#define SOFTIRQ_TIMER		0
+#define SOFTIRQ_INET		1
+
+extern void softirq_raise(int index, long data);
+extern int  softirq_setaction(int index, void (*action)(long data));
 
 #endif

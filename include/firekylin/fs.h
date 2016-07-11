@@ -1,35 +1,40 @@
-/*
- *    include/firekylin/fs.h
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #ifndef _FS_H
 #define _FS_H
 
 #include <sys/types.h>
-#include <firekylin/sched.h>
+#include <sys/param.h>
+#include <firekylin/lock.h>
 
-#define BUF_SIZE	1024
 struct buffer {
 	dev_t 		b_dev;
 	unsigned int    b_block;
 	unsigned short  b_flag;
 	unsigned short  b_count;
-	unsigned char   b_data[BUF_SIZE];
+	sleeplock_t	b_lock;
+	char          * b_data;
 	struct buffer * b_hash_prev;
 	struct buffer * b_hash_next;
 	struct buffer * b_free_prev;
 	struct buffer * b_free_next;
-	struct task   * b_wait;
 };
 
 /* Bits of buffer->b_flag */
-#define B_BUSY		0x0001
 #define B_VALID 	0x0002
 #define B_DIRTY 	0x0004
 
-#define NR_ZONE		9
+#define lock_buffer(buf)	require_lock(&((buf)->b_lock))
+#define unlock_buffer(buf)	release_lock(&((buf)->b_lock))
+
+#define INODE_EXT_SIZE	32
 struct inode {
 	dev_t 		     i_dev;
 	ino_t 		     i_ino;
@@ -42,85 +47,109 @@ struct inode {
 	time_t 		     i_atime;
 	time_t 		     i_mtime;
 	time_t 		     i_ctime;
-	unsigned int 	     i_zone[NR_ZONE];
-	struct fs_operation *i_op;
 	unsigned short 	     i_flag;
 	unsigned short 	     i_count;
-	struct task         *i_wait;
+	sleeplock_t	     i_lock;
+	struct fs_operation *i_op;
+	unsigned char        i_ext[INODE_EXT_SIZE];
 };
 
 /* Bits of inode->i_flag */
-#define I_BUSY		0x0001
 #define I_VALID		0x0002
 #define I_DIRTY		0x0004
 #define I_MOUNT		0x0008
 
+#define lock_inode(inode)	require_lock(&((inode)->i_lock))
+#define unlock_inode(inode)	release_lock(&((inode)->i_lock))
+
+static inline struct inode * ilock(struct inode *inode)
+{
+	require_lock(&inode->i_lock);
+	return inode;
+}
+
+static inline struct inode * idup(struct inode *inode)
+{
+	require_lock(&inode->i_lock);
+	inode->i_count++;
+	return inode;
+}
+
+static inline struct inode * iunlock(struct inode *inode)
+{
+	release_lock(&inode->i_lock);
+	return inode;
+}
+
+#define SUPER_EXT_SIZE	64
 struct super {
 	dev_t                s_dev;
-	unsigned short       s_inodes;
-	unsigned short       s_zones;
-	unsigned short       s_imap_blocks;
-	unsigned short       s_zmap_blocks;
-	unsigned short       s_first_data_zone;
-	unsigned short       s_log_zone_size;
-	unsigned long        s_max_size;
 	unsigned short       s_flag;
 	unsigned short       s_count;
+	sleeplock_t	     s_lock;
 	struct fs_operation *s_op;
 	struct inode        *s_imount;
-	struct task         *s_wait;
+	unsigned char        s_ext[SUPER_EXT_SIZE];
 };
 
 /* Bits of super->s_flag */
-#define S_BUSY		0x0001
 #define S_VALID		0x0002
 #define S_DIRTY		0x0004
 #define S_WRITEABLE	0x0008
 
-struct fs_operation{
-	int (*super_read)(struct super *super);
-	int (*super_write)(struct super *super);
-	int (*inode_read)(struct inode *inode);
-	int (*inode_write)(struct inode *inode);
-	int (*look_up)(struct inode *inode, char *filename, struct inode **res);
-	int (*file_read)(struct inode *inode, char *buf, size_t size,
-			off_t offset, int rw_flag);
-	int (*file_write)(struct inode *inode, char *buf, size_t size,
-			off_t offset, int rw_flag);
-	int (*mknod)(struct inode *inode, char *name,mode_t mode,dev_t dev);
-	int (*mkdir)(struct inode *dir_inode,char *basename,mode_t mode);
-	int (*link)(struct inode *dir_inode,char *name,struct inode *inode);
-	int (*unlink)(struct inode *dir_inode,char *basename);
-	int (*rmdir)(struct inode *dir_inode,char *basename);
-	int (*rename)(struct inode *inode,char *old,char *new);
-};
+#define lock_super(super)	require_lock(&((super)->s_lock))
+#define unlock_super(super)	release_lock(&((super)->s_lock))
 
 struct file {
 	unsigned long  f_mode;
 	unsigned long  f_count;
 	unsigned long  f_pos;
 	struct inode * f_inode;
+	sleeplock_t    f_lock;
 };
 
-#define NAME_LEN	14
-struct dir_entry {
-	unsigned short ino;
-	char name[NAME_LEN];
+#define lock_file(file)		require_lock(&((file)->f_lock))
+#define unlock_file(file)	release_lock(&((file)->f_lock))
+
+#include <sys/dirent.h>
+
+struct fs_operation{
+	/* super operation */
+	int (*super_read)(struct super *super);
+	int (*super_write)(struct super *super);
+
+	/* inode operation */
+	int (*inode_read)(struct inode *inode);
+	int (*inode_write)(struct inode *inode);
+	int (*lookup)(struct inode *inode, char *filename, struct inode **res);
+	int (*mknod)(struct inode *inode, char *name,mode_t mode,dev_t dev);
+	int (*mkdir)(struct inode *dir_inode,char *basename,mode_t mode);
+	int (*link)(struct inode *dir_inode,char *name,struct inode *inode);
+	int (*unlink)(struct inode *dir_inode,char *basename);
+	int (*rmdir)(struct inode *dir_inode,char *basename);
+	int (*rename)(struct inode *inode,char *old,char *new);
+
+	/* file operation */
+	int (*file_read)(struct file *file, char *buf, size_t size);
+	int (*file_readdir)(struct file *file, char *buf, size_t size);
+	int (*file_write)(struct file *file, char *buf, size_t size);
 };
 
-extern struct fs_operation minix_fs_operation;
+struct fs_type{
+	char                *fst_name;
+	struct fs_operation *fst_op;
+};
 
 extern struct buffer * bread(dev_t dev, long block);
 extern void            brelse(struct buffer * buf);
-
 extern struct super  * get_super(dev_t dev);
 extern void            put_super(struct super *super);
-
 extern struct inode  * iget(dev_t dev, ino_t ino);
-extern struct inode  * ilock(struct inode *inode);
-extern struct inode  * iunlock(struct inode *inode);
-extern struct inode  * idup(struct inode *inode);
-extern struct inode  * namei(char *path, char **basename);
 extern void            iput(struct inode *inode);
+extern struct inode  * namei(char *path, char **basename);
+
+#define NR_FILE 	64
+extern struct file file_table[NR_FILE];
+extern sleeplock_t file_table_lock;
 
 #endif

@@ -1,42 +1,93 @@
-/*
- *    include/firekylin/tty.h
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #ifndef _TTY_H
 #define _TTY_H
 
-#include <termios.h>
+#include <sys/termios.h>
 #include <firekylin/sched.h>
+
+#define CTRL_L 	0x81
+#define CTRL_R 	0x82
+#define SHIFT_L 0x83
+#define SHIFT_R 0x84
+#define ALT_L   0x85
+#define ALT_R   0x86
+#define F1  	0x87
+#define F2  	0x88
+#define F3  	0x89
+#define F4  	0x8a
+#define F5  	0x8b
+#define F6  	0x8c
+#define F7  	0x8d
+#define F8  	0x8e
+#define F9  	0x8f
+#define F10 	0x90
+#define F11 	0x91
+#define F12 	0x92
+#define CAPLK 	0x93
+
+#define C(x) (x - '@')
+
+#define MAX_CON		3	/* max vitrual console 	*/
+#define MAX_COM		2	/* max rs232		*/
+
+#define MAX_TTY		(1+MAX_CON+MAX_COM)
 
 #define TTY_BUF_SIZE 1024
 struct tty_buf {
-	char           buf[TTY_BUF_SIZE];
-	unsigned short head;
-	unsigned short tail;
-	unsigned short count;
-	struct task  * wait;
+	char             buf[TTY_BUF_SIZE];
+	unsigned short   head;
+	unsigned short   tail;
+	unsigned short   count;
+	unsigned short   lines;
+	struct task  *   wait;
 };
 
 struct tty_struct {
-	struct termios termios;
-	unsigned int pgrp;
-	struct tty_buf raw;
-	struct tty_buf cooked;
-	struct tty_buf out;
-	int   (*write)(struct tty_struct *tty);
+	struct termios   termios;
+	unsigned int     pgrp;
+	struct tty_buf   raw;
+	struct tty_buf   cook;
+	struct tty_buf   out;
+	int            (*write)(struct tty_struct *tty);
+	unsigned long    private;
 };
 
-#define __INC(a)	((a)=((a)+1)%TTY_BUF_SIZE)
+static inline int isfull(struct tty_buf *buf)
+{
+	return buf->count==TTY_BUF_SIZE;
+}
 
-#define isfull(tty_buf)		((tty_buf).count == TTY_BUF_SIZE)
-#define isempty(tty_buf)	(!((tty_buf).count))
-#define PUTCH(tty_buf,ch)	\
-	((tty_buf).buf[(tty_buf).head]=ch,(tty_buf).count++,__INC((tty_buf).head))
-#define GETCH(tty_buf,ch)	\
-	(ch=(tty_buf).buf[(tty_buf).tail],__INC((tty_buf).tail),(tty_buf).count--)
+static inline int isempty(struct tty_buf *buf)
+{
+	return buf->count == 0;
+}
 
-extern struct tty_struct console;
-extern struct tty_struct com1;
+static inline int GETCH(struct tty_buf *buf)
+{
+	char retval;
+	retval=buf->buf[buf->tail];
+	buf->tail=(buf->tail +1)% TTY_BUF_SIZE;
+	buf->count--;
+	return retval;
+}
+
+static inline void PUTCH(struct tty_buf *buf,char ch)
+{
+	buf->buf[buf->head]=ch;
+	buf->count++;
+	buf->head=(buf->head +1)% TTY_BUF_SIZE;
+}
+
+extern struct tty_struct *tty_table[MAX_TTY];
+extern unsigned int fg_console;
+extern void copy_to_cook(struct tty_struct *tty);
+
 #endif

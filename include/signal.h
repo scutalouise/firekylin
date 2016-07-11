@@ -1,73 +1,66 @@
-/*
- *    include/signal.h
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #ifndef _SIGNAL_H
 #define _SIGNAL_H
 
-typedef unsigned long sigset_t;
+#include <sys/types.h>
+#include <sys/signal.h>
+#include <errno.h>
 
-#define	NR_SIG		32
+extern sigact_t sigact(int signo, sigact_t action);
+extern int sigmask(int how, sigset_t *set, sigset_t *oset);
+extern int sigsend(pid_t pid, int signo);
+extern int raise(int signo);
 
-#define SIGHUP		1
-#define SIGINT		2
-#define SIGQUIT		3
-#define SIGILL		4
-#define SIGTRAP		5
-#define SIGABORT	6
-#define SIGFPU		7
-#define SIGKILL		8
-#define SIGUSR1		9
-#define SIGSEGV		10
-#define SIGUSR2		11
-#define SIGPIPE		12
-#define SIGALARM	13
-#define SIGTREM		14
-#define SIGCHLD		15
-#define SIGTKFLT	16
-#define SIGCONT		17
-#define SIGSTOP		18
-#define SIGTSTP		19
-#define SIGTTIN		20
-#define	SIGTTOU		21
+static inline int sigaddset(sigset_t *set, int signo)
+{
+	if (signo < 0 || signo > 32) {
+		errno = EINVAL;
+		return -1;
+	}
 
-#define SIG_DFL		((void(*)(int))0)
-#define SIG_IGN		((void(*)(int))1)
+	*set |= 1 << (signo - 1);
+	return 0;
+}
 
-struct sigaction {
-	void (*sa_handle)(int);
-	sigset_t sa_mask;
-	int sa_flags;
-	void (*sa_restoter)(void);
-};
+static inline int sigdelset(sigset_t *set, int signo)
+{
+	if (signo < 0 || signo > 32) {
+		errno = EINVAL;
+		return -1;
+	}
 
-/* bits of sa_flags */
-#define SA_ONSTACK	0x0001	/* deliver signal on alternate stack       */
-#define SA_RESETHAND	0x0002	/* reset signal handler when signal caught */
-#define SA_NODEFER	0x0004	/* don't block signal while catching it    */
-#define SA_RESTART	0x0008	/* automatic system call restart           */
-#define SA_SIGINFO	0x0010	/* extended signal handling                */
-#define SA_NOCLDWAIT	0x0020	/* don't create zombies                    */
-#define SA_NOCLDSTOP	0x0040	/* don't receive SIGCHLD when child stops  */
+	*set &= ~(1 << (signo - 1));
+	return 0;
+}
 
-/* values used by sigprocmask(). */
-#define SIG_BLOCK          0	/* for blocking signals        */
-#define SIG_UNBLOCK        1	/* for unblocking signals      */
-#define SIG_SETMASK        2	/* for setting the signal mask */
-#define SIG_INQUIRE        4	/* for internal use only       */
+static inline int sigismember(sigset_t *set, int signo)
+{
+	if (signo < 0 || signo > 32) {
+		errno = EINVAL;
+		return -1;
+	}
 
-typedef void (*sig_func_t)(int);
+	return (*set) >> (signo - 1) & 1;
+}
 
-sig_func_t signal(int signr,sig_func_t fun);
+static inline int sigemptyset(sigset_t *set)
+{
+	*set = 0;
+	return 0;
+}
 
-int sigaddset(sigset_t *set,int signo);
-int sigdelset(sigset_t *set,int signo);
-int sigemptyset(sigset_t *set);
-int sigfillset(sigset_t *set);
-int sigismember(sigset_t *set,int signo);
-int sigprocmask(int how,sigset_t *set ,sigset_t *oldset);
-int sigaction(int sig,struct sigaction *newact,struct sigaction * oldact);
+static inline int sigefillset(sigset_t *set)
+{
+	*set = ~(sigset_t) 0;
+	return 0;
+}
 
 #endif

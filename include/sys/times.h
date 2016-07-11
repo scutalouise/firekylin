@@ -1,8 +1,10 @@
-/*
- *    include/sys/times.h
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
  *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #ifndef _SYS_TIMES_H
@@ -11,12 +13,12 @@
 #include <sys/types.h>
 
 struct tms {
-	clock_t tms_utime; 	/* User CPU time.                     */
-	clock_t tms_stime; 	/* System CPU time.                   */
-	clock_t tms_cutime; 	/* User CPU time of child processes.  */
-	clock_t tms_cstime; 	/* System CPU time of child processes.*/
+	clock_t tms_utime;
+	clock_t tms_stime;
+	clock_t tms_cutime;
+	clock_t tms_cstime;
 };
 
-extern clock_t times(struct tms *tmsptr);
+clock_t times(struct tms *tmsptr);
 
 #endif

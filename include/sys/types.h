@@ -1,7 +1,10 @@
-/*
- *    include/sys/types.h
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #ifndef _SYS_TYPES_H
@@ -11,20 +14,12 @@
 #define NULL 		((void*)0)
 #endif
 
-#ifndef __SIZE_T
-#define __SIZE_T
 typedef unsigned long 	size_t;
-#endif
-
-#ifndef __SSIZE_T
-#define __SSIZE_T
-typedef long 		ssize_t;
-#endif
+typedef signed   long 	ssize_t;
 
 typedef unsigned long 	time_t;
 typedef unsigned long 	clock_t;
 
-typedef unsigned int 	id_t;
 typedef unsigned int 	uid_t;
 typedef unsigned int 	gid_t;
 typedef unsigned int 	pid_t;

@@ -1,7 +1,10 @@
-/*
- *    include/sys/stat.h
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #ifndef _SYS_STAT_H
@@ -48,7 +51,7 @@ struct stat {
 #define S_IFCHR		0020000
 #define S_IFBLK		0060000
 #define S_IFIFO		0010000
-#define S_IFLNK		0060000
+#define S_IFLNK		0030000
 #define S_IFSOCK	0070000
 #define S_IFMT		0170000
 
@@ -67,11 +70,10 @@ struct utimebuf {
 	time_t ctime;
 };
 
-extern int create(char *filename, mode_t mode, long arg);
-extern int stat(const char *filename, struct stat *statbuf);
+extern int stat(char *filename, struct stat *statbuf);
 extern int fstat(int fd, struct stat *statbuf);
-extern int chown(const char *filename, uid_t uid, gid_t gid);
-extern int chmod(const char *filename, mode_t mode);
-extern int utime(const char *filename, struct utimebuf *utbuf);
+extern int chown(char *filename, uid_t uid, gid_t gid);
+extern int chmod(char *filename, mode_t mode);
+extern int utime(char *filename, struct utimebuf *utbuf);
 
 #endif

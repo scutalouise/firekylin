@@ -1,11 +1,14 @@
-/*
- *    include/firekylin/driver.h
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
+ *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #ifndef _DRIVER_H
-#define _FRIVER_H
+#define _DRIVER_H
 
 #include <sys/types.h>
 #include <firekylin/fs.h>
@@ -14,20 +17,18 @@
 #define MAJOR(dev)		(((dev)>>8)&0xff)
 #define MINOR(dev)		((dev)&0xff)
 
-#define DEV_CHAR_MAX		7
+#define DEV_CHAR_MAX		3
 #define DEV_CHAR_MEM		1
-#define DEV_CHAR_TTYX		4
-#define DEV_CHAR_TTY		5
-#define DEV_CHAR_LP		6
+#define DEV_CHAR_TTY		2
 
-#define DEV_BLK_MAX		7
+#define DEV_BLK_MAX		3
 #define DEV_BLK_RAMDISK		1
 #define DEV_BLK_FLOPPY		2
-#define DEV_BLK_IDE		3
+#define DEV_BLK_ATAPI		3
 
-#define ROOT_DEV		DEV(DEV_BLK_IDE,0)
+#define ROOT_DEV		DEV(DEV_BLK_RAMDISK,0)
 
-struct char_dev {
+struct char_device {
 	char *name;
 	int  (*open)(dev_t dev);
 	int  (*close)(dev_t dev);
@@ -36,7 +37,7 @@ struct char_dev {
 	int  (*ioctl)(dev_t dev, int cmd, long arg);
 };
 
-struct blk_dev {
+struct block_device {
 	char *name;
 	int  (*open)(dev_t dev);
 	int  (*close)(dev_t dev);
@@ -45,10 +46,7 @@ struct blk_dev {
 	int  (*ioctl)(dev_t dev, int cmd, long arg);
 };
 
-extern struct char_dev *char_table[];
-extern struct blk_dev *blk_table[];
-
-extern void read_block(struct buffer *buf);
-extern void write_block(struct buffer *buf);
+extern struct char_device  *char_table[];
+extern struct block_device *blk_table[];
 
 #endif

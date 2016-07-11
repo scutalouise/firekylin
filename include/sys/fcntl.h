@@ -1,8 +1,10 @@
-/*
- *    include/sys/fcntl.h
+/* This file is part of The Firekylin Operating System.
  *
- *    Copyright (C) 2016 ximo<ximoos@foxmail.com>
+ * Copyright (c) 2016, Liuxiaofeng
+ * All rights reserved.
  *
+ * This program is free software; you can distribute it and/or modify
+ * it under the terms of The BSD License, see LICENSE.
  */
 
 #ifndef _SYS_FCNTL_H
@@ -30,9 +32,10 @@
 #define F_SETLK 	6	/* set record locking information           */
 #define F_SETLKW	7	/* set record locking info; wait if blocked */
 #define F_FREESP	8	/* free a section of a regular file         */
-#define F_SEEKSET	9
-#define F_SEEKCUR	10
-#define F_SEEKEND	11
+
+#define SEEK_SET	0
+#define SEEK_CUR	1
+#define SEEK_END	2
 
 /* Struct of file lock */
 struct flock {
@@ -44,6 +47,6 @@ struct flock {
 };
 
 extern int open(const char *path, int flag, ...);
-extern int fcntl(int fd, int cmd, long arg);
+extern int fcntl(int fd, int cmd, ...);
 
 #endif
